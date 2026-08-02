@@ -20,7 +20,6 @@ export function NavBar() {
           priority
         />
         <div style={{ display: "flex", flexDirection: "column", gap: "1px", textDecoration: "none" }}>
-          {/* "Kairos Labs™" com gradiente fiel ao logo */}
           <span
             style={{
               fontFamily: "var(--font-cinzel), serif",
@@ -48,14 +47,12 @@ export function NavBar() {
               ™
             </sup>
           </span>
-
-
         </div>
       </Link>
 
-      {/* Nav links */}
+      {/* Nav links — "Soluções" removido; já existe o botão "Explorar Soluções" no hero */}
       <div className="flex items-center gap-10">
-        {["Sobre", "Soluções", "Tecnologia", "Contato"].map((item) => (
+        {["Sobre", "Tecnologia", "Contato"].map((item) => (
           <Link
             key={item}
             href={`#${item.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`}

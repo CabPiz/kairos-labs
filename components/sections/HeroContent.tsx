@@ -61,7 +61,7 @@ export function HeroContent() {
       {/* CTAs */}
       <div style={{ display: "flex", gap: "1rem", marginTop: "2rem" }}>
         <button
-          onClick={() => document.getElementById("solucoes")?.scrollIntoView({ behavior: "smooth" })}
+          onClick={() => window.location.href = "/solucoes"}
           style={{
             background: "#1a56db",
             color: "#fff",
