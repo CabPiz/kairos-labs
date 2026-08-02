@@ -78,3 +78,7 @@
     @apply font-sans;
   }
 }
+
+a {
+  text-decoration: none;
+}

@@ -1,4 +1,6 @@
-// TODO(#7): Implementar Hero Section com headline e CTA
-export function Hero() {
-    return <section id="hero" />
-  }
+
+
+Hero · TSX
+// components/sections/Hero.tsx
+// Ref #7 — aponta para HeroSection (implementação completa)
+export { HeroSection as Hero } from "@/components/sections/HeroSection";
