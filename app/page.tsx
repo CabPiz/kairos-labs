@@ -1,8 +1,9 @@
-// TODO(#6, #7, #8): Implementar Hero, Cards de Produto e Footer
-export default function HomePage() {
+import { HeroSection } from "@/components/sections/HeroSection";
+
+export default function Home() {
   return (
     <main>
-      <p>Kairos Labs — Landing Page (em construção)</p>
+      <HeroSection />
     </main>
-  )
+  );
 }

@@ -1,13 +1,24 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Orbitron, Cinzel_Decorative } from 'next/font/google'
 import './globals.css'
-import { Header } from '@/components/sections/Header'  // ← adiciona essa linha
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+
+const orbitron = Orbitron({
+  subsets: ['latin'],
+  weight: ['700', '800', '900'],
+  variable: '--font-orbitron',
+})
+
+const cinzelDecorative = Cinzel_Decorative({
+  subsets: ['latin'],
+  weight: ['700'],
+  variable: '--font-cinzel',
+})
 
 export const metadata: Metadata = {
   title: 'Kairos Labs',
-  description: '...',
+  description: 'Construímos soluções digitais avançadas com segurança, performance e visão de futuro.',
 }
 
 export default function RootLayout({
@@ -17,8 +28,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className={inter.className}>
-        <Header />
+      <body className={`${inter.variable} ${orbitron.variable} ${cinzelDecorative.variable} ${inter.className}`}>
         {children}
       </body>
     </html>
