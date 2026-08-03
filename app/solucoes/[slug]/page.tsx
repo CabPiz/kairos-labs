@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
+import { WaitlistCTAButton } from "@/components/waitlist/WaitlistCTAButton";
 
 // ─────────────────────────────────────────────────────────────
 // Tipos
@@ -675,22 +676,12 @@ export default async function ProdutoDetalhe({ params }: Props) {
           </div>
 
           <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", justifyContent: "center" }}>
-            <button
-              style={{
-                padding: "0.7rem 2rem",
-                fontSize: "0.78rem",
-                fontWeight: 700,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "#050a14",
-                background: produto.cor,
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer",
-              }}
-            >
-              {produto.cta}
-            </button>
+            <WaitlistCTAButton
+              productId={slug}
+              productName={produto.nome}
+              productColor={produto.cor}
+              ctaLabel={produto.cta}
+            />
 
             <Link
               href="/solucoes"
