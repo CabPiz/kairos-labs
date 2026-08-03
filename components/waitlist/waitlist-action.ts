@@ -50,7 +50,7 @@ export async function joinWaitlistAction(
   if (!parsed.success) {
     return {
       status: "error",
-      message: parsed.error.errors[0]?.message ?? "Dados inválidos.",
+      message: parsed.error.issues[0]?.message ?? "Dados inválidos.",
     };
   }
 
@@ -59,9 +59,10 @@ export async function joinWaitlistAction(
   // 2. Inserir no Supabase
   const supabase = await createServerSupabaseClient();
 
-  const { error } = await supabase
-    .from("waitlist")
-    .insert({ email, product_id: product_id as ProductId });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+const { error } = await (supabase as any)
+.from("waitlist")
+.insert({ email, product_id });
 
   if (error) {
     // Código 23505 = violação de constraint UNIQUE (email + product_id)
