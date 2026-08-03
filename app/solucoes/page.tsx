@@ -327,21 +327,12 @@ function ProdutoCard({ produto }: { produto: (typeof produtos)[number] }) {
         {produto.descricao}
       </p>
 
-      {/* Rodapé do card: saiba mais + CTA */}
-      <div
-        style={{
-          display: "flex",
-          gap: "0.75rem",
-          marginTop: "0.4rem",
-          flexWrap: "wrap",
-        }}
-      >
+      {/* Rodapé do card: saiba mais */}
+      <div style={{ marginTop: "0.4rem" }}>
         <Link
           href={`/solucoes/${produto.slug}`}
           style={{
-            flex: 1,
-            minWidth: "120px",
-            display: "inline-flex",
+            display: "flex",
             alignItems: "center",
             justifyContent: "center",
             padding: "0.6rem 1rem",
@@ -366,36 +357,6 @@ function ProdutoCard({ produto }: { produto: (typeof produtos)[number] }) {
         >
           Saiba mais
         </Link>
-
-        <button
-          onClick={() => {
-            // TODO(#9): abrir modal de waitlist com product_id = produto.slug
-            console.log("waitlist:", produto.slug);
-          }}
-          style={{
-            flex: 1,
-            minWidth: "160px",
-            padding: "0.6rem 1rem",
-            fontSize: "0.75rem",
-            fontWeight: 700,
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            color: "#050a14",
-            background: "#d4a017",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            transition: "background 0.2s",
-          }}
-          onMouseOver={(e) =>
-            ((e.currentTarget as HTMLButtonElement).style.background = "#b8860f")
-          }
-          onMouseOut={(e) =>
-            ((e.currentTarget as HTMLButtonElement).style.background = "#d4a017")
-          }
-        >
-          Garantir Acesso
-        </button>
       </div>
     </div>
   );
