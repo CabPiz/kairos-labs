@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, Orbitron, Cinzel_Decorative } from 'next/font/google'
+import { Footer } from '@/components/sections/Footer'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className={`${inter.variable} ${orbitron.variable} ${cinzelDecorative.variable} ${inter.className}`}>
         {children}
+        <Footer />
       </body>
     </html>
   )
