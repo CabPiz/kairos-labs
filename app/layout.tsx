@@ -18,8 +18,34 @@ const cinzelDecorative = Cinzel_Decorative({
 })
 
 export const metadata: Metadata = {
-  title: 'Kairos Labs',
+  metadataBase: new URL('https://kairoslabs.com.br'),
+  title: {
+    default: 'Kairos Labs',
+    template: '%s | Kairos Labs',
+  },
   description: 'Construímos soluções digitais avançadas com segurança, performance e visão de futuro.',
+  openGraph: {
+    title: 'Kairos Labs',
+    description: 'Construímos soluções digitais avançadas com segurança, performance e visão de futuro.',
+    url: 'https://kairoslabs.com.br',
+    siteName: 'Kairos Labs',
+    images: [
+      {
+        url: '/logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Kairos Labs',
+      },
+    ],
+    locale: 'pt_BR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Kairos Labs',
+    description: 'Construímos soluções digitais avançadas com segurança, performance e visão de futuro.',
+    images: ['/logo.png'],
+  },
 }
 
 export default function RootLayout({
