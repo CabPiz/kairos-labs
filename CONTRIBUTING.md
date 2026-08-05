@@ -50,7 +50,37 @@ Stack: [Jest](https://jestjs.io) + [React Testing Library](https://testing-libra
 
 ## Testes E2E
 
-> **Ainda não configurados.** A issue [#39 — Configurar Playwright para testes E2E](https://github.com/CabPiz/kairos-labs/issues/39) é responsável por implementar essa infra. Quando concluída, esta seção será atualizada com o comando `npm run test:e2e` e as instruções de uso.
+Stack: [Playwright](https://playwright.dev) + Chromium.
+
+Os testes E2E validam os fluxos críticos da aplicação no browser real. Os specs ficam na pasta `e2e/`.
+
+**Pré-requisito (apenas na primeira vez):**
+
+```bash
+npx playwright install --with-deps chromium
+```
+
+**Rodar os testes E2E:**
+
+```bash
+npm run test:e2e
+```
+
+O servidor de desenvolvimento (`npm run dev`) precisa estar rodando em `localhost:3000`, ou você pode usar o `webServer` automático do Playwright (configurado no `playwright.config.ts`).
+
+**Relatório HTML após a execução:**
+
+```bash
+npx playwright show-report
+```
+
+**Fluxos cobertos:**
+
+| Spec | Fluxo validado |
+| :--- | :--- |
+| `e2e/waitlist.spec.ts` | Abre modal de waitlist → preenche e-mail → submete → vê confirmação |
+
+No CI (GitHub Actions), os testes E2E rodam automaticamente no job `e2e`, após o job `ci`. Screenshots de falha são salvas como artefatos por 7 dias.
 
 ---
 

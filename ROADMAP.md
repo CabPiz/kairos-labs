@@ -11,7 +11,7 @@ Repositório: `CabPiz/kairos-labs` | Project Board: nº 3
 | :--- | :--- | :--- |
 | **M1 — Foundation & Infra** | Setup do repositório, stack, CI/CD e banco de dados | ✅ Concluído |
 | **M2 — Public Landing Page** | Hero, vitrine de produtos, modal de waitlist, SEO | ✅ Concluído |
-| **M5 — Quality Engineering** | Infraestrutura de testes, CI automatizado e documentação | 🔵 Próximo |
+| **M5 — Quality Engineering** | Infraestrutura de testes, CI automatizado e documentação | ✅ Concluído |
 | **M3 — Founder Dashboard** | Rota /admin protegida, KPIs, gráficos e exportação CSV | ⚪ Planejado |
 | **M4 — Polish & Launch** | Acessibilidade, domínio customizado, README e go-live | ⚪ Planejado |
 
@@ -22,7 +22,7 @@ Repositório: `CabPiz/kairos-labs` | Project Board: nº 3
 ## Sequência de Execução
 
 ```
-[M1 ✅] → [M2 ✅ #11→#12] → [M5 🔵 #33→#34→#35→#36→#37→#38→#39] → [M3 ⚪ #13→#14→#15→#16] → [M4 ⚪ #17→#18→#19→#20]
+[M1 ✅] → [M2 ✅ #11→#12] → [M5 ✅ #33→#34→#35→#36→#37→#38→#39] → [M3 ⚪ #13→#14→#15→#16] → [M4 ⚪ #17→#18→#19→#20]
 ```
 
 ```mermaid
@@ -43,9 +43,9 @@ flowchart TD
         i6("#6 Header"):::done --> i7("#7 Hero Section"):::done --> i8("#8 Cards de Produto"):::done --> i9("#9 Modal Waitlist"):::done --> i10("#10 Footer"):::done --> i11("#11 SEO e Metadata"):::done --> i12("#12 Feedback de Sugestões"):::done
     end
 
-    subgraph M5["🔵 M5 — Quality Engineering"]
+    subgraph M5["✅ M5 — Quality Engineering"]
         direction LR
-        i33("#33 .env.example"):::quality --> i34("#34 ESLint + Husky"):::quality --> i35("#35 Jest + RTL"):::quality --> i36("#36 GitHub Actions CI"):::quality --> i37("#37 CONTRIBUTING.md"):::quality --> i38("#38 Testes unitários"):::quality --> i39("#39 Playwright E2E"):::quality
+        i33("#33 .env.example"):::done --> i34("#34 ESLint + Husky"):::done --> i35("#35 Jest + RTL"):::done --> i36("#36 GitHub Actions CI"):::done --> i37("#37 CONTRIBUTING.md"):::done --> i38("#38 Testes unitários"):::done --> i39("#39 Playwright E2E"):::done
     end
 
     subgraph M3["⚪ M3 — Founder Dashboard"]
@@ -90,19 +90,19 @@ flowchart TD
 
 ---
 
-## M5 — Quality Engineering 🔵 Próximo
+## M5 — Quality Engineering ✅ Concluído
 
 Executado após a conclusão do M2. Estabelece a infraestrutura de qualidade que sustentará todo o desenvolvimento do M3 em diante.
 
 | # | Issue | Dependência | Status |
 |---|---|---|---|
-| #33 | Adicionar `.env.example` e documentar variáveis de ambiente | — | ⚪ |
-| #34 | Configurar ESLint + lint-staged + Husky | #33 | ⚪ |
-| #35 | Configurar Jest + React Testing Library | #34 | ⚪ |
-| #36 | Criar pipeline CI no GitHub Actions (build + lint + test) | #35 | ⚪ |
-| #37 | Criar `CONTRIBUTING.md` com guia de desenvolvimento local | #36 | ⚪ |
-| #38 | Escrever testes unitários nos componentes principais | #35 | ⚪ |
-| #39 | Configurar Playwright para testes E2E | #36 | ⚪ |
+| #33 | Adicionar `.env.example` e documentar variáveis de ambiente | — | ✅ |
+| #34 | Configurar ESLint + lint-staged + Husky | #33 | ✅ |
+| #35 | Configurar Jest + React Testing Library | #34 | ✅ |
+| #36 | Criar pipeline CI no GitHub Actions (build + lint + test) | #35 | ✅ |
+| #37 | Criar `CONTRIBUTING.md` com guia de desenvolvimento local | #36 | ✅ |
+| #38 | Escrever testes unitários nos componentes principais | #35 | ✅ |
+| #39 | Configurar Playwright para testes E2E | #36 | ✅ |
 
 ---
 
@@ -141,4 +141,4 @@ Etapa final antes do go-live. Executada após o M3 completo.
 
 ---
 
-*ROADMAP.md v2.1 — M2 concluído (issues #11 e #12 mergeadas) | Kairos Labs*
+*ROADMAP.md v2.2 — M5 concluído (issues #33–#39 mergeadas) | Kairos Labs*
