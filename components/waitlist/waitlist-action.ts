@@ -2,7 +2,6 @@
 
 import { z } from "zod";
 import { createServerSupabaseClient } from "@/lib/supabase";
-import type { ProductId } from "@/lib/types";
 
 // ─────────────────────────────────────────────────────────────
 // Schema de validação (server-side — segunda camada de defesa)

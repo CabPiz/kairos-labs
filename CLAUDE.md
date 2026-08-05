@@ -12,6 +12,7 @@ Repositório: `CabPiz/kairos-labs` | Owner: `CabPiz` | Project Board: nº 3
 - Criar e editar arquivos de código-fonte diretamente no disco
 - Criar e editar arquivos de documentação (`.md`) diretamente no disco
 - Rodar `npm run build` para validar o build
+- Rodar `npm run lint` para verificar conformidade ESLint
 - Ler issues do GitHub com `gh issue view [NUMERO]` e `gh issue list`
 
 ### 🚫 PROIBIDO — EXECUÇÃO AUTOMÁTICA
@@ -135,6 +136,8 @@ O Claude Code instrui o usuário a rodar:
 ```bash
 npm run build
 ```
+
+> **Hook de pre-commit ativo (desde a issue #34):** Husky + lint-staged estão configurados. Ao executar `git commit`, o hook `.husky/pre-commit` roda automaticamente `npx lint-staged`, que executa `eslint --max-warnings=0` nos arquivos `.ts` e `.tsx` modificados. Se houver erro ou warning de lint, o commit é bloqueado. O Claude Code deve garantir conformidade ESLint antes de entregar os blocos de commit da FASE 3.
 
 - Se falhar: Claude Code analisa o erro, corrige os arquivos e **documenta o erro no `BUILD_ERRORS.md`** se for um padrão novo, depois solicita novo build.
 - **PROIBIDO** avançar para testes manuais ou commits enquanto houver erros de build.
