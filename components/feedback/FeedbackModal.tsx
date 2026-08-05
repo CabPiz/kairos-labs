@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CheckCircle, AlertCircle, Loader2, Mail } from "lucide-react";
+import { CheckCircle, Loader2, MessageSquare } from "lucide-react";
 
 import {
   Dialog,
@@ -15,16 +15,15 @@ import {
 } from "@/components/ui/dialog";
 import { ModalResultPanel } from "@/components/ui/ModalResultPanel";
 import { ModalErrorBanner } from "@/components/ui/ModalErrorBanner";
-import { joinWaitlistAction, type WaitlistActionState } from "./waitlist-action";
+import { sendFeedbackAction, type FeedbackActionState } from "./feedback-action";
 
 // ─────────────────────────────────────────────────────────────
-// Schema de validação client-side
+// Schema
 // ─────────────────────────────────────────────────────────────
 const formSchema = z.object({
-  email: z
-    .string()
-    .min(1, "E-mail é obrigatório.")
-    .email("Formato de e-mail inválido."),
+  nome: z.string().optional(),
+  email: z.union([z.literal(""), z.string().email("Formato de e-mail inválido.")]),
+  mensagem: z.string().min(10, "A mensagem deve ter pelo menos 10 caracteres."),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -32,27 +31,25 @@ type FormValues = z.infer<typeof formSchema>;
 // ─────────────────────────────────────────────────────────────
 // Props
 // ─────────────────────────────────────────────────────────────
-interface WaitlistModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  productId: string;
-  productName: string;
-  productColor: string;
+interface FeedbackModalProps {
+  readonly open: boolean;
+  readonly onOpenChange: (open: boolean) => void;
+  readonly productId: string;
+  readonly productName: string;
+  readonly productColor: string;
 }
 
 // ─────────────────────────────────────────────────────────────
 // Componente
 // ─────────────────────────────────────────────────────────────
-export function WaitlistModal({
+export function FeedbackModal({
   open,
   onOpenChange,
   productId,
   productName,
   productColor,
-}: WaitlistModalProps) {
-  const [actionState, setActionState] = useState<WaitlistActionState>({
-    status: "idle",
-  });
+}: FeedbackModalProps) {
+  const [actionState, setActionState] = useState<FeedbackActionState>({ status: "idle" });
   const [isPending, startTransition] = useTransition();
 
   const {
@@ -64,8 +61,6 @@ export function WaitlistModal({
     resolver: zodResolver(formSchema),
   });
 
-  // Ao fechar o modal, resetar o estado para que na próxima abertura
-  // o formulário apareça limpo (sem mensagem de sucesso anterior)
   function handleOpenChange(nextOpen: boolean) {
     if (!nextOpen) {
       reset();
@@ -76,14 +71,38 @@ export function WaitlistModal({
 
   function onSubmit(values: FormValues) {
     const formData = new FormData();
-    formData.set("email", values.email);
     formData.set("product_id", productId);
+    formData.set("nome", values.nome ?? "");
+    formData.set("email", values.email ?? "");
+    formData.set("mensagem", values.mensagem);
 
     startTransition(async () => {
-      const result = await joinWaitlistAction(formData);
+      const result = await sendFeedbackAction(formData);
       setActionState(result);
     });
   }
+
+  const labelStyle: React.CSSProperties = {
+    display: "block",
+    marginBottom: "0.4rem",
+    color: "rgba(255,255,255,0.7)",
+    fontSize: "0.75rem",
+    fontWeight: 600,
+    letterSpacing: "0.12em",
+    textTransform: "uppercase",
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%",
+    padding: "0.65rem 0.9rem",
+    fontSize: "0.9rem",
+    color: "#fff",
+    background: "rgba(255,255,255,0.05)",
+    border: "1px solid rgba(255,255,255,0.15)",
+    borderRadius: "6px",
+    outline: "none",
+    boxSizing: "border-box",
+  };
 
   // ── Painel de sucesso ──────────────────────────────────────
   if (actionState.status === "success") {
@@ -93,18 +112,15 @@ export function WaitlistModal({
         onOpenChange={handleOpenChange}
         icon={<CheckCircle size={30} color="#10b981" />}
         iconColor="#10b981"
-        title="Você está na lista!"
+        title="Sugestão enviada!"
         message={
           <>
-            <span style={{ color: "#10b981", fontWeight: 600 }}>
-              {actionState.email}
-            </span>{" "}
-            foi cadastrado na lista de espera de{" "}
+            Obrigado pelo feedback sobre{" "}
             <span style={{ color: productColor, fontWeight: 600 }}>
               {productName}
             </span>
             {". "}
-            Você será notificado no lançamento.
+            Sua sugestão foi recebida e será analisada pelo fundador.
           </>
         }
         buttonColor="#10b981"
@@ -112,31 +128,7 @@ export function WaitlistModal({
     );
   }
 
-  // ── Painel de e-mail duplicado ─────────────────────────────
-  if (actionState.status === "duplicate") {
-    return (
-      <ModalResultPanel
-        open={open}
-        onOpenChange={handleOpenChange}
-        icon={<AlertCircle size={30} color="#d4a017" />}
-        iconColor="#d4a017"
-        title="Já registrado"
-        message={
-          <>
-            Este e-mail já está na lista de espera de{" "}
-            <span style={{ color: productColor, fontWeight: 600 }}>
-              {productName}
-            </span>
-            {". "}
-            Você será notificado no lançamento.
-          </>
-        }
-        buttonColor="#d4a017"
-      />
-    );
-  }
-
-  // ── Formulário principal (idle | error) ────────────────────
+  // ── Formulário principal ───────────────────────────────────
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
@@ -145,10 +137,9 @@ export function WaitlistModal({
         style={{
           background: "#0b1221",
           border: "1px solid rgba(59,130,246,0.2)",
-          maxWidth: "420px",
+          maxWidth: "440px",
         }}
       >
-        {/* Barra de destaque na cor do produto */}
         <div
           style={{
             height: "3px",
@@ -158,7 +149,6 @@ export function WaitlistModal({
 
         <div style={{ padding: "1.8rem 2rem 2rem" }}>
           <DialogHeader style={{ marginBottom: "1.5rem" }}>
-            {/* Ícone de e-mail */}
             <div
               style={{
                 width: "44px",
@@ -173,7 +163,7 @@ export function WaitlistModal({
                 color: productColor,
               }}
             >
-              <Mail size={20} />
+              <MessageSquare size={20} />
             </div>
 
             <DialogTitle
@@ -186,7 +176,7 @@ export function WaitlistModal({
                 textTransform: "uppercase",
               }}
             >
-              Acesso Antecipado
+              Enviar Sugestão
             </DialogTitle>
             <DialogDescription
               style={{
@@ -196,79 +186,89 @@ export function WaitlistModal({
                 marginTop: "0.4rem",
               }}
             >
-              Entre na lista de espera de{" "}
+              Compartilhe sua ideia para{" "}
               <span style={{ color: productColor, fontWeight: 600 }}>
                 {productName}
-              </span>{" "}
-              e seja notificado no lançamento.
+              </span>{". "}
+              Nome e e-mail são opcionais.
             </DialogDescription>
           </DialogHeader>
 
-          {/* Formulário */}
           <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Nome */}
             <div style={{ marginBottom: "1rem" }}>
-              <label
-                htmlFor="waitlist-email"
-                style={{
-                  display: "block",
-                  marginBottom: "0.4rem",
-                  color: "rgba(255,255,255,0.7)",
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                }}
-              >
-                E-mail
+              <label htmlFor="feedback-nome" style={labelStyle}>
+                Nome{" "}
+                <span style={{ color: "rgba(255,255,255,0.3)", fontWeight: 400 }}>
+                  (opcional)
+                </span>
               </label>
               <input
-                id="waitlist-email"
+                id="feedback-nome"
+                type="text"
+                autoComplete="name"
+                placeholder="Seu nome"
+                disabled={isPending}
+                {...register("nome")}
+                style={{ ...inputStyle, opacity: isPending ? 0.6 : 1 }}
+              />
+            </div>
+
+            {/* E-mail */}
+            <div style={{ marginBottom: "1rem" }}>
+              <label htmlFor="feedback-email" style={labelStyle}>
+                E-mail{" "}
+                <span style={{ color: "rgba(255,255,255,0.3)", fontWeight: 400 }}>
+                  (opcional)
+                </span>
+              </label>
+              <input
+                id="feedback-email"
                 type="email"
                 autoComplete="email"
                 placeholder="seu@email.com"
                 disabled={isPending}
                 {...register("email")}
                 style={{
-                  width: "100%",
-                  padding: "0.65rem 0.9rem",
-                  fontSize: "0.9rem",
-                  color: "#fff",
-                  background: "rgba(255,255,255,0.05)",
-                  border: errors.email
-                    ? "1px solid rgba(239,68,68,0.7)"
-                    : "1px solid rgba(255,255,255,0.15)",
-                  borderRadius: "6px",
-                  outline: "none",
-                  transition: "border-color 0.2s",
-                  boxSizing: "border-box",
+                  ...inputStyle,
                   opacity: isPending ? 0.6 : 1,
-                }}
-                onFocus={(e) => {
-                  if (!errors.email) {
-                    e.currentTarget.style.borderColor = productColor;
-                  }
-                }}
-                onBlur={(e) => {
-                  if (!errors.email) {
-                    e.currentTarget.style.borderColor =
-                      "rgba(255,255,255,0.15)";
-                  }
+                  borderColor: errors.email ? "rgba(239,68,68,0.7)" : "rgba(255,255,255,0.15)",
                 }}
               />
               {errors.email && (
-                <p
-                  style={{
-                    margin: "0.4rem 0 0",
-                    color: "rgba(239,68,68,0.9)",
-                    fontSize: "0.75rem",
-                  }}
-                >
+                <p style={{ margin: "0.4rem 0 0", color: "rgba(239,68,68,0.9)", fontSize: "0.75rem" }}>
                   {errors.email.message}
                 </p>
               )}
             </div>
 
-            {/* Erro genérico da action */}
+            {/* Mensagem */}
+            <div style={{ marginBottom: "1rem" }}>
+              <label htmlFor="feedback-mensagem" style={labelStyle}>
+                Mensagem
+              </label>
+              <textarea
+                id="feedback-mensagem"
+                rows={4}
+                placeholder="Descreva sua sugestão..."
+                disabled={isPending}
+                {...register("mensagem")}
+                style={{
+                  ...inputStyle,
+                  resize: "vertical",
+                  opacity: isPending ? 0.6 : 1,
+                  borderColor: errors.mensagem ? "rgba(239,68,68,0.7)" : "rgba(255,255,255,0.15)",
+                  fontFamily: "inherit",
+                }}
+              />
+              {errors.mensagem && (
+                <p style={{ margin: "0.4rem 0 0", color: "rgba(239,68,68,0.9)", fontSize: "0.75rem" }}>
+                  {errors.mensagem.message}
+                </p>
+              )}
+            </div>
+
+            {/* Erro genérico */}
             {actionState.status === "error" && (
               <ModalErrorBanner message={actionState.message} />
             )}
@@ -284,7 +284,7 @@ export function WaitlistModal({
                 letterSpacing: "0.14em",
                 textTransform: "uppercase",
                 color: "#050a14",
-                background: isPending ? "rgba(212,160,23,0.5)" : "#d4a017",
+                background: isPending ? `${productColor}80` : productColor,
                 border: "none",
                 borderRadius: "6px",
                 cursor: isPending ? "not-allowed" : "pointer",
@@ -296,20 +296,8 @@ export function WaitlistModal({
               }}
             >
               {isPending && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
-              {isPending ? "Cadastrando..." : "Garantir Acesso Antecipado"}
+              {isPending ? "Enviando..." : "Enviar Sugestão"}
             </button>
-
-            <p
-              style={{
-                marginTop: "0.9rem",
-                textAlign: "center",
-                color: "rgba(255,255,255,0.3)",
-                fontSize: "0.72rem",
-                lineHeight: 1.5,
-              }}
-            >
-              Sem spam. Apenas uma notificação quando o produto lançar.
-            </p>
           </form>
         </div>
       </DialogContent>

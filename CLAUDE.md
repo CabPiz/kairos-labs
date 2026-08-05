@@ -34,11 +34,13 @@ O Claude Code deve **gerar o bloco de comandos formatado** para o usuário execu
 O usuário inicia sempre com:
 > "Vou trabalhar na issue #[número] — [título]"
 
-Ao receber isso, o Claude Code executa automaticamente:
+Ao receber isso, o Claude Code executa automaticamente, nesta ordem:
 ```bash
 gh issue view [NUMERO]
 ```
-para ler o escopo completo da issue antes de qualquer coisa.
+para ler o escopo completo da issue.
+
+Em seguida, **obrigatoriamente**, lê o arquivo `BUILD_ERRORS.md` na raiz do projeto para internalizar todos os erros já resolvidos e aplicar os padrões corretos antes de gerar qualquer código.
 
 ---
 
@@ -124,7 +126,20 @@ gh project item-edit --id $ITEM_ID --project-id $PROJECT_ID --field-id $STATUS_F
 
 ### FASE 2.5 — Validação Local Obrigatória (usuário executa)
 
-**Passo 1 — Testes manuais (antes do build)**
+**Passo 1 — Build do projeto**
+
+O Claude Code instrui o usuário a rodar:
+
+```bash
+npm run build
+```
+
+- Se falhar: Claude Code analisa o erro, corrige os arquivos e **documenta o erro no `BUILD_ERRORS.md`** se for um padrão novo, depois solicita novo build.
+- **PROIBIDO** avançar para testes manuais ou commits enquanto houver erros de build.
+
+Após build verde, o Claude Code realiza internamente a validação Sonar de todos os arquivos editados na sessão, verificando cada regra da seção `🔍 PADRÕES SONAR` deste arquivo. Se detectar qualquer não-conformidade, corrige os arquivos antes de prosseguir. O usuário não precisa revisar nada — o Claude Code confirma: *"Build verde e conformidade Sonar validada. Pronto para os testes manuais."*
+
+**Passo 2 — Testes manuais (após build verde)**
 
 O Claude Code descreve objetivamente o que deve ser testado na interface/funcionalidade implementada, incluindo:
 - O fluxo principal (caminho feliz) a validar.
@@ -136,20 +151,7 @@ O usuário executa os testes e **envia prints que comprovem os resultados** (tel
 Após receber e analisar os prints:
 - O Claude Code confirma se os critérios foram atendidos.
 - O trabalho de teste é **registrado no Diário de Aprendizado** da sessão para dar visibilidade ao esforço de validação do desenvolvedor/testador.
-- Se houver falha identificada nos prints, o Claude Code corrige os arquivos e solicita nova rodada de testes.
-
-**Passo 2 — Build do projeto**
-
-O Claude Code instrui o usuário a rodar:
-
-```bash
-npm run build
-```
-
-- Se falhar: Claude Code analisa o erro, corrige os arquivos, solicita novo build.
-- **PROIBIDO** gerar comandos de commit enquanto houver erros de build.
-
-Após build verde, o Claude Code realiza internamente a validação Sonar de todos os arquivos editados na sessão, verificando cada regra da seção `🔍 PADRÕES SONAR` deste arquivo. Se detectar qualquer não-conformidade, corrige os arquivos antes de liberar os comandos de commit. O usuário não precisa revisar nada — o Claude Code confirma: *"Build verde e conformidade Sonar validada. Pronto para os commits."*
+- Se houver falha identificada nos prints, o Claude Code corrige os arquivos, solicita novo build e nova rodada de testes.
 
 ---
 
@@ -234,6 +236,8 @@ gh issue view [NUMERO]
 ### Encerramento da sessão
 
 O Diário de Aprendizado **só é gerado após o usuário confirmar que executou a FASE 4** (merge concluído).
+
+Antes de gerar o Diário, o Claude Code verifica se houve erros de build novos na sessão. Se sim, **adiciona as entradas correspondentes no `BUILD_ERRORS.md`** (se ainda não foram adicionadas durante a FASE 2.5). O `BUILD_ERRORS.md` é atualizado antes do Diário de Aprendizado.
 
 O Claude Code gera a entrada **dentro de um bloco de código markdown**, pronta para cópia direta.
 
@@ -328,8 +332,29 @@ function Component({ open }: Readonly<Props>) { ... }
 
 ### Espaçamento JSX explícito
 ```tsx
-// ✅ Correto
+// ✅ Correto — espaço antes do elemento
 <p>E-mail{" "}<span>{email}</span>{" "}foi cadastrado.</p>
+
+// ✅ Correto — espaçamento/pontuação após </span> deve ficar na MESMA LINHA que a tag
+<p>
+  Feedback sobre{" "}
+  <span>{produto}</span>{". "}
+  Obrigado pelo retorno.
+</p>
+
+// ❌ Errado — pontuação em linha separada após </span> gera "Ambiguous spacing" no Sonar
+<p>
+  Feedback sobre{" "}
+  <span>{produto}</span>
+  {". "}Obrigado pelo retorno.
+</p>
+
+// ❌ Errado — ponto solto sem espaçamento explícito
+<p>
+  Feedback sobre{" "}
+  <span>{produto}</span>
+  . Obrigado pelo retorno.
+</p>
 ```
 
 ### Sem imports mortos
@@ -370,4 +395,4 @@ function Component({ open }: Readonly<Props>) { ... }
 ---
 
 *Kairos Labs — Cesar Antonio Brito Pizarro*
-*CLAUDE.md v1.4 — FASE 2.5 com testes manuais obrigatórios e campo Issue no Diário de Aprendizado*
+*CLAUDE.md v1.5 — BUILD_ERRORS.md como base de conhecimento; build antes dos testes manuais na FASE 2.5*

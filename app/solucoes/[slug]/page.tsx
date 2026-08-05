@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { WaitlistCTAButton } from "@/components/waitlist/WaitlistCTAButton";
+import { FeedbackCTAButton } from "@/components/feedback/FeedbackCTAButton";
 
 // ─────────────────────────────────────────────────────────────
 // Tipos
@@ -681,6 +682,12 @@ export default async function ProdutoDetalhe({ params }: Props) {
               productName={produto.nome}
               productColor={produto.cor}
               ctaLabel={produto.cta}
+            />
+
+            <FeedbackCTAButton
+              productId={slug}
+              productName={produto.nome}
+              productColor={produto.cor}
             />
 
             <Link
