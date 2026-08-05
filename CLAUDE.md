@@ -332,8 +332,22 @@ function Component({ open }: Readonly<Props>) { ... }
 
 ### Espaçamento JSX explícito
 ```tsx
-// ✅ Correto
+// ✅ Correto — espaço antes do elemento
 <p>E-mail{" "}<span>{email}</span>{" "}foi cadastrado.</p>
+
+// ✅ Correto — pontuação após </span> também exige espaçamento explícito
+<p>
+  Feedback sobre{" "}
+  <span>{produto}</span>
+  {". "}Obrigado pelo retorno.
+</p>
+
+// ❌ Errado — ponto solto após </span> gera "Ambiguous spacing" no Sonar
+<p>
+  Feedback sobre{" "}
+  <span>{produto}</span>
+  . Obrigado pelo retorno.
+</p>
 ```
 
 ### Sem imports mortos

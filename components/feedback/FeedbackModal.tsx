@@ -166,7 +166,7 @@ export function FeedbackModal({
                 <span style={{ color: productColor, fontWeight: 600 }}>
                   {productName}
                 </span>
-                . Sua sugestão foi recebida e será analisada pelo fundador.
+                {". "}Sua sugestão foi recebida e será analisada pelo fundador.
               </p>
             </div>
 
@@ -257,7 +257,7 @@ export function FeedbackModal({
               <span style={{ color: productColor, fontWeight: 600 }}>
                 {productName}
               </span>
-              . Nome e e-mail são opcionais.
+              {". "}Nome e e-mail são opcionais.
             </DialogDescription>
           </DialogHeader>
 
