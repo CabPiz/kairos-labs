@@ -14,6 +14,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { ModalResultPanel } from "@/components/ui/ModalResultPanel";
+import { ModalErrorBanner } from "@/components/ui/ModalErrorBanner";
 import { sendFeedbackAction, type FeedbackActionState } from "./feedback-action";
 
 // ─────────────────────────────────────────────────────────────
@@ -269,20 +270,7 @@ export function FeedbackModal({
 
             {/* Erro genérico */}
             {actionState.status === "error" && (
-              <div
-                style={{
-                  marginBottom: "1rem",
-                  padding: "0.65rem 0.9rem",
-                  background: "rgba(239,68,68,0.08)",
-                  border: "1px solid rgba(239,68,68,0.3)",
-                  borderRadius: "6px",
-                  color: "rgba(239,68,68,0.9)",
-                  fontSize: "0.78rem",
-                  lineHeight: 1.5,
-                }}
-              >
-                {actionState.message}
-              </div>
+              <ModalErrorBanner message={actionState.message} />
             )}
 
             <button
