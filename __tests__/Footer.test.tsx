@@ -18,22 +18,13 @@ describe("Footer", () => {
     expect(screen.getByText(/944610498/)).toBeInTheDocument();
   });
 
-  it("exibe o link do GitHub com aria-label", () => {
-    render(<Footer />);
-    expect(screen.getByRole("link", { name: "GitHub" })).toBeInTheDocument();
-  });
-
-  it("exibe o link do LinkedIn com aria-label", () => {
-    render(<Footer />);
-    expect(
-      screen.getByRole("link", { name: "LinkedIn" })
-    ).toBeInTheDocument();
-  });
-
-  it("exibe o link de e-mail com aria-label", () => {
-    render(<Footer />);
-    expect(screen.getByRole("link", { name: "E-mail" })).toBeInTheDocument();
-  });
+  it.each(["GitHub", "LinkedIn", "E-mail"])(
+    "exibe o link %s com aria-label",
+    (label) => {
+      render(<Footer />);
+      expect(screen.getByRole("link", { name: label })).toBeInTheDocument();
+    }
+  );
 
   it("links externos têm rel noopener noreferrer", () => {
     render(<Footer />);

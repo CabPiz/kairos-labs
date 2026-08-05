@@ -362,6 +362,23 @@ function Component({ open }: Readonly<Props>) { ... }
 </p>
 ```
 
+### Testes similares devem ser parametrizados (`typescript:S5976`)
+```tsx
+// ❌ Errado — Sonar aponta Consistency/Medium: testes repetitivos devem ser agrupados
+it("exibe o link do GitHub", () => { ... });
+it("exibe o link do LinkedIn", () => { ... });
+it("exibe o link do E-mail", () => { ... });
+
+// ✅ Correto — usar it.each para testes com mesmo padrão e dados diferentes
+it.each(["GitHub", "LinkedIn", "E-mail"])(
+  "exibe o link %s com aria-label",
+  (label) => {
+    render(<Footer />);
+    expect(screen.getByRole("link", { name: label })).toBeInTheDocument();
+  }
+);
+```
+
 ### Sem imports mortos
 ```tsx
 // ✅ Remover qualquer import não utilizado no arquivo
