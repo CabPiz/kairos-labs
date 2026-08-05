@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 // TODO(#12): Proteger com middleware de autenticação Supabase
 // TODO(#13, #14, #15): Implementar KPIs, Gráfico e Tabela de Leads
 import { createAdminClient } from "@/lib/supabase";
