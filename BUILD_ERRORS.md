@@ -77,3 +77,57 @@ Type error: Property 'id' does not exist on type 'never'.
   </div>
 )}
 ```
+
+---
+
+## [ERR-004] Sonar: duplicação de código entre componentes modais (> 3%)
+
+**Issue de origem:** #12  
+**Sintoma:** Quality Gate falha com `X% Duplicated Lines (%) — ≤ 3.0% required`.  
+**Causa:** Componentes modais com estrutura visual semelhante (mesmo padrão de Dialog, painel de sucesso, banner de erro, botão de submit) geram blocos duplicados detectados pelo Sonar ao comparar arquivos diferentes. No projeto Kairos Labs, o `FeedbackModal` começou com 26.4% de duplicação com o `WaitlistModal`.
+
+**Como o desenvolvedor deve pensar antes de codificar:**
+
+> **Regra de ouro:** qualquer componente React que se parece visualmente com outro já existente deve reusar partes estruturais — não copiar. Antes de criar um novo modal, componente de lista ou card, pergunte: *"Já existe um componente que faz isso?"*
+
+**Padrão a seguir — extração progressiva:**
+
+1. **Painel de resultado (sucesso/erro/aviso):** sempre usar `ModalResultPanel` de `@/components/ui/ModalResultPanel`.
+2. **Banner de erro genérico de action:** sempre usar `ModalErrorBanner` de `@/components/ui/ModalErrorBanner`.
+3. **Novos padrões visuais recorrentes:** extrair para `components/ui/` antes de copiar para um segundo arquivo.
+
+```tsx
+// ❌ Errado — copiar o painel de sucesso do WaitlistModal para o FeedbackModal
+// resulta em ~90 linhas duplicadas e falha no Quality Gate
+
+// ✅ Correto — usar o componente compartilhado
+import { ModalResultPanel } from "@/components/ui/ModalResultPanel";
+import { ModalErrorBanner } from "@/components/ui/ModalErrorBanner";
+
+// Painel de sucesso
+if (actionState.status === "success") {
+  return (
+    <ModalResultPanel
+      open={open}
+      onOpenChange={handleOpenChange}
+      icon={<CheckCircle size={30} color="#10b981" />}
+      iconColor="#10b981"
+      title="Ação concluída!"
+      message={<>Mensagem de confirmação.</>}
+      buttonColor="#10b981"
+    />
+  );
+}
+
+// Banner de erro dentro do formulário
+{actionState.status === "error" && (
+  <ModalErrorBanner message={actionState.message} />
+)}
+```
+
+**Componentes compartilhados disponíveis em `components/ui/`:**
+
+| Componente | Quando usar |
+|---|---|
+| `ModalResultPanel` | Painel de sucesso, aviso ou qualquer estado final de modal |
+| `ModalErrorBanner` | Banner de erro inline dentro de formulários de modal |
