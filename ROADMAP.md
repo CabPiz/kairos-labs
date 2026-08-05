@@ -1,144 +1,144 @@
-# Product Roadmap & Delivery Strategy
+# Roadmap — Kairos Labs
 
-Welcome to the central product development roadmap. This document outlines the sequential execution path for our Minimum Viable Product (MVP) release, as well as the strategic milestones planned for post-MVP iteration cycles.
+Documento vivo que define a sequência de execução do projeto, organizado por milestones e dependências técnicas.
+Repositório: `CabPiz/kairos-labs` | Project Board: nº 3
 
 ---
 
-## Strategic Vision & Execution Strategy
+## Visão Geral dos Milestones
 
-Our engineering workflow follows a strictly ordered, dependency-driven release pipeline. Items are executed sequentially to minimize merge conflicts, unblock technical dependencies, and ensure scalable architectural progression.
+| Milestone | Foco | Status |
+| :--- | :--- | :--- |
+| **M1 — Foundation & Infra** | Setup do repositório, stack, CI/CD e banco de dados | ✅ Concluído |
+| **M2 — Public Landing Page** | Hero, vitrine de produtos, modal de waitlist, SEO | 🟡 Em andamento |
+| **M5 — Quality Engineering** | Infraestrutura de testes, CI automatizado e documentação | 🔵 Próximo |
+| **M3 — Founder Dashboard** | Rota /admin protegida, KPIs, gráficos e exportação CSV | ⚪ Planejado |
+| **M4 — Polish & Launch** | Acessibilidade, domínio customizado, README e go-live | ⚪ Planejado |
+
+> **Regra de execução:** nenhuma issue downstream é iniciada sem o merge da upstream que a desbloqueia.
+
+---
+
+## Sequência de Execução
 
 ```
-       [ MVP Pipeline ]                       [ v1.1 Enhancements ]           [ v2.0 Scale & Analytics ]
-#21 ➔ #1 ➔ #2 ➔ #5 ➔ ... ➔ #19   ➔➔➔   [Milestone 2 Execution]   ➔➔➔   [Milestone 3 Execution]
+[M1 ✅] → [M2 🟡 #11→#12] → [M5 🔵 #33→#34→#35→#36→#37→#38→#39] → [M3 ⚪ #13→#14→#15→#16] → [M4 ⚪ #17→#18→#19→#20]
 ```
-
----
-
-## Roadmap Milestones Overview
-
-| Milestone | Target Horizon | Objective & Focus | Status |
-| :--- | :--- | :--- | :--- |
-| **Milestone 1: Core MVP** | Sprint 1 – 4 | Core architecture, essential user journeys, and foundational stability | 🟡 In Progress |
-| **Milestone 2: Feature Upgrades** | Sprint 5 – 7 | Performance optimization, advanced integrations, and user experience enhancements | 🔵 Planned |
-| **Milestone 3: Scale & Analytics** | Sprint 8+ | Enterprise scalability, deep metrics, automated intelligence | ⚪ Future Backlog |
-
----
-
-## 🚀 Milestone 1: Minimum Viable Product (MVP)
-
-The following dependency chain dictates the exact sequence in which issues must be picked up, developed, code-reviewed, and merged.
-
-### Sequential Issue Dependency Flow
-> **Execution Chain:** `#21` ➔ `#1` ➔ `#2` ➔ `#5` ➔ `#3` ➔ `#4` ➔ `#6` ➔ `#7` ➔ `#8` ➔ `#9` ➔ `#10` ➔ `#11` ➔ `#20` ➔ `#12` ➔ `#13` ➔ `#14` ➔ `#15` ➔ `#16` ➔ `#17` ➔ `#18` ➔ `#19`
 
 ```mermaid
 %%{init: {'flowchart': {'curve': 'linear'}}}%%
 flowchart TD
-    classDef foundation fill:#1f2937,stroke:#3b82f6,stroke-width:2px,color:#fff;
-    classDef core fill:#1f2937,stroke:#10b981,stroke-width:2px,color:#fff;
-    classDef feature fill:#1f2937,stroke:#8b5cf6,stroke-width:2px,color:#fff;
-    classDef final fill:#1f2937,stroke:#f59e0b,stroke-width:2px,color:#fff;
+    classDef done fill:#166534,stroke:#16a34a,stroke-width:2px,color:#fff;
+    classDef active fill:#1e3a5f,stroke:#3b82f6,stroke-width:2px,color:#fff;
+    classDef quality fill:#3b0764,stroke:#8b5cf6,stroke-width:2px,color:#fff;
+    classDef planned fill:#1f2937,stroke:#6b7280,stroke-width:2px,color:#9ca3af;
 
-    subgraph Phase1["1. System Foundation & Setup"]
+    subgraph M1["✅ M1 — Foundation & Infra"]
         direction LR
-        #21:::foundation --> #1:::foundation --> #2:::foundation
+        i21("#21 LICENSE e Roadmap"):::done --> i1("#1 Next.js 15"):::done --> i2("#2 Tailwind + shadcn/ui"):::done --> i5("#5 Estrutura de rotas"):::done --> i3("#3 Supabase"):::done --> i4("#4 Deploy Vercel"):::done
     end
 
-    subgraph Phase2["2. Core Domain Architecture"]
+    subgraph M2["🟡 M2 — Public Landing Page"]
         direction LR
-        #5:::core --> #3:::core --> #4:::core --> #6:::core
+        i6("#6 Header"):::done --> i7("#7 Hero Section"):::done --> i8("#8 Cards de Produto"):::done --> i9("#9 Modal Waitlist"):::done --> i10("#10 Footer"):::done --> i11("#11 SEO e Metadata"):::active --> i12("#12 Feedback de Sugestões"):::active
     end
 
-    subgraph Phase3["3. Main Business Workflows"]
+    subgraph M5["🔵 M5 — Quality Engineering"]
         direction LR
-        #7:::feature --> #8:::feature --> #9:::feature --> #10:::feature --> #11:::feature
+        i33("#33 .env.example"):::quality --> i34("#34 ESLint + Husky"):::quality --> i35("#35 Jest + RTL"):::quality --> i36("#36 GitHub Actions CI"):::quality --> i37("#37 CONTRIBUTING.md"):::quality --> i38("#38 Testes unitários"):::quality --> i39("#39 Playwright E2E"):::quality
     end
 
-    subgraph Phase4["4. Integration & Reliability"]
+    subgraph M3["⚪ M3 — Founder Dashboard"]
         direction LR
-        #20:::feature --> #12:::feature --> #13:::feature --> #14:::feature
+        i13("#13 Auth /admin"):::planned --> i14("#14 KPI Cards"):::planned --> i15("#15 Gráfico de Demanda"):::planned --> i16("#16 Tabela de Leads CSV"):::planned
     end
 
-    subgraph Phase5["5. Polish & Delivery"]
+    subgraph M4["⚪ M4 — Polish & Launch"]
         direction LR
-        #15:::final --> #16:::final --> #17:::final --> #18:::final --> #19:::final
+        i17("#17 Testes a11y"):::planned --> i18("#18 Domínio customizado"):::planned --> i19("#19 README.md"):::planned --> i20("#20 Smoke tests"):::planned
     end
 
-    Phase1 --> Phase2 --> Phase3 --> Phase4 --> Phase5
+    M1 --> M2 --> M5 --> M3 --> M4
 ```
-
-### Detailed Issue Checklist & Objectives
-
-#### Phase 1: System Foundation & Infrastructure
-- [ ] **#21** — Environment Configuration & Repository Scaffolding
-- [ ] **#1** — Core Database Schema & Migration Setup
-- [ ] **#2** — Authentication & Authorization Middleware
-
-#### Phase 2: Core Domain Architecture
-- [ ] **#5** — Domain Entity Definitions & Data Access Layer (DAL)
-- [ ] **#3** — User Profile Management APIs
-- [ ] **#4** — Core Business Logic Service Layer
-- [ ] **#6** — Primary API Gateway & Endpoint Routing Setup
-
-#### Phase 3: Main Business Workflows
-- [ ] **#7** — Primary Dashboard Interface & State Management
-- [ ] **#8** — Data Ingestion / Input Workflow Components
-- [ ] **#9** — Business Process Pipeline Handler
-- [ ] **#10** — Validation, Error Handling & Logging Interceptors
-- [ ] **#11** — User Notification System Implementation
-
-#### Phase 4: Integration, Testing & Reliability
-- [ ] **#20** — Third-party Service API Integrations
-- [ ] **#12** — Unit & Integration Test Suite Coverage
-- [ ] **#13** — End-to-End (E2E) Critical Path Automation
-- [ ] **#14** — Security Auditing, Rate Limiting & Input Sanitization
-
-#### Phase 5: Final Polish, CI/CD & Launch
-- [ ] **#15** — Performance Optimization & Database Indexing
-- [ ] **#16** — Cross-browser / Mobile Responsiveness Polish
-- [ ] **#17** — Staging Environment Deployment & Verification
-- [ ] **#18** — User Acceptance Testing (UAT) & Bug Fixes
-- [ ] **#19** — Production CI/CD Release & MVP Rollout
 
 ---
 
-## 🔮 Future Releases & Upgrades (Post-MVP)
+## M1 — Foundation & Infra ✅ Concluído
 
-Future feature sets will follow the same strict dependency-driven sequence once MVP sign-off is completed.
-
-### Milestone 2: Feature Upgrades & Enhancements (v1.1)
-
-```mermaid
-graph LR
-    classDef future fill:#111827,stroke:#6366f1,stroke-width:2px,color:#fff;
-    #22[#22 Real-time Sync]:::future --> #23[#23 Export Modules]:::future --> #24[#24 Advanced Filters]:::future --> #25[#25 OAuth2 Provider]:::future
-```
-
-- [ ] **#22** — Real-time WebSockets Synchronization
-- [ ] **#23** — Custom Report Generation & Multi-format Export (PDF/CSV)
-- [ ] **#24** — Advanced Search & Filter Engine with Indexing
-- [ ] **#25** — OAuth2 Social Login Providers Expansion
-
-### Milestone 3: Scale & Intelligence (v2.0)
-
-```mermaid
-graph LR
-    classDef v2 fill:#111827,stroke:#ec4899,stroke-width:2px,color:#fff;
-    #26[#26 Analytics Engine]:::v2 --> #27[#27 AI Insights]:::v2 --> #28[#28 Multi-tenant SLA]:::v2
-```
-
-- [ ] **#26** — Analytics Telemetry & Event Tracking Engine
-- [ ] **#27** — Automated AI-driven Insights & Recommendations
-- [ ] **#28** — Enterprise Multi-tenancy & SLA Controls
+| # | Issue | Status |
+|---|---|---|
+| #21 | Criar arquivo LICENSE e Roadmap.md | ✅ |
+| #1 | Inicializar projeto Next.js 15 com App Router | ✅ |
+| #2 | Configurar Tailwind CSS v4 + shadcn/ui | ✅ |
+| #5 | Estrutura de pastas e arquitetura de rotas | ✅ |
+| #3 | Criar projeto e tabela no Supabase | ✅ |
+| #4 | Configurar variáveis de ambiente e deploy na Vercel | ✅ |
 
 ---
 
-## 📐 Governance & Execution Guidelines
+## M2 — Public Landing Page 🟡 Em andamento
 
-1. **Strict Dependency Order:** Developers must not start work on a downstream issue until all upstream prerequisite issues in the chain are merged or unblocked.
-2. **Issue Linking:** Pull Requests (PRs) must reference their respective issue ID (e.g., `Closes #21`) to maintain clear traceability in GitHub Projects.
-3. **Continuous Revision:** This roadmap is a living document. Any additions or sequence changes must be discussed in sprint planning and reflected here immediately.
+| # | Issue | Status |
+|---|---|---|
+| #6 | Header com logo e badge INPI | ✅ |
+| #7 | Hero Section com headline e CTA | ✅ |
+| #8 | Cards de Produtos (Vitrine) | ✅ |
+| #9 | Modal de Waitlist (captura de lead segmentada) | ✅ |
+| #10 | Footer institucional | ✅ |
+| #11 | SEO e Metadata (Next.js Metadata API) | 🟡 Próxima |
+| #12 | Interface de Feedback de Sugestões (Landing Page) | ⚪ Aguarda #11 |
 
 ---
-*Document Version: 1.0.0 | Maintained by Engineering & Product Team*
+
+## M5 — Quality Engineering 🔵 Próximo
+
+Executado após a conclusão do M2. Estabelece a infraestrutura de qualidade que sustentará todo o desenvolvimento do M3 em diante.
+
+| # | Issue | Dependência | Status |
+|---|---|---|---|
+| #33 | Adicionar `.env.example` e documentar variáveis de ambiente | — | ⚪ |
+| #34 | Configurar ESLint + lint-staged + Husky | #33 | ⚪ |
+| #35 | Configurar Jest + React Testing Library | #34 | ⚪ |
+| #36 | Criar pipeline CI no GitHub Actions (build + lint + test) | #35 | ⚪ |
+| #37 | Criar `CONTRIBUTING.md` com guia de desenvolvimento local | #36 | ⚪ |
+| #38 | Escrever testes unitários nos componentes principais | #35 | ⚪ |
+| #39 | Configurar Playwright para testes E2E | #36 | ⚪ |
+
+---
+
+## M3 — Founder Dashboard ⚪ Planejado
+
+Desbloqueado após conclusão do M5. A autenticação (#13) é pré-requisito para todas as demais issues deste milestone.
+
+| # | Issue | Dependência | Status |
+|---|---|---|---|
+| #13 | Autenticação com Supabase Auth na rota /admin | — | ⚪ |
+| #14 | KPI Cards (totais e crescimento) | #13 | ⚪ |
+| #15 | Gráfico de Demanda por Produto | #13 | ⚪ |
+| #16 | Tabela de Leads com exportação CSV | #13 | ⚪ |
+
+---
+
+## M4 — Polish & Launch ⚪ Planejado
+
+Etapa final antes do go-live. Executada após o M3 completo.
+
+| # | Issue | Status |
+|---|---|---|
+| #17 | Testes de acessibilidade (a11y) | ⚪ |
+| #18 | Configurar domínio customizado na Vercel | ⚪ |
+| #19 | README.md completo do projeto | ⚪ |
+| #20 | Smoke tests pré-lançamento | ⚪ |
+
+---
+
+## Governança
+
+1. **Ordem de dependência:** nenhuma issue downstream é iniciada sem merge da upstream que a desbloqueia.
+2. **Rastreabilidade:** todo PR referencia sua issue com `Closes #N` ou `Ref #N`.
+3. **Quality Gate:** nenhum PR é mergeado com issues abertas no SonarCloud.
+4. **Documento vivo:** qualquer adição ou mudança de sequência deve ser refletida aqui imediatamente.
+
+---
+
+*ROADMAP.md v2.0 — Reescrito com milestones reais e M5 Quality Engineering | Kairos Labs*
