@@ -244,10 +244,10 @@ O Diário de Aprendizado **só é gerado após o usuário confirmar que executou
 
 Antes de gerar o Diário, o Claude Code verifica se houve erros de build novos na sessão. Se sim, **adiciona as entradas correspondentes no `BUILD_ERRORS.md`** (se ainda não foram adicionadas durante a FASE 2.5). O `BUILD_ERRORS.md` é atualizado antes do Diário de Aprendizado.
 
-O Claude Code gera a entrada **dentro de um bloco de código markdown**, pronta para cópia direta.
+O Claude Code **edita o arquivo `diario_de_aprendizado.md` diretamente no disco**, inserindo a nova entrada imediatamente após o cabeçalho do arquivo (logo abaixo da linha `---` que segue o parágrafo introdutório). O arquivo é ordenado em ordem decrescente — a entrada mais recente sempre no topo. Nunca adicionar ao final.
 
 - **`[N]`** é um número sequencial que reseta para `1` a cada novo dia. Primeira entrada do dia = `1`, segunda = `2`, e assim por diante. Nunca usar `[N]` como placeholder — sempre substituir pelo número real.
-- O Claude Code escolhe automaticamente o formato mais adequado (A, B ou C) com base no tipo de issue resolvida e indica o formato escolhido antes do bloco.
+- O Claude Code escolhe automaticamente o formato mais adequado (A, B ou C) com base no tipo de issue resolvida e indica o formato escolhido antes de editar o arquivo.
 
 ---
 
