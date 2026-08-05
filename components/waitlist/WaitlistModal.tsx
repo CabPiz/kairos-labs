@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { ModalResultPanel } from "@/components/ui/ModalResultPanel";
 import { joinWaitlistAction, type WaitlistActionState } from "./waitlist-action";
 
 // ─────────────────────────────────────────────────────────────
@@ -86,188 +87,51 @@ export function WaitlistModal({
   // ── Painel de sucesso ──────────────────────────────────────
   if (actionState.status === "success") {
     return (
-      <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent
-          showCloseButton={false}
-          className="border-0 p-0 overflow-hidden"
-          style={{
-            background: "#0b1221",
-            border: "1px solid rgba(59,130,246,0.2)",
-            maxWidth: "420px",
-          }}
-        >
-          <div
-            style={{
-              padding: "2.5rem 2rem",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              textAlign: "center",
-              gap: "1.2rem",
-            }}
-          >
-            {/* Ícone de sucesso */}
-            <div
-              style={{
-                width: "64px",
-                height: "64px",
-                borderRadius: "50%",
-                background: "rgba(16,185,129,0.12)",
-                border: "1px solid rgba(16,185,129,0.35)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CheckCircle size={30} color="#10b981" />
-            </div>
-
-            <div>
-              <h2
-                style={{
-                  margin: "0 0 0.5rem",
-                  color: "#fff",
-                  fontSize: "1.1rem",
-                  fontWeight: 700,
-                  fontFamily: "var(--font-orbitron), sans-serif",
-                  letterSpacing: "0.04em",
-                  textTransform: "uppercase",
-                }}
-              >
-                Você está na lista!
-              </h2>
-              <p
-                style={{
-                  margin: 0,
-                  color: "rgba(255,255,255,0.55)",
-                  fontSize: "0.88rem",
-                  lineHeight: 1.65,
-                }}
-              >
-                <span style={{ color: "#10b981", fontWeight: 600 }}>
-                  {actionState.email}
-                </span>{" "}
-                foi cadastrado na lista de espera de{" "}
-                <span style={{ color: productColor, fontWeight: 600 }}>
-                  {productName}
-                </span>
-                . Você será notificado no lançamento.
-              </p>
-            </div>
-
-            <button
-              onClick={() => handleOpenChange(false)}
-              style={{
-                marginTop: "0.4rem",
-                padding: "0.6rem 2rem",
-                fontSize: "0.78rem",
-                fontWeight: 700,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "#050a14",
-                background: "#10b981",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer",
-              }}
-            >
-              OK
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ModalResultPanel
+        open={open}
+        onOpenChange={handleOpenChange}
+        icon={<CheckCircle size={30} color="#10b981" />}
+        iconColor="#10b981"
+        title="Você está na lista!"
+        message={
+          <>
+            <span style={{ color: "#10b981", fontWeight: 600 }}>
+              {actionState.email}
+            </span>{" "}
+            foi cadastrado na lista de espera de{" "}
+            <span style={{ color: productColor, fontWeight: 600 }}>
+              {productName}
+            </span>
+            {". "}
+            Você será notificado no lançamento.
+          </>
+        }
+        buttonColor="#10b981"
+      />
     );
   }
 
   // ── Painel de e-mail duplicado ─────────────────────────────
   if (actionState.status === "duplicate") {
     return (
-      <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent
-          showCloseButton={false}
-          className="border-0 p-0 overflow-hidden"
-          style={{
-            background: "#0b1221",
-            border: "1px solid rgba(59,130,246,0.2)",
-            maxWidth: "420px",
-          }}
-        >
-          <div
-            style={{
-              padding: "2.5rem 2rem",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              textAlign: "center",
-              gap: "1.2rem",
-            }}
-          >
-            <div
-              style={{
-                width: "64px",
-                height: "64px",
-                borderRadius: "50%",
-                background: "rgba(212,160,23,0.12)",
-                border: "1px solid rgba(212,160,23,0.35)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <AlertCircle size={30} color="#d4a017" />
-            </div>
-
-            <div>
-              <h2
-                style={{
-                  margin: "0 0 0.5rem",
-                  color: "#fff",
-                  fontSize: "1.1rem",
-                  fontWeight: 700,
-                  fontFamily: "var(--font-orbitron), sans-serif",
-                  letterSpacing: "0.04em",
-                  textTransform: "uppercase",
-                }}
-              >
-                Já registrado
-              </h2>
-              <p
-                style={{
-                  margin: 0,
-                  color: "rgba(255,255,255,0.55)",
-                  fontSize: "0.88rem",
-                  lineHeight: 1.65,
-                }}
-              >
-                Este e-mail já está na lista de espera de{" "}
-                <span style={{ color: productColor, fontWeight: 600 }}>
-                  {productName}
-                </span>
-                . Você será notificado no lançamento.
-              </p>
-            </div>
-
-            <button
-              onClick={() => handleOpenChange(false)}
-              style={{
-                marginTop: "0.4rem",
-                padding: "0.6rem 2rem",
-                fontSize: "0.78rem",
-                fontWeight: 700,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "#050a14",
-                background: "#d4a017",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer",
-              }}
-            >
-              OK
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ModalResultPanel
+        open={open}
+        onOpenChange={handleOpenChange}
+        icon={<AlertCircle size={30} color="#d4a017" />}
+        iconColor="#d4a017"
+        title="Já registrado"
+        message={
+          <>
+            Este e-mail já está na lista de espera de{" "}
+            <span style={{ color: productColor, fontWeight: 600 }}>
+              {productName}
+            </span>
+            {". "}
+            Você será notificado no lançamento.
+          </>
+        }
+        buttonColor="#d4a017"
+      />
     );
   }
 

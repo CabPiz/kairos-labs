@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { ModalResultPanel } from "@/components/ui/ModalResultPanel";
 import { sendFeedbackAction, type FeedbackActionState } from "./feedback-action";
 
 // ─────────────────────────────────────────────────────────────
@@ -105,93 +106,24 @@ export function FeedbackModal({
   // ── Painel de sucesso ──────────────────────────────────────
   if (actionState.status === "success") {
     return (
-      <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent
-          showCloseButton={false}
-          className="border-0 p-0 overflow-hidden"
-          style={{
-            background: "#0b1221",
-            border: "1px solid rgba(59,130,246,0.2)",
-            maxWidth: "420px",
-          }}
-        >
-          <div
-            style={{
-              padding: "2.5rem 2rem",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              textAlign: "center",
-              gap: "1.2rem",
-            }}
-          >
-            <div
-              style={{
-                width: "64px",
-                height: "64px",
-                borderRadius: "50%",
-                background: "rgba(16,185,129,0.12)",
-                border: "1px solid rgba(16,185,129,0.35)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CheckCircle size={30} color="#10b981" />
-            </div>
-
-            <div>
-              <h2
-                style={{
-                  margin: "0 0 0.5rem",
-                  color: "#fff",
-                  fontSize: "1.1rem",
-                  fontWeight: 700,
-                  fontFamily: "var(--font-orbitron), sans-serif",
-                  letterSpacing: "0.04em",
-                  textTransform: "uppercase",
-                }}
-              >
-                Sugestão enviada!
-              </h2>
-              <p
-                style={{
-                  margin: 0,
-                  color: "rgba(255,255,255,0.55)",
-                  fontSize: "0.88rem",
-                  lineHeight: 1.65,
-                }}
-              >
-                Obrigado pelo feedback sobre{" "}
-                <span style={{ color: productColor, fontWeight: 600 }}>
-                  {productName}
-                </span>{". "}
-                Sua sugestão foi recebida e será analisada pelo fundador.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => handleOpenChange(false)}
-              style={{
-                marginTop: "0.4rem",
-                padding: "0.6rem 2rem",
-                fontSize: "0.78rem",
-                fontWeight: 700,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "#050a14",
-                background: "#10b981",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer",
-              }}
-            >
-              OK
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ModalResultPanel
+        open={open}
+        onOpenChange={handleOpenChange}
+        icon={<CheckCircle size={30} color="#10b981" />}
+        iconColor="#10b981"
+        title="Sugestão enviada!"
+        message={
+          <>
+            Obrigado pelo feedback sobre{" "}
+            <span style={{ color: productColor, fontWeight: 600 }}>
+              {productName}
+            </span>
+            {". "}
+            Sua sugestão foi recebida e será analisada pelo fundador.
+          </>
+        }
+        buttonColor="#10b981"
+      />
     );
   }
 
