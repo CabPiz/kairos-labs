@@ -10,7 +10,7 @@ Repositório: `CabPiz/kairos-labs` | Project Board: nº 3
 | Milestone | Foco | Status |
 | :--- | :--- | :--- |
 | **M1 — Foundation & Infra** | Setup do repositório, stack, CI/CD e banco de dados | ✅ Concluído |
-| **M2 — Public Landing Page** | Hero, vitrine de produtos, modal de waitlist, SEO | 🟡 Em andamento |
+| **M2 — Public Landing Page** | Hero, vitrine de produtos, modal de waitlist, SEO | ✅ Concluído |
 | **M5 — Quality Engineering** | Infraestrutura de testes, CI automatizado e documentação | 🔵 Próximo |
 | **M3 — Founder Dashboard** | Rota /admin protegida, KPIs, gráficos e exportação CSV | ⚪ Planejado |
 | **M4 — Polish & Launch** | Acessibilidade, domínio customizado, README e go-live | ⚪ Planejado |
@@ -22,7 +22,7 @@ Repositório: `CabPiz/kairos-labs` | Project Board: nº 3
 ## Sequência de Execução
 
 ```
-[M1 ✅] → [M2 🟡 #11→#12] → [M5 🔵 #33→#34→#35→#36→#37→#38→#39] → [M3 ⚪ #13→#14→#15→#16] → [M4 ⚪ #17→#18→#19→#20]
+[M1 ✅] → [M2 ✅ #11→#12] → [M5 🔵 #33→#34→#35→#36→#37→#38→#39] → [M3 ⚪ #13→#14→#15→#16] → [M4 ⚪ #17→#18→#19→#20]
 ```
 
 ```mermaid
@@ -38,9 +38,9 @@ flowchart TD
         i21("#21 LICENSE e Roadmap"):::done --> i1("#1 Next.js 15"):::done --> i2("#2 Tailwind + shadcn/ui"):::done --> i5("#5 Estrutura de rotas"):::done --> i3("#3 Supabase"):::done --> i4("#4 Deploy Vercel"):::done
     end
 
-    subgraph M2["🟡 M2 — Public Landing Page"]
+    subgraph M2["✅ M2 — Public Landing Page"]
         direction LR
-        i6("#6 Header"):::done --> i7("#7 Hero Section"):::done --> i8("#8 Cards de Produto"):::done --> i9("#9 Modal Waitlist"):::done --> i10("#10 Footer"):::done --> i11("#11 SEO e Metadata"):::active --> i12("#12 Feedback de Sugestões"):::active
+        i6("#6 Header"):::done --> i7("#7 Hero Section"):::done --> i8("#8 Cards de Produto"):::done --> i9("#9 Modal Waitlist"):::done --> i10("#10 Footer"):::done --> i11("#11 SEO e Metadata"):::done --> i12("#12 Feedback de Sugestões"):::done
     end
 
     subgraph M5["🔵 M5 — Quality Engineering"]
@@ -76,7 +76,7 @@ flowchart TD
 
 ---
 
-## M2 — Public Landing Page 🟡 Em andamento
+## M2 — Public Landing Page ✅ Concluído
 
 | # | Issue | Status |
 |---|---|---|
@@ -85,8 +85,8 @@ flowchart TD
 | #8 | Cards de Produtos (Vitrine) | ✅ |
 | #9 | Modal de Waitlist (captura de lead segmentada) | ✅ |
 | #10 | Footer institucional | ✅ |
-| #11 | SEO e Metadata (Next.js Metadata API) | 🟡 Próxima |
-| #12 | Interface de Feedback de Sugestões (Landing Page) | ⚪ Aguarda #11 |
+| #11 | SEO e Metadata (Next.js Metadata API) | ✅ |
+| #12 | Interface de Feedback de Sugestões (Landing Page) | ✅ |
 
 ---
 
@@ -141,4 +141,4 @@ Etapa final antes do go-live. Executada após o M3 completo.
 
 ---
 
-*ROADMAP.md v2.0 — Reescrito com milestones reais e M5 Quality Engineering | Kairos Labs*
+*ROADMAP.md v2.1 — M2 concluído (issues #11 e #12 mergeadas) | Kairos Labs*
