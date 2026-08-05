@@ -42,6 +42,8 @@ para ler o escopo completo da issue.
 
 Em seguida, **obrigatoriamente**, lê o arquivo `BUILD_ERRORS.md` na raiz do projeto para internalizar todos os erros já resolvidos e aplicar os padrões corretos antes de gerar qualquer código.
 
+**Verificação de milestone:** ainda na abertura, o Claude Code verifica se a issue é a última do seu milestone, consultando a sequência definida no `ROADMAP.md`. Issues finais de cada milestone: **#12** (M2), **#39** (M5), **#16** (M3), **#20** (M4). Se for a última, o Claude Code já inclui a atualização do `ROADMAP.md` no escopo da sessão — status do milestone na tabela de visão geral, linha de sequência, label do subgraph mermaid, classes dos nós mermaid e cabeçalho da seção — e comunica isso ao usuário na FASE 0. A atualização do `ROADMAP.md` é incluída nos commits atômicos da FASE 3, junto com os commits do desenvolvimento.
+
 ---
 
 ### FASE 0 — Entendimento e Proposta Técnica (PAUSA OBRIGATÓRIA)
@@ -395,4 +397,4 @@ function Component({ open }: Readonly<Props>) { ... }
 ---
 
 *Kairos Labs — Cesar Antonio Brito Pizarro*
-*CLAUDE.md v1.5 — BUILD_ERRORS.md como base de conhecimento; build antes dos testes manuais na FASE 2.5*
+*CLAUDE.md v1.6 — BUILD_ERRORS.md como base de conhecimento; build antes dos testes manuais na FASE 2.5*
