@@ -1,5 +1,7 @@
 # Kairos Labs
 
+[![CI](https://github.com/CabPiz/kairos-labs/actions/workflows/ci.yml/badge.svg)](https://github.com/CabPiz/kairos-labs/actions/workflows/ci.yml)
+
 > Ecossistema de soluções em tecnologia — DevPrint, AI & SaaS, Audio Tech, Blockchain.
 
 Marca registrada no INPI — Processo nº 944610498 | Classe 42

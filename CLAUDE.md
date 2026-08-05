@@ -367,6 +367,17 @@ function Component({ open }: Readonly<Props>) { ... }
 // ✅ Remover qualquer import não utilizado no arquivo
 ```
 
+### `npm ci` em workflows GitHub Actions
+```yaml
+# ✅ Correto — evita execução de lifecycle scripts de pacotes durante instalação
+- name: Instalar dependências
+  run: npm ci --ignore-scripts
+
+# ❌ Errado — Sonar aponta Security Medium: lifecycle scripts podem rodar
+- name: Instalar dependências
+  run: npm ci
+```
+
 ---
 
 ## 🌿 CONVENÇÕES DE BRANCHES
