@@ -177,6 +177,16 @@ Após receber e analisar os prints:
 - O trabalho de teste é **registrado no Diário de Aprendizado** da sessão para dar visibilidade ao esforço de validação do desenvolvedor/testador.
 - Se houver falha identificada nos prints, o Claude Code corrige os arquivos, solicita novo build e nova rodada de testes.
 
+**Passo 3 — Testes E2E com Playwright (quando aplicável)**
+
+Para issues que envolvem fluxos de UI críticos (formulários, modais, autenticação, navegação protegida), o Claude Code instrui o usuário a rodar os testes E2E após os testes manuais:
+
+```bash
+npm run test:e2e 2>&1 | tee saida.log
+```
+
+O Claude Code lê o `saida.log` para confirmar resultado. Se o fluxo implementado ainda não tiver spec E2E, o Claude Code cria ou atualiza o arquivo correspondente em `e2e/` como parte da FASE 2 — **nunca** delegar a criação de specs para depois. Issues que **exigem** spec E2E nova ou atualizada: qualquer fluxo que envolva submit de formulário, autenticação, redirecionamento protegido ou confirmação visual de ação do usuário.
+
 ---
 
 ### FASE 3 — Commits Atômicos (bloco gerado para o usuário executar)
