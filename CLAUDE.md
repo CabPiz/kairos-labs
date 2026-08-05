@@ -335,14 +335,21 @@ function Component({ open }: Readonly<Props>) { ... }
 // ✅ Correto — espaço antes do elemento
 <p>E-mail{" "}<span>{email}</span>{" "}foi cadastrado.</p>
 
-// ✅ Correto — pontuação após </span> também exige espaçamento explícito
+// ✅ Correto — espaçamento/pontuação após </span> deve ficar na MESMA LINHA que a tag
+<p>
+  Feedback sobre{" "}
+  <span>{produto}</span>{". "}
+  Obrigado pelo retorno.
+</p>
+
+// ❌ Errado — pontuação em linha separada após </span> gera "Ambiguous spacing" no Sonar
 <p>
   Feedback sobre{" "}
   <span>{produto}</span>
   {". "}Obrigado pelo retorno.
 </p>
 
-// ❌ Errado — ponto solto após </span> gera "Ambiguous spacing" no Sonar
+// ❌ Errado — ponto solto sem espaçamento explícito
 <p>
   Feedback sobre{" "}
   <span>{produto}</span>
