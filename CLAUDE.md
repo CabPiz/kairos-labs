@@ -414,6 +414,23 @@ it.each(["GitHub", "LinkedIn", "E-mail"])(
   run: npm ci
 ```
 
+### Sem `npx` em workflows GitHub Actions (S6505 + S8543)
+`npx` pode baixar e executar pacotes on-demand em versões não verificadas — Sonar aponta Security Medium nos dois casos.
+Use sempre o binário local instalado pelo `npm ci`, que já tem versão travada no `package-lock.json`.
+
+```yaml
+# ✅ Correto — usa binário local com versão travada
+- name: Instalar Playwright Chromium
+  run: ./node_modules/.bin/playwright install --with-deps chromium
+
+- name: Aguardar servidor
+  run: ./node_modules/.bin/wait-on http://localhost:3000 --timeout 60000
+
+# ❌ Errado — Sonar S6505 + S8543: npx pode baixar versão não verificada
+- run: npx playwright install --with-deps chromium
+- run: npx wait-on http://localhost:3000
+```
+
 ---
 
 ## 🌿 CONVENÇÕES DE BRANCHES
