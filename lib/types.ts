@@ -30,6 +30,7 @@ export type Database = {
       feedback: {
         Row: {
           id: string
+          product_id: string
           nome: string | null
           email: string | null
           mensagem: string
@@ -37,6 +38,7 @@ export type Database = {
         }
         Insert: {
           id?: string
+          product_id: string
           nome?: string | null
           email?: string | null
           mensagem: string
@@ -44,6 +46,7 @@ export type Database = {
         }
         Update: {
           id?: string
+          product_id?: string
           nome?: string | null
           email?: string | null
           mensagem?: string
