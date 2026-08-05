@@ -14,6 +14,25 @@ Repositório: `CabPiz/kairos-labs` | Owner: `CabPiz` | Project Board: nº 3
 - Rodar `npm run build` para validar o build
 - Rodar `npm run lint` para verificar conformidade ESLint
 - Ler issues do GitHub com `gh issue view [NUMERO]` e `gh issue list`
+- Ler o arquivo `saida.log` na raiz do projeto para analisar resultados de comandos
+
+### 📋 PADRÃO DE SAÍDA DE COMANDOS — tee para saida.log
+
+Todo comando que o Claude Code instruir o usuário a executar e cujo resultado precise ser analisado (build, lint, testes, instalação de dependências, etc.) deve ser executado com `tee` para exibir a saída no terminal **e** gravar em `saida.log` simultaneamente:
+
+```bash
+# PowerShell
+comando 2>&1 | tee saida.log
+
+# Exemplos
+npm run build 2>&1 | tee saida.log
+npm run lint 2>&1 | tee saida.log
+npm test 2>&1 | tee saida.log
+npm run test:e2e 2>&1 | tee saida.log
+npm install 2>&1 | tee saida.log
+```
+
+Após o usuário executar o comando, o Claude Code lê o `saida.log` diretamente com a ferramenta Read para analisar o resultado completo — sem depender de prints ou cópias manuais. O arquivo `saida.log` é sobrescrito a cada execução (sem acumulação).
 
 ### 🚫 PROIBIDO — EXECUÇÃO AUTOMÁTICA
 Os comandos abaixo **NUNCA** devem ser executados automaticamente.
@@ -213,7 +232,7 @@ Closes #[NUMERO]" \
 
 # Verificar PR
 gh pr diff
-gh pr status
+gh pr status 2>&1 | tee saida.log
 ```
 
 ---
