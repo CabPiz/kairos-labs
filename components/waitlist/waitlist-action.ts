@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { createServerSupabaseClient } from "@/lib/supabase";
+import { createServerSupabaseClient } from "@/lib/supabase-server";
 
 // ─────────────────────────────────────────────────────────────
 // Schema de validação (server-side — segunda camada de defesa)

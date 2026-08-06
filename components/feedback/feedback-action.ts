@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { createServerSupabaseClient } from "@/lib/supabase";
+import { createServerSupabaseClient } from "@/lib/supabase-server";
 
 const schema = z.object({
   product_id: z.string().min(1),
