@@ -408,6 +408,17 @@ it.each(["GitHub", "LinkedIn", "E-mail"])(
 );
 ```
 
+### Testes E2E com credenciais obrigatórias (`typescript:S1607`)
+```ts
+// ❌ Errado — Sonar S1607: test.skip condicional torna o teste abandonado
+const EMAIL = process.env.E2E_EMAIL ?? "";
+test.skip(!EMAIL, "variável não definida");
+
+// ✅ Correto — credenciais são requisito; se ausentes, o teste falha explicitamente
+const EMAIL = process.env.E2E_EMAIL!;
+// sem test.skip — as variáveis devem estar em .env.local ou nos secrets do CI
+```
+
 ### Sem imports mortos
 ```tsx
 // ✅ Remover qualquer import não utilizado no arquivo

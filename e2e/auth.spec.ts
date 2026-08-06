@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
-const ADMIN_EMAIL = process.env.E2E_ADMIN_EMAIL ?? "";
-const ADMIN_PASSWORD = process.env.E2E_ADMIN_PASSWORD ?? "";
+const ADMIN_EMAIL = process.env.E2E_ADMIN_EMAIL!;
+const ADMIN_PASSWORD = process.env.E2E_ADMIN_PASSWORD!;
 
 test.describe("Autenticação /admin", () => {
   test("rota protegida redireciona para /admin/login sem sessão", async ({ page }) => {
@@ -28,8 +28,6 @@ test.describe("Autenticação /admin", () => {
   });
 
   test("login com credenciais válidas acessa o dashboard", async ({ page }) => {
-    test.skip(!ADMIN_EMAIL || !ADMIN_PASSWORD, "E2E_ADMIN_EMAIL e E2E_ADMIN_PASSWORD não definidos");
-
     await page.context().clearCookies();
     await page.goto("/admin/login");
     await page.getByRole("textbox", { name: "E-mail" }).fill(ADMIN_EMAIL);
@@ -40,8 +38,6 @@ test.describe("Autenticação /admin", () => {
   });
 
   test("usuário autenticado acessando /admin/login é redirecionado para /admin", async ({ page }) => {
-    test.skip(!ADMIN_EMAIL || !ADMIN_PASSWORD, "E2E_ADMIN_EMAIL e E2E_ADMIN_PASSWORD não definidos");
-
     await page.context().clearCookies();
     await page.goto("/admin/login");
     await page.getByRole("textbox", { name: "E-mail" }).fill(ADMIN_EMAIL);
