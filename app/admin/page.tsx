@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 
-// TODO(#12): Proteger com middleware de autenticação Supabase
-// TODO(#13, #14, #15): Implementar KPIs, Gráfico e Tabela de Leads
+// TODO(#14, #15, #16): Implementar KPIs, Gráfico e Tabela de Leads
 import { createAdminClient } from "@/lib/supabase";
 import type { Database } from "@/lib/types";
 
@@ -35,19 +34,37 @@ export default async function AdminPage() {
         padding: "3rem 2.5rem",
       }}
     >
-      <h1
-        style={{
-          margin: "0 0 2rem",
-          fontFamily: "var(--font-orbitron), sans-serif",
-          fontSize: "1.2rem",
-          fontWeight: 800,
-          letterSpacing: "0.06em",
-          textTransform: "uppercase",
-          color: "#d4a017",
-        }}
-      >
-        Founder Dashboard
-      </h1>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem" }}>
+        <h1
+          style={{
+            margin: 0,
+            fontFamily: "var(--font-orbitron), sans-serif",
+            fontSize: "1.2rem",
+            fontWeight: 800,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            color: "#d4a017",
+          }}
+        >
+          Founder Dashboard
+        </h1>
+        <a
+          href="/admin/logout"
+          style={{
+            fontSize: "0.75rem",
+            fontWeight: 600,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.4)",
+            textDecoration: "none",
+            border: "1px solid rgba(255,255,255,0.12)",
+            borderRadius: "6px",
+            padding: "0.4rem 0.9rem",
+          }}
+        >
+          Sair
+        </a>
+      </div>
 
       <section>
         <h2
