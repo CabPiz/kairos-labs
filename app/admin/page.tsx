@@ -1,9 +1,10 @@
 export const dynamic = "force-dynamic";
 
-// TODO(#14, #15, #16): Implementar KPIs, Gráfico e Tabela de Leads
-import { createAdminClient } from "@/lib/supabase";
+import { createServerAdminClient } from "@/lib/supabase-server";
 import type { Database } from "@/lib/types";
+import { KPICard } from "@/components/admin/KPICard";
 
+type WaitlistRow = Database["public"]["Tables"]["waitlist"]["Row"];
 type FeedbackRow = Database["public"]["Tables"]["feedback"]["Row"];
 
 const productNames: Record<string, string> = {
@@ -14,15 +15,43 @@ const productNames: Record<string, string> = {
   "kairos-labs": "Kairos Labs",
 };
 
-export default async function AdminPage() {
-  const supabase = createAdminClient();
+function sevenDaysAgoISO(): string {
+  const ms = 7 * 24 * 60 * 60 * 1000;
+  return new Date(Date.now() - ms).toISOString();
+}
 
-  const { data } = await supabase
+function getMostDemandedProduct(leads: WaitlistRow[]): string {
+  if (leads.length === 0) return "—";
+  const counts: Record<string, number> = {};
+  for (const row of leads) {
+    counts[row.product_id] = (counts[row.product_id] ?? 0) + 1;
+  }
+  const topId = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+  return productNames[topId] ?? topId;
+}
+
+export default async function AdminPage() {
+  const supabase = createServerAdminClient();
+
+  const sevenDaysAgo = sevenDaysAgoISO();
+
+  const { data: allLeadsData } = await supabase.from("waitlist").select("*");
+
+  const { data: recentLeadsData } = await supabase
+    .from("waitlist")
+    .select("*")
+    .gte("created_at", sevenDaysAgo);
+
+  const { data: feedbackData } = await supabase
     .from("feedback")
     .select("*")
     .order("created_at", { ascending: false });
 
-  const sugestoes: FeedbackRow[] = (data as FeedbackRow[] | null) ?? [];
+  const allLeads: WaitlistRow[] = (allLeadsData as WaitlistRow[] | null) ?? [];
+  const recentLeads: WaitlistRow[] = (recentLeadsData as WaitlistRow[] | null) ?? [];
+  const sugestoes: FeedbackRow[] = (feedbackData as FeedbackRow[] | null) ?? [];
+
+  const topProduct = getMostDemandedProduct(allLeads);
 
   return (
     <main
@@ -65,6 +94,45 @@ export default async function AdminPage() {
           Sair
         </a>
       </div>
+
+      <section style={{ marginBottom: "3rem" }}>
+        <h2
+          style={{
+            margin: "0 0 1.25rem",
+            fontSize: "0.72rem",
+            fontWeight: 700,
+            letterSpacing: "0.22em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.35)",
+          }}
+        >
+          KPIs
+        </h2>
+        <div
+          style={{
+            display: "flex",
+            gap: "1.25rem",
+            flexWrap: "wrap",
+          }}
+        >
+          <KPICard
+            label="Total na Waitlist"
+            value={allLeads.length}
+            sublabel="inscritos no geral"
+          />
+          <KPICard
+            label="Últimos 7 dias"
+            value={recentLeads.length}
+            sublabel="novos inscritos"
+          />
+          <KPICard
+            label="Maior Demanda"
+            value={topProduct}
+            sublabel="produto mais solicitado"
+            highlight
+          />
+        </div>
+      </section>
 
       <section>
         <h2
@@ -152,7 +220,6 @@ export default async function AdminPage() {
           </div>
         )}
       </section>
-
     </main>
   );
 }
