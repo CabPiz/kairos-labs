@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { createServerAdminClient } from "@/lib/supabase-server";
 
 // ─────────────────────────────────────────────────────────────
 // Schema de validação (server-side — segunda camada de defesa)
@@ -56,7 +56,7 @@ export async function joinWaitlistAction(
   const { email, product_id } = parsed.data;
 
   // 2. Inserir no Supabase
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServerAdminClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const { error } = await (supabase as any)
@@ -64,6 +64,7 @@ const { error } = await (supabase as any)
 .insert({ email, product_id });
 
   if (error) {
+    console.error("[waitlist] error:", JSON.stringify(error));
     // Código 23505 = violação de constraint UNIQUE (email + product_id)
     if (error.code === "23505") {
       return { status: "duplicate" };
