@@ -156,6 +156,14 @@ O Claude Code instrui o usuário a rodar:
 npm run build
 ```
 
+> **Regressão obrigatória após qualquer alteração de fonte:** sempre que a FASE 2 modificar arquivos de código-fonte (`.ts`, `.tsx`), o Claude Code instrui o usuário a rodar a suite completa de testes unitários **antes** dos testes manuais. O objetivo é detectar regressões nos testes já existentes antes de prosseguir.
+
+```bash
+npm test 2>&1 | tee saida.log
+```
+
+O Claude Code lê o `saida.log` e confirma que **todos os test suites passaram** antes de avançar. Se algum teste existente quebrar, o Claude Code investiga e corrige o arquivo causador antes de prosseguir.
+
 > **Hook de pre-commit ativo (desde a issue #34):** Husky + lint-staged estão configurados. Ao executar `git commit`, o hook `.husky/pre-commit` roda automaticamente `npx lint-staged`, que executa `eslint --max-warnings=0` nos arquivos `.ts` e `.tsx` modificados. Se houver erro ou warning de lint, o commit é bloqueado. O Claude Code deve garantir conformidade ESLint antes de entregar os blocos de commit da FASE 3.
 
 - Se falhar: Claude Code analisa o erro, corrige os arquivos e **documenta o erro no `BUILD_ERRORS.md`** se for um padrão novo, depois solicita novo build.

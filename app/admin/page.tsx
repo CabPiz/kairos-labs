@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { createServerAdminClient } from "@/lib/supabase-server";
 import type { Database } from "@/lib/types";
 import { KPICard } from "@/components/admin/KPICard";
+import { DemandChart } from "@/components/admin/DemandChart";
 
 type WaitlistRow = Database["public"]["Tables"]["waitlist"]["Row"];
 type FeedbackRow = Database["public"]["Tables"]["feedback"]["Row"];
@@ -132,6 +133,22 @@ export default async function AdminPage() {
             highlight
           />
         </div>
+      </section>
+
+      <section style={{ marginBottom: "3rem" }}>
+        <h2
+          style={{
+            margin: "0 0 1.25rem",
+            fontSize: "0.72rem",
+            fontWeight: 700,
+            letterSpacing: "0.22em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.35)",
+          }}
+        >
+          Demanda por Produto
+        </h2>
+        <DemandChart leads={allLeads} />
       </section>
 
       <section>

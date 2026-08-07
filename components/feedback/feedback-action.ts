@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { createServerAdminClient } from "@/lib/supabase-server";
 
 const schema = z.object({
   product_id: z.string().min(1),
@@ -33,7 +33,7 @@ export async function sendFeedbackAction(
   const { product_id, nome, mensagem } = parsed.data;
   const email = parsed.data.email || null;
 
-  const supabase = await createServerSupabaseClient();
+  const supabase = createServerAdminClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase as any)
