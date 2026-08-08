@@ -21,6 +21,7 @@ export function WaitlistCTAButton({
   return (
     <>
       <button
+        type="button"
         onClick={() => setOpen(true)}
         style={{
           padding: "0.7rem 2rem",
@@ -39,7 +40,14 @@ export function WaitlistCTAButton({
           ((e.currentTarget as HTMLButtonElement).style.filter =
             "brightness(0.85)")
         }
+        onFocus={(e) =>
+          ((e.currentTarget as HTMLButtonElement).style.filter =
+            "brightness(0.85)")
+        }
         onMouseOut={(e) =>
+          ((e.currentTarget as HTMLButtonElement).style.filter = "brightness(1)")
+        }
+        onBlur={(e) =>
           ((e.currentTarget as HTMLButtonElement).style.filter = "brightness(1)")
         }
       >
