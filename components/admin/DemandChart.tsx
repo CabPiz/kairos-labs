@@ -10,13 +10,7 @@ import {
   Cell,
 } from "recharts";
 
-const PRODUCT_NAMES: Record<string, string> = {
-  devprint: "DevPrint",
-  ascend: "Ascend",
-  "elucya-talk": "Elucya Talk",
-  "agora-global": "Ágora Global",
-  "kairos-labs": "Kairos Labs",
-};
+import { productNames as PRODUCT_NAMES } from "@/lib/products";
 
 const BAR_COLORS = ["#3b82f6", "#d4a017", "#6366f1", "#10b981", "#f59e0b"];
 

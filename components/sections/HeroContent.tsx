@@ -60,24 +60,24 @@ export function HeroContent() {
 
       {/* CTAs */}
       <div style={{ display: "flex", gap: "1rem", marginTop: "2rem" }}>
-        <button
-          onClick={() => window.location.href = "/solucoes"}
+        <a
+          href="#products"
           style={{
+            display: "inline-block",
             background: "#1a56db",
             color: "#fff",
-            border: "none",
+            textDecoration: "none",
             padding: "0.7rem 1.8rem",
             fontSize: "0.78rem",
             fontWeight: 700,
             letterSpacing: "0.15em",
             textTransform: "uppercase",
             borderRadius: "4px",
-            cursor: "pointer",
             fontFamily: "var(--font-inter), sans-serif",
           }}
         >
           Explorar Soluções
-        </button>
+        </a>
 
         <button
           style={{
