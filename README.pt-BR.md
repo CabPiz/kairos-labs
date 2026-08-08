@@ -93,7 +93,7 @@ npm run dev
 
 Abra [http://localhost:3000](http://localhost:3000) no navegador.
 
-> **Banco de dados:** a aplicação requer um projeto Supabase com o schema descrito em [`docs/PRD.md`](./docs/PRD.md#6-database-schema-supabase--postgres). Um script de migration pronto para execução está registrado como [issue conhecida](https://github.com/CabPiz/kairos-labs/issues).
+> **Banco de dados:** a aplicação requer um projeto Supabase. Execute o script de migration consolidado em [`supabase/migrations/001_initial_schema.sql`](./supabase/migrations/001_initial_schema.sql) no SQL Editor do Supabase para criar todas as tabelas, políticas RLS e grants.
 
 Para o guia completo de setup, comandos de teste e padrões de contribuição, veja [docs/CONTRIBUTING.pt-BR.md](./docs/CONTRIBUTING.pt-BR.md).
 

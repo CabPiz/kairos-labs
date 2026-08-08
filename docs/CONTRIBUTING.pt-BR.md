@@ -8,25 +8,81 @@ Guia para qualquer pessoa clonar, configurar e rodar o projeto localmente.
 
 - **Node.js** >= 22 (`node --version` para verificar)
 - **npm** >= 10 (incluído com o Node.js)
-- Conta no [Supabase](https://supabase.com) para obter as variáveis de ambiente
+- Conta no [Supabase](https://supabase.com) (o plano gratuito é suficiente)
 
 ---
 
-## Setup local
+## 1. Criar um projeto Supabase
+
+1. Acesse [supabase.com](https://supabase.com) → **New project**
+2. Preencha:
+   - **Organization:** sua organização
+   - **Project name:** qualquer nome (ex: `kairos-labs`)
+   - **Database password:** clique em **Generate a password** e guarde o valor
+   - **Region:** Americas (ou a mais próxima dos seus usuários)
+   - **Security:** desmarque **"Automatically expose new tables"** — o script de migration define os grants manualmente
+   - Deixe **"Enable automatic RLS"** desmarcado — a migration ativa o RLS explicitamente
+3. Clique em **Create new project** e aguarde ~1 minuto para o provisionamento
+
+---
+
+## 2. Executar a migration do banco
+
+1. No seu projeto Supabase, acesse o **SQL Editor** (barra lateral esquerda) → **New query**
+2. Copie o conteúdo completo de [`supabase/migrations/001_initial_schema.sql`](../supabase/migrations/001_initial_schema.sql) e cole na janela
+3. Clique em **Run** (ou `Ctrl+Enter`)
+4. Você verá **"Success. No rows returned"**
+
+Isso cria as tabelas `waitlist` e `feedback`, ativa o RLS em ambas e define os grants corretos para `anon` e `service_role`.
+
+**Para verificar que a migration rodou corretamente**, execute essas queries no SQL Editor:
+
+```sql
+-- Verificar colunas
+SELECT table_name, column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_schema = 'public'
+ORDER BY table_name, ordinal_position;
+
+-- Verificar grants
+SELECT grantee, table_name, privilege_type
+FROM information_schema.role_table_grants
+WHERE table_schema = 'public'
+ORDER BY table_name, grantee;
+
+-- Verificar RLS
+SELECT tablename, rowsecurity
+FROM pg_tables
+WHERE schemaname = 'public';
+```
+
+Esperado: tabelas `waitlist` e `feedback` com suas colunas, `anon` com INSERT em ambas, `service_role` com ALL em ambas, e `rowsecurity = true` nas duas tabelas.
+
+---
+
+## 3. Configurar variáveis de ambiente
 
 ```bash
-# 1. Clone o repositório
-git clone https://github.com/CabPiz/kairos-labs.git
-cd kairos-labs
-
-# 2. Configure as variáveis de ambiente
 cp .env.example .env.local
-# Edite .env.local com suas credenciais do Supabase
+```
 
-# 3. Instale as dependências
+Abra `.env.local` e preencha com os valores do seu projeto Supabase (**Settings → API**):
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://<seu-project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<chave anon/public>
+SUPABASE_SERVICE_ROLE_KEY=<chave service_role>
+```
+
+---
+
+## 4. Instalar e rodar
+
+```bash
+# Instalar dependências
 npm install
 
-# 4. Inicie o servidor de desenvolvimento
+# Iniciar o servidor de desenvolvimento
 npm run dev
 ```
 

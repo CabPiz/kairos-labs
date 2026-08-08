@@ -10,25 +10,81 @@ Guide for anyone to clone, set up, and run the project locally.
 
 - **Node.js** >= 22 (check with `node --version`)
 - **npm** >= 10 (bundled with Node.js)
-- A [Supabase](https://supabase.com) account to obtain the environment variables
+- A [Supabase](https://supabase.com) account (free tier is enough)
 
 ---
 
-## Local Setup
+## 1. Create a Supabase project
+
+1. Go to [supabase.com](https://supabase.com) → **New project**
+2. Fill in:
+   - **Organization:** your org
+   - **Project name:** any name (e.g. `kairos-labs`)
+   - **Database password:** click **Generate a password** and save it
+   - **Region:** Americas (or closest to your users)
+   - **Security:** uncheck **"Automatically expose new tables"** — the migration script sets grants manually
+   - Leave **"Enable automatic RLS"** unchecked — the migration enables RLS explicitly
+3. Click **Create new project** and wait ~1 minute for provisioning
+
+---
+
+## 2. Run the database migration
+
+1. In your Supabase project, go to **SQL Editor** (left sidebar) → **New query**
+2. Copy the full contents of [`supabase/migrations/001_initial_schema.sql`](./supabase/migrations/001_initial_schema.sql) and paste it
+3. Click **Run** (or `Ctrl+Enter`)
+4. You should see **"Success. No rows returned"**
+
+This creates the `waitlist` and `feedback` tables, enables RLS on both, and sets the correct grants for `anon` and `service_role`.
+
+**To verify the migration ran correctly**, run these queries in the SQL Editor:
+
+```sql
+-- Check columns
+SELECT table_name, column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_schema = 'public'
+ORDER BY table_name, ordinal_position;
+
+-- Check grants
+SELECT grantee, table_name, privilege_type
+FROM information_schema.role_table_grants
+WHERE table_schema = 'public'
+ORDER BY table_name, grantee;
+
+-- Check RLS
+SELECT tablename, rowsecurity
+FROM pg_tables
+WHERE schemaname = 'public';
+```
+
+Expected: `waitlist` and `feedback` tables with their columns, `anon` with INSERT on both, `service_role` with ALL on both, and `rowsecurity = true` on both tables.
+
+---
+
+## 3. Configure environment variables
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/CabPiz/kairos-labs.git
-cd kairos-labs
-
-# 2. Set up environment variables
 cp .env.example .env.local
-# Edit .env.local with your Supabase credentials
+```
 
-# 3. Install dependencies
+Open `.env.local` and fill in the values from your Supabase project (**Settings → API**):
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://<your-project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon/public key>
+SUPABASE_SERVICE_ROLE_KEY=<service_role key>
+```
+
+---
+
+## 4. Install and run
+
+```bash
+# Install dependencies
 npm install
 
-# 4. Start the development server
+# Start the development server
 npm run dev
 ```
 
