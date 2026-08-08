@@ -14,7 +14,7 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export default async function ProdutoDetalhe({ params }: Props) {
+export default async function ProdutoDetalhe({ params }: Readonly<Props>) {
   const { slug } = await params;
   const produto = getProducts().find((p) => p.slug === slug);
 
@@ -91,7 +91,7 @@ export default async function ProdutoDetalhe({ params }: Props) {
           <div className="grid grid-cols-2 gap-4">
             {produto.funcionalidades.map((f, i) => (
               <div
-                key={i}
+                key={f.titulo}
                 className="bg-white/[0.03] border border-blue-500/14 rounded-[10px] px-[1.4rem] py-5"
               >
                 <span
@@ -116,8 +116,8 @@ export default async function ProdutoDetalhe({ params }: Props) {
             <div className="mb-12">
               <SectionLabel>Para Quem É</SectionLabel>
               <ul className="flex flex-col gap-[0.6rem] list-none p-0 m-0">
-                {produto.publicoAlvo.map((p, i) => (
-                  <li key={i} className="flex items-start gap-3 text-white/60 text-[0.88rem] leading-[1.6]">
+                {produto.publicoAlvo.map((p) => (
+                  <li key={p} className="flex items-start gap-3 text-white/60 text-[0.88rem] leading-[1.6]">
                     <span
                       className="flex-shrink-0 mt-[0.35rem] w-[5px] h-[5px] rounded-full inline-block"
                       style={{ background: produto.cor }}
@@ -137,9 +137,9 @@ export default async function ProdutoDetalhe({ params }: Props) {
             <div className="mb-12">
               <SectionLabel>Stack Técnica</SectionLabel>
               <div className="flex flex-wrap gap-2">
-                {produto.stack.map((tech, i) => (
+                {produto.stack.map((tech) => (
                   <span
-                    key={i}
+                    key={tech}
                     className="text-[0.75rem] font-semibold tracking-[0.06em] text-white/65 bg-white/5 border border-white/12 rounded-[5px] px-3 py-[0.3rem]"
                   >
                     {tech}
