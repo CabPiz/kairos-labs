@@ -1,6 +1,5 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { HeroContent } from "@/components/sections/HeroContent";
 
 describe("HeroContent", () => {
@@ -28,11 +27,11 @@ describe("HeroContent", () => {
     ).toBeInTheDocument();
   });
 
-  it("exibe o botão Explorar Soluções", () => {
+  it("exibe o link Explorar Soluções apontando para #products", () => {
     render(<HeroContent />);
-    expect(
-      screen.getByRole("button", { name: /explorar soluções/i })
-    ).toBeInTheDocument();
+    const link = screen.getByRole("link", { name: /explorar soluções/i });
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute("href", "#products");
   });
 
   it("exibe o botão Falar com Especialista", () => {
@@ -40,19 +39,5 @@ describe("HeroContent", () => {
     expect(
       screen.getByRole("button", { name: /falar com especialista/i })
     ).toBeInTheDocument();
-  });
-
-  it("botão Explorar Soluções navega para /solucoes", async () => {
-    const mockLocation = { href: "" };
-    Object.defineProperty(window, "location", {
-      configurable: true,
-      writable: true,
-      value: mockLocation,
-    });
-    render(<HeroContent />);
-    await userEvent.click(
-      screen.getByRole("button", { name: /explorar soluções/i })
-    );
-    expect(mockLocation.href).toBe("/solucoes");
   });
 });

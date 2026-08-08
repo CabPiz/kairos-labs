@@ -50,6 +50,7 @@ describe("DemandChart", () => {
     { product_id: "elucya-talk", nome: "Elucya Talk" },
     { product_id: "agora-global", nome: "Ágora Global" },
     { product_id: "kairos-labs", nome: "Kairos Labs" },
+    { product_id: "talvrix", nome: "Talvrix" },
   ])("mapeia product_id '$product_id' para '$nome'", ({ product_id }) => {
     render(<DemandChart leads={[{ product_id }]} />);
     expect(screen.getByTestId("bar-chart")).toBeInTheDocument();

@@ -7,6 +7,7 @@ const mockNotFound = jest.fn(() => {
 
 jest.mock("next/navigation", () => ({
   notFound: mockNotFound,
+  redirect: jest.fn(),
 }));
 
 jest.mock("@/components/waitlist/WaitlistCTAButton", () => ({
@@ -21,7 +22,7 @@ jest.mock("@/components/feedback/FeedbackCTAButton", () => ({
   ),
 }));
 
-import ProdutoDetalhe from "@/app/solucoes/[slug]/page";
+import ProdutoDetalhe from "@/app/[slug]/page";
 
 async function renderSlug(slug: string) {
   const Component = await Promise.resolve(
@@ -31,31 +32,16 @@ async function renderSlug(slug: string) {
 }
 
 describe("ProdutoDetalhe", () => {
-  it("renderiza DevPrint com o nome correto", async () => {
-    await renderSlug("devprint");
-    expect(screen.getAllByText("DevPrint").length).toBeGreaterThan(0);
-  });
-
-  it("renderiza Ascend com o nome correto", async () => {
-    await renderSlug("ascend");
-    expect(screen.getAllByText("Ascend").length).toBeGreaterThan(0);
-  });
-
-  it("renderiza Elucya Talk", async () => {
-    await renderSlug("elucya-talk");
-    expect(screen.getAllByText("Elucya Talk").length).toBeGreaterThan(0);
-  });
-
-  it("renderiza Ágora Global", async () => {
-    await renderSlug("agora-global");
-    expect(
-      screen.getAllByText(/Plataforma Ágora Global/i).length
-    ).toBeGreaterThan(0);
-  });
-
-  it("renderiza Kairos Labs", async () => {
-    await renderSlug("kairos-labs");
-    expect(screen.getAllByText("Kairos Labs").length).toBeGreaterThan(0);
+  it.each([
+    { slug: "devprint", nome: "DevPrint" },
+    { slug: "ascend", nome: "Ascend" },
+    { slug: "elucya-talk", nome: "Elucya Talk" },
+    { slug: "agora-global", nome: "Plataforma Ágora Global" },
+    { slug: "talvrix", nome: "Talvrix" },
+    { slug: "kairos-labs", nome: "Kairos Labs" },
+  ])("renderiza $nome com o nome correto", async ({ slug, nome }) => {
+    await renderSlug(slug);
+    expect(screen.getAllByText(new RegExp(nome, "i")).length).toBeGreaterThan(0);
   });
 
   it("chama notFound para slug inexistente", async () => {
@@ -63,10 +49,10 @@ describe("ProdutoDetalhe", () => {
     expect(mockNotFound).toHaveBeenCalled();
   });
 
-  it("exibe link de voltar para /solucoes com texto Soluções", async () => {
+  it("exibe link de voltar com texto Portfólio apontando para /#products", async () => {
     await renderSlug("devprint");
-    const link = screen.getByRole("link", { name: /soluções/i });
-    expect(link).toHaveAttribute("href", "/solucoes");
+    const link = screen.getByRole("link", { name: /portfólio/i });
+    expect(link).toHaveAttribute("href", "/#products");
   });
 
   it("exibe botões de waitlist e feedback", async () => {
@@ -78,20 +64,29 @@ describe("ProdutoDetalhe", () => {
       screen.getByRole("button", { name: /feedback devprint/i })
     ).toBeInTheDocument();
   });
+
+  it("exibe botões de waitlist e feedback para o Talvrix", async () => {
+    await renderSlug("talvrix");
+    expect(
+      screen.getByRole("button", { name: /waitlist talvrix/i })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /feedback talvrix/i })
+    ).toBeInTheDocument();
+  });
 });
 
 describe("generateStaticParams", () => {
-  it("retorna os 5 slugs de produto", async () => {
-    const { generateStaticParams } = await import(
-      "@/app/solucoes/[slug]/page"
-    );
+  it("retorna os 6 slugs de produto", async () => {
+    const { generateStaticParams } = await import("@/app/[slug]/page");
     const params = generateStaticParams();
-    expect(params).toHaveLength(5);
+    expect(params).toHaveLength(6);
     const slugs = params.map((p: { slug: string }) => p.slug);
     expect(slugs).toContain("devprint");
     expect(slugs).toContain("ascend");
     expect(slugs).toContain("elucya-talk");
     expect(slugs).toContain("agora-global");
+    expect(slugs).toContain("talvrix");
     expect(slugs).toContain("kairos-labs");
   });
 });
