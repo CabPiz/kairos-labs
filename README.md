@@ -93,7 +93,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-> **Database:** the app requires a Supabase project with the schema described in [`docs/PRD.md`](./docs/PRD.md#6-database-schema-supabase--postgres). A ready-to-run migration script is tracked as a [known issue](https://github.com/CabPiz/kairos-labs/issues).
+> **Database:** the app requires a Supabase project. Run the consolidated migration script at [`supabase/migrations/001_initial_schema.sql`](./supabase/migrations/001_initial_schema.sql) in the Supabase SQL Editor to create all tables, RLS policies, and grants.
 
 For the full setup guide, test commands, and contribution standards, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
