@@ -2,19 +2,13 @@ export const dynamic = "force-dynamic";
 
 import { createServerAdminClient } from "@/lib/supabase-server";
 import type { Database } from "@/lib/types";
+import { productNames } from "@/lib/product-names";
 import { KPICard } from "@/components/admin/KPICard";
 import { DemandChart } from "@/components/admin/DemandChart";
+import { LeadsTable } from "@/components/admin/LeadsTable";
 
 type WaitlistRow = Database["public"]["Tables"]["waitlist"]["Row"];
 type FeedbackRow = Database["public"]["Tables"]["feedback"]["Row"];
-
-const productNames: Record<string, string> = {
-  devprint: "DevPrint",
-  ascend: "Ascend",
-  "elucya-talk": "Elucya Talk",
-  "agora-global": "Ágora Global",
-  "kairos-labs": "Kairos Labs",
-};
 
 function sevenDaysAgoISO(): string {
   const ms = 7 * 24 * 60 * 60 * 1000;
@@ -36,7 +30,10 @@ export default async function AdminPage() {
 
   const sevenDaysAgo = sevenDaysAgoISO();
 
-  const { data: allLeadsData } = await supabase.from("waitlist").select("*");
+  const { data: allLeadsData } = await supabase
+    .from("waitlist")
+    .select("*")
+    .order("created_at", { ascending: false });
 
   const { data: recentLeadsData } = await supabase
     .from("waitlist")
@@ -149,6 +146,22 @@ export default async function AdminPage() {
           Demanda por Produto
         </h2>
         <DemandChart leads={allLeads} />
+      </section>
+
+      <section style={{ marginBottom: "3rem" }}>
+        <h2
+          style={{
+            margin: "0 0 1.25rem",
+            fontSize: "0.72rem",
+            fontWeight: 700,
+            letterSpacing: "0.22em",
+            textTransform: "uppercase",
+            color: "rgba(255,255,255,0.35)",
+          }}
+        >
+          Leads da Waitlist
+        </h2>
+        <LeadsTable leads={allLeads} />
       </section>
 
       <section>
