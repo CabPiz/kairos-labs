@@ -66,6 +66,7 @@ export default async function AdminPage() {
         </h1>
         <Link
           href="/admin/logout"
+          prefetch={false}
           style={{
             fontSize: "0.75rem",
             fontWeight: 600,
