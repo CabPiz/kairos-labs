@@ -160,6 +160,53 @@ In CI (GitHub Actions), E2E tests run automatically in the `e2e` job, after the 
 
 ---
 
+## SonarCloud via CLI
+
+Consulte o Quality Gate e as issues de uma PR diretamente pelo terminal, sem precisar abrir o browser.
+
+**Pré-requisito:** defina `SONAR_TOKEN` em `.env.local` (gere em [sonarcloud.io/account/security](https://sonarcloud.io/account/security)).
+
+```bash
+# Carregar variáveis do .env.local
+export $(grep -v '^#' .env.local | xargs)
+
+# Verificar status do Quality Gate de uma PR
+./scripts/sonar-check.sh gate <PR_NUMBER>
+
+# Listar issues abertas com arquivo e linha
+./scripts/sonar-check.sh issues <PR_NUMBER>
+
+# Redirecionar saída para saida.log (padrão do projeto)
+./scripts/sonar-check.sh issues <PR_NUMBER> 2>&1 | tee saida.log
+```
+
+**Exemplo de saída (`gate`):**
+
+```
+=== Quality Gate — PR #75 ===
+STATUS: FAILED (bloqueado)
+
+Condições:
+  [ERROR] new_coverage — valor: 72.5 (limite: 80.0)
+  [OK] new_duplicated_lines_density — valor: 0.0 (limite: 3.0)
+```
+
+**Exemplo de saída (`issues`):**
+
+```
+=== Issues abertas — PR #75 ===
+[MAJOR] Props should be read-only.
+  Arquivo : src/components/ui/Modal.tsx
+  Linha   : 12
+  Regra   : typescript:S6598
+
+Total: 1 issue(s)
+```
+
+Em CI, o `SONAR_TOKEN` é injetado automaticamente via secret do repositório — nenhuma configuração adicional é necessária para o pipeline.
+
+---
+
 ## Pre-commit Hooks
 
 [Husky](https://typicode.github.io/husky) + [lint-staged](https://github.com/lint-staged/lint-staged) are configured. When running `git commit`, ESLint runs automatically on modified `.ts` and `.tsx` files. Commits with lint errors or warnings are blocked.

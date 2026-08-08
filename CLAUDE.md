@@ -246,8 +246,19 @@ Após `gh pr checks --watch` retornar com todos os checks verdes, o Claude Code 
 ### FASE 4 — Resolução de Issues do Sonar na PR
 
 - **PROIBIDO fazer merge** enquanto houver issues do Sonar abertas.
-- URL para verificar: `sonarcloud.io/summary/new_code?id=CabPiz_kairos-labs&pullRequest=[NUMERO_PR]`
-- O usuário compartilha prints ou descrição das issues apontadas. O Claude Code então:
+- O Claude Code consulta as issues **de forma autônoma** via CLI, sem depender do browser ou do usuário:
+
+```bash
+# Verificar Quality Gate
+./scripts/sonar-check.sh gate [NUMERO_PR] 2>&1 | tee saida.log
+
+# Listar issues com arquivo e linha
+./scripts/sonar-check.sh issues [NUMERO_PR] 2>&1 | tee saida.log
+```
+
+> **Pré-requisito:** `SONAR_TOKEN` deve estar definido em `.env.local`. Em CI, o secret já está configurado no repositório.
+
+- O Claude Code lê o `saida.log`, identifica as issues apontadas e então:
   1. **Atualiza a seção `🔍 PADRÕES SONAR` deste `CLAUDE.md`** para contemplar as novas regras detectadas, garantindo que não se repitam em issues futuras.
   2. **Corrige os arquivos afetados** diretamente no disco.
 - Após correção: usuário roda `npm run build` + push. Aguardar novo ciclo do Sonar.
