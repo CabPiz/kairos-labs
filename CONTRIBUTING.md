@@ -28,7 +28,11 @@ Guide for anyone to clone, set up, and run the project locally.
 
 ---
 
-## 2. Run the database migration
+## 2. Run the database migrations
+
+Run the migrations **in order** — each one builds on the previous.
+
+### Migration 001 — Initial schema
 
 1. In your Supabase project, go to **SQL Editor** (left sidebar) → **New query**
 2. Copy the full contents of [`supabase/migrations/001_initial_schema.sql`](./supabase/migrations/001_initial_schema.sql) and paste it
@@ -37,7 +41,16 @@ Guide for anyone to clone, set up, and run the project locally.
 
 This creates the `waitlist` and `feedback` tables, enables RLS on both, and sets the correct grants for `anon` and `service_role`.
 
-**To verify the migration ran correctly**, run these queries in the SQL Editor:
+### Migration 002 — Dashboard RPC
+
+1. Open a new query in the SQL Editor
+2. Copy the full contents of [`supabase/migrations/002_dashboard_rpc.sql`](./supabase/migrations/002_dashboard_rpc.sql) and paste it
+3. Click **Run**
+4. You should see **"Success. No rows returned"**
+
+This creates the `get_dashboard_kpis()` SECURITY DEFINER function used by the admin dashboard to read data without relying on `BYPASSRLS` (service_role).
+
+**To verify both migrations ran correctly**, run these queries in the SQL Editor:
 
 ```sql
 -- Check columns
@@ -56,9 +69,14 @@ ORDER BY table_name, grantee;
 SELECT tablename, rowsecurity
 FROM pg_tables
 WHERE schemaname = 'public';
+
+-- Check SECURITY DEFINER function
+SELECT routine_name, security_type
+FROM information_schema.routines
+WHERE routine_schema = 'public' AND routine_name = 'get_dashboard_kpis';
 ```
 
-Expected: `waitlist` and `feedback` tables with their columns, `anon` with INSERT on both, `service_role` with ALL on both, and `rowsecurity = true` on both tables.
+Expected: `waitlist` and `feedback` tables with their columns, `anon` with INSERT on both, `service_role` with ALL on both, `rowsecurity = true` on both tables, and `get_dashboard_kpis` with `security_type = DEFINER`.
 
 ---
 

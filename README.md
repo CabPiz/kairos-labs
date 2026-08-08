@@ -93,7 +93,9 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-> **Database:** the app requires a Supabase project. Run the consolidated migration script at [`supabase/migrations/001_initial_schema.sql`](./supabase/migrations/001_initial_schema.sql) in the Supabase SQL Editor to create all tables, RLS policies, and grants.
+> **Database:** the app requires a Supabase project. Run the migration scripts in order in the Supabase SQL Editor:
+> 1. [`supabase/migrations/001_initial_schema.sql`](./supabase/migrations/001_initial_schema.sql) — tables, RLS policies, and grants
+> 2. [`supabase/migrations/002_dashboard_rpc.sql`](./supabase/migrations/002_dashboard_rpc.sql) — `get_dashboard_kpis()` SECURITY DEFINER function
 
 For the full setup guide, test commands, and contribution standards, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 

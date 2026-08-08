@@ -26,7 +26,11 @@ Guia para qualquer pessoa clonar, configurar e rodar o projeto localmente.
 
 ---
 
-## 2. Executar a migration do banco
+## 2. Executar as migrations do banco
+
+Execute as migrations **em ordem** — cada uma depende da anterior.
+
+### Migration 001 — Schema inicial
 
 1. No seu projeto Supabase, acesse o **SQL Editor** (barra lateral esquerda) → **New query**
 2. Copie o conteúdo completo de [`supabase/migrations/001_initial_schema.sql`](../supabase/migrations/001_initial_schema.sql) e cole na janela
@@ -35,7 +39,16 @@ Guia para qualquer pessoa clonar, configurar e rodar o projeto localmente.
 
 Isso cria as tabelas `waitlist` e `feedback`, ativa o RLS em ambas e define os grants corretos para `anon` e `service_role`.
 
-**Para verificar que a migration rodou corretamente**, execute essas queries no SQL Editor:
+### Migration 002 — RPC do dashboard
+
+1. Abra uma nova query no SQL Editor
+2. Copie o conteúdo completo de [`supabase/migrations/002_dashboard_rpc.sql`](../supabase/migrations/002_dashboard_rpc.sql) e cole na janela
+3. Clique em **Run**
+4. Você verá **"Success. No rows returned"**
+
+Isso cria a função `get_dashboard_kpis()` com SECURITY DEFINER, usada pelo dashboard admin para ler dados sem depender de BYPASSRLS (service_role).
+
+**Para verificar que as migrations rodaram corretamente**, execute essas queries no SQL Editor:
 
 ```sql
 -- Verificar colunas
@@ -54,9 +67,14 @@ ORDER BY table_name, grantee;
 SELECT tablename, rowsecurity
 FROM pg_tables
 WHERE schemaname = 'public';
+
+-- Verificar função SECURITY DEFINER
+SELECT routine_name, security_type
+FROM information_schema.routines
+WHERE routine_schema = 'public' AND routine_name = 'get_dashboard_kpis';
 ```
 
-Esperado: tabelas `waitlist` e `feedback` com suas colunas, `anon` com INSERT em ambas, `service_role` com ALL em ambas, e `rowsecurity = true` nas duas tabelas.
+Esperado: tabelas `waitlist` e `feedback` com suas colunas, `anon` com INSERT em ambas, `service_role` com ALL em ambas, `rowsecurity = true` nas duas tabelas, e `get_dashboard_kpis` com `security_type = DEFINER`.
 
 ---
 
