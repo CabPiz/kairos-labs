@@ -1,13 +1,6 @@
-import { redirect } from "next/navigation";
-import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { LoginForm } from "./_components/LoginForm";
 
-export default async function LoginPage() {
-  const supabase = await createServerSupabaseClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (session) redirect("/admin");
+export default function LoginPage() {
   return (
     <main
       style={{

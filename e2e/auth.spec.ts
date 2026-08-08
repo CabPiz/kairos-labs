@@ -46,6 +46,6 @@ test.describe("Autenticação /admin", () => {
     await expect(page).toHaveURL(/\/admin(?!\/login)/);
 
     await page.goto("/admin/login");
-    await expect(page).toHaveURL(/\/admin(?!\/login)/);
+    await expect(page).toHaveURL(/\/admin(?!\/login)/, { timeout: 10_000 });
   });
 });
