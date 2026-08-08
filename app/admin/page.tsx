@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import Link from "next/link";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import type { Database } from "@/lib/types";
 import { productNames } from "@/lib/product-names";
@@ -63,7 +64,7 @@ export default async function AdminPage() {
         >
           Founder Dashboard
         </h1>
-        <a
+        <Link
           href="/admin/logout"
           style={{
             fontSize: "0.75rem",
@@ -78,7 +79,7 @@ export default async function AdminPage() {
           }}
         >
           Sair
-        </a>
+        </Link>
       </div>
 
       <section style={{ marginBottom: "3rem" }}>
