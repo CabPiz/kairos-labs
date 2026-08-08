@@ -94,6 +94,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon/public key>
 SUPABASE_SERVICE_ROLE_KEY=<service_role key>
 ```
 
+The SonarCloud variables (`SONAR_TOKEN` and `SONAR_PROJECT_KEY`) are **optional** for running the app locally. They are only needed if you want to use the `./scripts/sonar-check.sh` script to check the Quality Gate from the terminal. See the [SonarCloud via CLI](#sonarcloud-via-cli) section for setup instructions.
+
 ---
 
 ## 4. Install and run
@@ -164,23 +166,41 @@ In CI (GitHub Actions), E2E tests run automatically in the `e2e` job, after the 
 
 Consulte o Quality Gate e as issues de uma PR diretamente pelo terminal, sem precisar abrir o browser.
 
-**Pré-requisito:** defina `SONAR_TOKEN` em `.env.local` (gere em [sonarcloud.io/account/security](https://sonarcloud.io/account/security)).
+### Prerequisites: configuring SONAR_TOKEN and SONAR_PROJECT_KEY
+
+Two variables are required in your `.env.local`:
+
+**`SONAR_TOKEN`** — your personal SonarCloud access token:
+
+1. Go to [sonarcloud.io](https://sonarcloud.io) and log in (GitHub login works)
+2. Click your avatar (top right) → **My Account** → **Security**
+3. Under "Generate Tokens", type a name (e.g. `kairos-labs-local`) and click **Generate**
+4. Copy the token — it is shown only once
+5. Paste it into `.env.local`: `SONAR_TOKEN=<paste here>`
+
+**`SONAR_PROJECT_KEY`** — the unique identifier of this project in SonarCloud:
+
+- This value is fixed and already set in `.env.example`: `CabPiz_kairos-labs`
+- Do not change it — it maps to this specific repository on the platform
+- If you ever need to confirm it: go to [sonarcloud.io](https://sonarcloud.io) → open the `kairos-labs` project → **Information** (left sidebar)
+
+### Running the script
 
 ```bash
-# Carregar variáveis do .env.local
+# Load variables from .env.local
 export $(grep -v '^#' .env.local | xargs)
 
-# Verificar status do Quality Gate de uma PR
+# Check the Quality Gate status of a PR
 ./scripts/sonar-check.sh gate <PR_NUMBER>
 
-# Listar issues abertas com arquivo e linha
+# List open issues with file and line
 ./scripts/sonar-check.sh issues <PR_NUMBER>
 
-# Redirecionar saída para saida.log (padrão do projeto)
+# Redirect output to saida.log (project standard)
 ./scripts/sonar-check.sh issues <PR_NUMBER> 2>&1 | tee saida.log
 ```
 
-**Exemplo de saída (`gate`):**
+**Example output (`gate`):**
 
 ```
 === Quality Gate — PR #75 ===
@@ -191,7 +211,7 @@ Condições:
   [OK] new_duplicated_lines_density — valor: 0.0 (limite: 3.0)
 ```
 
-**Exemplo de saída (`issues`):**
+**Example output (`issues`):**
 
 ```
 === Issues abertas — PR #75 ===
@@ -203,7 +223,7 @@ Condições:
 Total: 1 issue(s)
 ```
 
-Em CI, o `SONAR_TOKEN` é injetado automaticamente via secret do repositório — nenhuma configuração adicional é necessária para o pipeline.
+In CI, `SONAR_TOKEN` is injected automatically via the repository secret — no additional configuration is needed for the pipeline.
 
 ---
 
