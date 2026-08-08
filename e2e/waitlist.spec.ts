@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 const E2E_EMAIL = "contact.kairoslabs@gmail.com";
 
 async function openWaitlistModal(page: import("@playwright/test").Page) {
-  await page.goto("/solucoes/devprint");
+  await page.goto("/devprint");
   await page.getByRole("button", { name: /garantir acesso antecipado/i }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
 }

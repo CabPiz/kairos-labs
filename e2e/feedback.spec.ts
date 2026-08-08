@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 async function openFeedbackModal(page: import("@playwright/test").Page) {
-  await page.goto("/solucoes/devprint");
+  await page.goto("/devprint");
   await page.getByRole("button", { name: /enviar sugestão/i }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
 }
