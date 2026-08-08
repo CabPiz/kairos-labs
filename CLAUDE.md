@@ -13,6 +13,7 @@ Repositório: `CabPiz/kairos-labs` | Owner: `CabPiz` | Project Board: nº 3
 - Criar e editar arquivos de documentação (`.md`) diretamente no disco
 - Rodar `npm run build` para validar o build
 - Rodar `npm test` para rodar a suite de testes
+- Rodar `npm run test:e2e 2>&1 | tee saida.log` para rodar os testes E2E
 - Rodar `npm run lint` para verificar conformidade ESLint
 - Ler issues do GitHub com `gh issue view [NUMERO]` e `gh issue list`
 - Ler o arquivo `saida.log` na raiz do projeto para analisar resultados de comandos
@@ -44,42 +45,25 @@ O arquivo `saida.log` é sobrescrito a cada execução (sem acumulação).
 
 ### Abertura da sessão
 O usuário inicia sempre com:
-> "Vou trabalhar na issue #[número] — [título]"
+> "issue #[número]"
 
-Ao receber isso, o Claude Code executa automaticamente, nesta ordem:
+Ao receber isso, o Claude Code executa **imediatamente e de forma autônoma**, nesta ordem:
 ```bash
 gh issue view [NUMERO]
 ```
-para ler o escopo completo da issue.
+para ler o escopo completo da issue. Em seguida, **obrigatoriamente**, lê o arquivo `BUILD_ERRORS.md` na raiz do projeto.
 
-Em seguida, **obrigatoriamente**, lê o arquivo `BUILD_ERRORS.md` na raiz do projeto para internalizar todos os erros já resolvidos e aplicar os padrões corretos antes de gerar qualquer código.
-
-**Verificação de milestone:** ainda na abertura, o Claude Code verifica se a issue é a última do seu milestone, consultando a sequência definida no `ROADMAP.md`. Issues finais de cada milestone: **#12** (M2), **#39** (M5), **#16** (M3), **#20** (M4). Se for a última, o Claude Code já inclui a atualização do `ROADMAP.md` no escopo da sessão — status do milestone na tabela de visão geral, linha de sequência, label do subgraph mermaid, classes dos nós mermaid e cabeçalho da seção — e comunica isso ao usuário na FASE 0. A atualização do `ROADMAP.md` é incluída nos commits atômicos da FASE 3, junto com os commits do desenvolvimento.
+**Verificação de milestone:** ainda na abertura, o Claude Code verifica se a issue é a última do seu milestone, consultando a sequência definida no `ROADMAP.md`. Issues finais de cada milestone: **#12** (M2), **#39** (M5), **#16** (M3), **#20** (M4). Se for a última, o Claude Code já inclui a atualização do `ROADMAP.md` no escopo da sessão — e comunica isso ao usuário na FASE 1.
 
 ---
 
-### FASE 0 — Entendimento e Proposta Técnica (PAUSA OBRIGATÓRIA)
+### FASE 0 — Versionamento Imediato (executado ANTES de propor qualquer solução)
 
-**Obrigatória para TODAS as issues, sem exceção.**
+**Obrigatória para TODAS as issues, sem exceção. Executada de forma autônoma assim que o usuário indica a issue.**
 
-1. **Leitura e Confirmação de Escopo**
-   - Ler os requisitos da issue, identificar dependências, fronteiras com outras issues e ambiguidades.
-   - Apresentar resumo do entendimento e fazer perguntas de clarificação necessárias.
-   - **PROIBIDO** gerar código ou comandos antes desta etapa.
+> **Motivo:** detalhar uma solução já é trabalhar na issue — a issue já saiu do backlog no momento em que começa a ser analisada. O card deve refletir isso imediatamente.
 
-2. **Proposta Técnica Detalhada**
-   - Propor solução completa: arquivos a criar/modificar, arquitetura, decisões de design e justificativas.
-   - Apresentar alternativas quando houver trade-offs relevantes.
-   - **PROIBIDO** gerar código ou comandos antes da aprovação explícita.
-   - Encerrar sempre com: *"A proposta técnica está alinhada com o esperado para prosseguirmos com a implementação?"* — e **PARAR**.
-
-> **ATENÇÃO:** Respostas do usuário que fornecem dados solicitados (links, e-mails, nomes) **não constituem aprovação**. A aprovação explícita é obrigatória — palavras como "sim", "pode ir", "aprovado", "prossiga". Enquanto não houver aprovação explícita, o Claude Code permanece em FASE 0.
-
----
-
-### FASE 1 — Início do Versionamento (SOMENTE após aprovação explícita da Proposta Técnica)
-
-Após aprovação explícita, o Claude Code executa diretamente, nesta ordem:
+O Claude Code executa diretamente, nesta ordem:
 
 ```bash
 # 1. Atualizar a main e criar branch
@@ -123,13 +107,30 @@ gh project item-edit --id $ITEM_ID --project-id $PROJECT_ID --field-id $STATUS_F
 
 ---
 
+### FASE 1 — Entendimento e Proposta Técnica (PAUSA OBRIGATÓRIA)
+
+**Executada após a FASE 0, com o card já em "In Progress".**
+
+1. **Leitura e Confirmação de Escopo**
+   - Ler os requisitos da issue, identificar dependências, fronteiras com outras issues e ambiguidades.
+   - Apresentar resumo do entendimento e fazer perguntas de clarificação necessárias.
+
+2. **Proposta Técnica Detalhada**
+   - Propor solução completa: arquivos a criar/modificar, arquitetura, decisões de design e justificativas.
+   - Apresentar alternativas quando houver trade-offs relevantes.
+   - Encerrar sempre com: *"A proposta técnica está alinhada com o esperado para prosseguirmos com a implementação?"* — e **PARAR**.
+
+> **ATENÇÃO:** Respostas do usuário que fornecem dados solicitados (links, e-mails, nomes) **não constituem aprovação**. A aprovação explícita é obrigatória — palavras como "sim", "pode ir", "aprovado", "prossiga". Enquanto não houver aprovação explícita, o Claude Code permanece em FASE 1.
+
+---
+
 ### FASE 2 — Código-Fonte (Claude Code edita os arquivos diretamente)
 
 - O Claude Code edita os arquivos diretamente no disco.
 - **Antes de editar qualquer arquivo**, o Claude Code aplica proativamente todas as regras da seção `🔍 PADRÕES SONAR` deste arquivo. O código gerado já deve estar em conformidade — nunca delegar a verificação Sonar para o usuário.
 - O Claude Code é responsável pela conformidade Sonar. O usuário nunca revisa o checklist manualmente.
-- Para issues de UI/UX: aguardar feedback visual antes de prosseguir para commits.
-- Encerrar sempre com: *"A solução atendeu visualmente ao esperado para prosseguirmos?"* — e **PARAR**.
+- **Para issues que envolvem qualquer artefato que o usuário precise validar** (UI/UX, documentos `.md`, conteúdo gerado): apresentar o que foi criado/modificado e encerrar com *"Você validou o resultado? Pode prosseguir?"* — e **PARAR até receber validação explícita**.
+- Essa é a **única pausa obrigatória de validação no fluxo**. Todas as demais etapas (build, testes, CI, merge, diário) são executadas autonomamente pelo Claude Code.
 
 ---
 
@@ -174,13 +175,13 @@ Após receber e analisar os prints:
 
 **Passo 3 — Testes E2E com Playwright (quando aplicável)**
 
-Para issues que envolvem fluxos de UI críticos (formulários, modais, autenticação, navegação protegida), o Claude Code instrui o usuário a rodar os testes E2E após os testes manuais:
+Para issues que envolvem fluxos de UI críticos (formulários, modais, autenticação, navegação protegida), o Claude Code **executa diretamente** os testes E2E após os testes manuais:
 
 ```bash
 npm run test:e2e 2>&1 | tee saida.log
 ```
 
-O Claude Code lê o `saida.log` para confirmar resultado. Se o fluxo implementado ainda não tiver spec E2E, o Claude Code cria ou atualiza o arquivo correspondente em `e2e/` como parte da FASE 2 — **nunca** delegar a criação de specs para depois. Issues que **exigem** spec E2E nova ou atualizada: qualquer fluxo que envolva submit de formulário, autenticação, redirecionamento protegido ou confirmação visual de ação do usuário.
+O Claude Code lê o `saida.log` para confirmar resultado. **O usuário nunca roda este comando — é responsabilidade exclusiva do Claude Code.** Se o fluxo implementado ainda não tiver spec E2E, o Claude Code cria ou atualiza o arquivo correspondente em `e2e/` como parte da FASE 2 — **nunca** delegar a criação de specs para depois. Issues que **exigem** spec E2E nova ou atualizada: qualquer fluxo que envolva submit de formulário, autenticação, redirecionamento protegido ou confirmação visual de ação do usuário.
 
 ---
 
@@ -233,10 +234,12 @@ Closes #[NUMERO]" \
   --head tipo/[NUMERO]-descricao \
   --label "type: [tipo]"
 
-# Verificar PR
+# Verificar PR e aguardar CI
 gh pr diff
-gh pr status 2>&1 | tee saida.log
+gh pr checks [N] --watch 2>&1 | tee saida.log
 ```
+
+Após `gh pr checks --watch` retornar com todos os checks verdes, o Claude Code prossegue **automaticamente** para a FASE 4 sem aguardar instrução do usuário.
 
 ---
 
@@ -249,7 +252,7 @@ gh pr status 2>&1 | tee saida.log
   2. **Corrige os arquivos afetados** diretamente no disco.
 - Após correção: usuário roda `npm run build` + push. Aguardar novo ciclo do Sonar.
 
-Somente após Quality Gate verde, o Claude Code entrega o bloco de merge:
+Após Quality Gate verde, o Claude Code executa o merge **autonomamente**:
 
 ```bash
 gh pr merge --squash --delete-branch
@@ -258,15 +261,18 @@ git pull origin main
 gh issue view [NUMERO]
 ```
 
+Em seguida, **sem aguardar confirmação**, move os cards para Done e gera o Diário de Aprendizado.
+
 ---
 
 ### Encerramento da sessão
 
-O Diário de Aprendizado **só é gerado após o usuário confirmar que executou a FASE 4** (merge concluído).
+Imediatamente após o merge, o Claude Code executa de forma autônoma:
 
-Antes de gerar o Diário, o Claude Code verifica se houve erros de build novos na sessão. Se sim, **adiciona as entradas correspondentes no `BUILD_ERRORS.md`** (se ainda não foram adicionadas durante a FASE 2.5). O `BUILD_ERRORS.md` é atualizado antes do Diário de Aprendizado.
+1. Verificar se houve erros de build novos na sessão. Se sim, **adicionar as entradas correspondentes no `BUILD_ERRORS.md`** antes do Diário.
+2. Gerar o Diário de Aprendizado — **sem solicitar confirmação**.
 
-O Claude Code **edita o arquivo `diario_de_aprendizado.md` diretamente no disco**, inserindo a nova entrada imediatamente após o cabeçalho do arquivo (logo abaixo da linha `---` que segue o parágrafo introdutório). O arquivo é ordenado em ordem decrescente — a entrada mais recente sempre no topo. Nunca adicionar ao final.
+O Claude Code **edita o arquivo `1.diario_de_aprendizado.md` diretamente no disco**, inserindo a nova entrada imediatamente após o cabeçalho do arquivo (logo abaixo da linha `---` que segue o parágrafo introdutório). O arquivo é ordenado em ordem decrescente — a entrada mais recente sempre no topo. Nunca adicionar ao final.
 
 - **`[N]`** é um número sequencial que reseta para `1` a cada novo dia. Primeira entrada do dia = `1`, segunda = `2`, e assim por diante. Nunca usar `[N]` como placeholder — sempre substituir pelo número real.
 - O Claude Code escolhe automaticamente o formato mais adequado (A, B ou C) com base no tipo de issue resolvida e indica o formato escolhido antes de editar o arquivo.
@@ -512,4 +518,4 @@ Para descobrir o SHA de qualquer Action: olhar o log do CI — o step "Set up jo
 ---
 
 *Kairos Labs — Cesar Antonio Brito Pizarro*
-*CLAUDE.md v1.6 — BUILD_ERRORS.md como base de conhecimento; build antes dos testes manuais na FASE 2.5*
+*CLAUDE.md v1.7 — CI monitorado e merge executados autonomamente; única pausa obrigatória é validação do usuário na FASE 2*

@@ -2,27 +2,43 @@ import { test, expect } from "@playwright/test";
 
 const E2E_EMAIL = "contact.kairoslabs@gmail.com";
 
-test.describe("Fluxo de Waitlist", () => {
-  test("abre modal, preenche e-mail e vê confirmação de sucesso", async ({ page }) => {
-    // O botão de waitlist fica na página individual do produto
-    await page.goto("/solucoes/devprint");
+async function openWaitlistModal(page: import("@playwright/test").Page) {
+  await page.goto("/solucoes/devprint");
+  await page.getByRole("button", { name: /garantir acesso antecipado/i }).click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+}
 
-    const ctaButton = page.getByRole("button", { name: /garantir acesso antecipado/i });
-    await ctaButton.click();
-
-    // Modal deve estar visível
-    await expect(page.getByRole("dialog")).toBeVisible();
-
-    // Preenche o e-mail — usa o id do input para evitar ambiguidade com o link de e-mail do footer
+test.describe("Fluxo de Waitlist — Server Action", () => {
+  test("sucesso ou duplicado: e-mail válido atinge o Supabase e retorna resultado", async ({ page }) => {
+    await openWaitlistModal(page);
     await page.locator("#waitlist-email").fill(E2E_EMAIL);
-
-    // Submete o formulário
     await page.getByRole("button", { name: /garantir acesso antecipado/i }).click();
 
-    // Verifica painel de resultado — aceita primeira inscrição ("Você está na lista!")
-    // ou e-mail já cadastrado ("Já Registrado"), ambos indicam fluxo completo com sucesso
+    // Aceita primeira inscrição ou duplicado — ambos validam o grant RLS de INSERT
     await expect(
       page.getByText(/você está na lista|já registrado/i)
     ).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("erro de validação: e-mail inválido exibe mensagem sem atingir o banco", async ({ page }) => {
+    await openWaitlistModal(page);
+    // Desabilita validação nativa do browser para o react-hook-form/zod poder exibir sua mensagem
+    await page.locator("form").evaluate((form: HTMLFormElement) => { form.noValidate = true; });
+    await page.locator("#waitlist-email").fill("nao-e-um-email");
+    await page.getByRole("button", { name: /garantir acesso antecipado/i }).click();
+
+    await expect(
+      page.getByText(/formato de e-mail inválido/i)
+    ).toBeVisible({ timeout: 5_000 });
+  });
+
+  test("erro de validação: campo e-mail vazio exibe mensagem de obrigatoriedade", async ({ page }) => {
+    await openWaitlistModal(page);
+    // Submete sem preencher o campo
+    await page.getByRole("button", { name: /garantir acesso antecipado/i }).click();
+
+    await expect(
+      page.getByText(/e-mail é obrigatório/i)
+    ).toBeVisible({ timeout: 5_000 });
   });
 });
