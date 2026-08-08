@@ -92,6 +92,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<chave anon/public>
 SUPABASE_SERVICE_ROLE_KEY=<chave service_role>
 ```
 
+As variáveis do SonarCloud (`SONAR_TOKEN` e `SONAR_PROJECT_KEY`) são **opcionais** para rodar a aplicação localmente. Elas só são necessárias se você quiser usar o script `./scripts/sonar-check.sh` para consultar o Quality Gate pelo terminal. Consulte a seção [SonarCloud via CLI](#sonarcloud-via-cli) para instruções de configuração.
+
 ---
 
 ## 4. Instalar e rodar
@@ -155,6 +157,71 @@ O servidor de desenvolvimento (`npm run dev`) precisa estar rodando em `localhos
 | `e2e/waitlist.spec.ts` | Abre modal de waitlist → preenche e-mail → submete → vê confirmação |
 
 No CI (GitHub Actions), os testes E2E rodam automaticamente no job `e2e`, após o job `ci`. Screenshots de falha são salvas como artefatos por 7 dias.
+
+---
+
+## SonarCloud via CLI
+
+Consulte o Quality Gate e as issues de uma PR diretamente pelo terminal, sem precisar abrir o browser.
+
+### Pré-requisitos: configurar SONAR_TOKEN e SONAR_PROJECT_KEY
+
+Duas variáveis são necessárias no seu `.env.local`:
+
+**`SONAR_TOKEN`** — seu token de acesso pessoal ao SonarCloud:
+
+1. Acesse [sonarcloud.io](https://sonarcloud.io) e faça login (pode usar sua conta GitHub)
+2. Clique no avatar (canto superior direito) → **My Account** → **Security**
+3. Em "Generate Tokens", dê um nome (ex: `kairos-labs-local`) e clique em **Generate**
+4. Copie o token gerado — ele é exibido apenas uma vez
+5. Cole no `.env.local`: `SONAR_TOKEN=<cole aqui>`
+
+**`SONAR_PROJECT_KEY`** — identificador único deste projeto no SonarCloud:
+
+- O valor já está definido no `.env.example`: `CabPiz_kairos-labs`
+- Não altere — ele mapeia exatamente este repositório na plataforma
+- Se precisar confirmar: acesse [sonarcloud.io](https://sonarcloud.io) → abra o projeto `kairos-labs` → **Information** (barra lateral esquerda)
+
+### Rodando o script
+
+```bash
+# Carregar variáveis do .env.local
+export $(grep -v '^#' .env.local | xargs)
+
+# Verificar status do Quality Gate de uma PR
+./scripts/sonar-check.sh gate <NUMERO_DA_PR>
+
+# Listar issues abertas com arquivo e linha
+./scripts/sonar-check.sh issues <NUMERO_DA_PR>
+
+# Redirecionar saída para saida.log (padrão do projeto)
+./scripts/sonar-check.sh issues <NUMERO_DA_PR> 2>&1 | tee saida.log
+```
+
+**Exemplo de saída (`gate`):**
+
+```
+=== Quality Gate — PR #75 ===
+STATUS: FAILED (bloqueado)
+
+Condições:
+  [ERROR] new_coverage — valor: 72.5 (limite: 80.0)
+  [OK] new_duplicated_lines_density — valor: 0.0 (limite: 3.0)
+```
+
+**Exemplo de saída (`issues`):**
+
+```
+=== Issues abertas — PR #75 ===
+[MAJOR] Props should be read-only.
+  Arquivo : src/components/ui/Modal.tsx
+  Linha   : 12
+  Regra   : typescript:S6598
+
+Total: 1 issue(s)
+```
+
+No CI, o `SONAR_TOKEN` é injetado automaticamente via secret do repositório — nenhuma configuração adicional é necessária para o pipeline.
 
 ---
 
