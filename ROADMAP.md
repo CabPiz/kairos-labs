@@ -12,7 +12,7 @@ Repositório: `CabPiz/kairos-labs` | Project Board: nº 3
 | **M1 — Foundation & Infra** | Setup do repositório, stack, CI/CD e banco de dados | ✅ Concluído |
 | **M2 — Public Landing Page** | Hero, vitrine de produtos, modal de waitlist, SEO | ✅ Concluído |
 | **M5 — Quality Engineering** | Infraestrutura de testes, CI automatizado e documentação | ✅ Concluído |
-| **M3 — Founder Dashboard** | Rota /admin protegida, KPIs, gráficos e exportação CSV | ⚪ Planejado |
+| **M3 — Founder Dashboard** | Rota /admin protegida, KPIs, gráficos e exportação CSV | ✅ Concluído |
 | **M4 — Polish & Launch** | Acessibilidade, domínio customizado, README e go-live | ⚪ Planejado |
 
 > **Regra de execução:** nenhuma issue downstream é iniciada sem o merge da upstream que a desbloqueia.
@@ -22,7 +22,7 @@ Repositório: `CabPiz/kairos-labs` | Project Board: nº 3
 ## Sequência de Execução
 
 ```
-[M1 ✅] → [M2 ✅ #11→#12] → [M5 ✅ #33→#34→#35→#36→#37→#38→#39] → [M3 ⚪ #13→#14→#15→#16] → [M4 ⚪ #17→#18→#19→#20]
+[M1 ✅] → [M2 ✅ #11→#12] → [M5 ✅ #33→#34→#35→#36→#37→#38→#39] → [M3 ✅ #13→#14→#15→#16] → [M4 ⚪ #17→#18→#19→#20]
 ```
 
 ```mermaid
@@ -48,9 +48,9 @@ flowchart TD
         i33("#33 .env.example"):::done --> i34("#34 ESLint + Husky"):::done --> i35("#35 Jest + RTL"):::done --> i36("#36 GitHub Actions CI"):::done --> i37("#37 CONTRIBUTING.md"):::done --> i38("#38 Testes unitários"):::done --> i39("#39 Playwright E2E"):::done
     end
 
-    subgraph M3["⚪ M3 — Founder Dashboard"]
+    subgraph M3["✅ M3 — Founder Dashboard"]
         direction LR
-        i13("#13 Auth /admin"):::planned --> i14("#14 KPI Cards"):::planned --> i15("#15 Gráfico de Demanda"):::planned --> i16("#16 Tabela de Leads CSV"):::planned
+        i13("#13 Auth /admin"):::done --> i14("#14 KPI Cards"):::done --> i15("#15 Gráfico de Demanda"):::done --> i16("#16 Tabela de Leads CSV"):::done
     end
 
     subgraph M4["⚪ M4 — Polish & Launch"]
@@ -106,16 +106,16 @@ Executado após a conclusão do M2. Estabelece a infraestrutura de qualidade que
 
 ---
 
-## M3 — Founder Dashboard ⚪ Planejado
+## M3 — Founder Dashboard ✅ Concluído
 
 Desbloqueado após conclusão do M5. A autenticação (#13) é pré-requisito para todas as demais issues deste milestone.
 
 | # | Issue | Dependência | Status |
 |---|---|---|---|
-| #13 | Autenticação com Supabase Auth na rota /admin | — | ⚪ |
-| #14 | KPI Cards (totais e crescimento) | #13 | ⚪ |
-| #15 | Gráfico de Demanda por Produto | #13 | ⚪ |
-| #16 | Tabela de Leads com exportação CSV | #13 | ⚪ |
+| #13 | Autenticação com Supabase Auth na rota /admin | — | ✅ |
+| #14 | KPI Cards (totais e crescimento) | #13 | ✅ |
+| #15 | Gráfico de Demanda por Produto | #13 | ✅ |
+| #16 | Tabela de Leads com exportação CSV | #13 | ✅ |
 
 ---
 
@@ -141,4 +141,4 @@ Etapa final antes do go-live. Executada após o M3 completo.
 
 ---
 
-*ROADMAP.md v2.2 — M5 concluído (issues #33–#39 mergeadas) | Kairos Labs*
+*ROADMAP.md v2.3 — M3 concluído (issues #13–#16 mergeadas) | Kairos Labs*
