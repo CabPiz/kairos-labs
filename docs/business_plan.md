@@ -1,6 +1,6 @@
 # Plano de Negócios — Kairos Labs
 
-**Versão:** 1.0.0
+**Versão:** 1.1.0
 **Data:** 2026-08-08
 **Autor:** Cesar Antonio Brito Pizarro
 **Marca registrada:** INPI Processo nº 944610498 · Classe 42
@@ -11,207 +11,257 @@
 
 O MVP do Kairos Labs está **ao vivo** com:
 
-- Landing page pública com vitrine de 4 produtos e captura segmentada de leads (waitlist)
+- Landing page pública com vitrine de produtos e captura segmentada de leads (waitlist)
 - Dashboard privado do fundador com KPIs em tempo real: total de inscritos, ranking de demanda por produto, crescimento semanal e exportação CSV
 - Infraestrutura de qualidade: CI/CD, cobertura de testes, SonarCloud Quality Gate, testes E2E
 - Marca registrada no INPI (Classe 42 — serviços de tecnologia)
 - Custo fixo de infraestrutura: **R$ 0** (Vercel Hobby + Supabase Free)
 
-O site já cumpre sua função estratégica número um: **medir demanda real antes de construir qualquer produto.**
+O site já cumpre sua função estratégica número um: **medir demanda real antes de construir qualquer produto.** Os dados da waitlist segmentada por produto são o ativo mais valioso do MVP.
 
 ---
 
 ## 2. O Ecossistema de Produtos
 
-| Produto | Descrição | Audiência-alvo |
-|---|---|---|
-| **DevPrint** | Portfólio vivo e verificável para desenvolvedores | Devs júnior/pleno, recrutadores tech |
-| **AI & SaaS** | Automação e plataformas AIaaS | Startups, times pequenos, solopreneurs |
-| **Audio Tech** | Software de processamento e medição acústica | Engenheiros de som, produtores, acústicos |
-| **Blockchain** | Smart contracts e soluções descentralizadas | Empresas com necessidade de contratos auditáveis |
-
-A waitlist segmentada já está coletando dados que dizem **qual produto construir primeiro**. Esse dado é o ativo mais valioso do MVP.
+| Produto | Descrição | Status | Card no site |
+|---|---|---|---|
+| **DevPrint** | Portfólio vivo e verificável: transforma commits, PRs e aprendizados em currículo auto-atualizável com evidências rastreáveis | PRD v0.2 — em desenvolvimento | ✅ |
+| **Talvrix** | Matching inteligente entre currículo e vagas em múltiplos sites, ordenado por salário + score de compatibilidade via IA | PRD v1.0 — em breve no site | 🔜 |
+| **Elucya Talk** | Analisa conversas (áudio/texto), detecta padrões de comunicação tóxica e gera feedback psicológico individualizado | PRD v1.0 — protótipos prontos | ✅ (AI & SaaS) |
+| **Ascend** | Preparação adaptativa para concursos públicos de TI: cruza currículo com edital e gera plano personalizado via IA | Em desenvolvimento | ✅ (AI & SaaS) |
+| **Ágora Global** | Plataforma cívica open-source de democracia direta, auditoria orçamentária e soberania de dados públicos | Concepção estratégica | ✅ (Blockchain) |
 
 ---
 
-## 3. Modelo de Receita por Produto
+## 3. Priorização de Produtos para Receita
 
-### 3.1 DevPrint — Produto Flagship (construir primeiro)
+A ordem abaixo não é arbitrária — é baseada em velocidade de validação, tamanho de mercado acessível e esforço de construção.
 
-**Por que DevPrint primeiro:**
-- É o produto que Cesar melhor entende — ele é o usuário
-- Audiência imensa: há ~27 milhões de desenvolvedores no GitHub; recrutadores buscam diferencial além do LinkedIn
-- Concorrentes diretos (Bento.me, read.cv, Polywork) não têm verificação técnica integrada (commits, PRs, cobertura de testes)
-- Cesar já construiu exatamente isso para si mesmo — o repositório `kairos-labs` **é** o produto
+### Prioridade 1 — Talvrix
 
-**Modelo de receita: Freemium SaaS**
+**Por que primeiro:**
+- Resolve uma dor ativa e universal: buscar emprego é manual, fragmentado e frustrante
+- Modelo de preços já definido e testável imediatamente
+- A dor é recorrente (o candidato busca vagas toda semana) — isso gera retenção natural
+- O mercado brasileiro tem ~14 milhões de desempregados ativos + milhões em recolocação passiva
+- É o único produto do ecossistema onde o usuário paga **pelo resultado imediato**, não pelo hábito
+
+**Risco principal:** sites de vagas bloqueando scraping. Mitigação: rotação de user-agent + rate limiting + priorizar sites que já têm APIs (LinkedIn, Indeed via parceria futura).
+
+### Prioridade 2 — DevPrint
+
+**Por que segundo:**
+- Cesar é o usuário — o produto pode ser validado no próprio desenvolvimento do Kairos Labs
+- Diferencial técnico claro sobre concorrentes (Bento.me, read.cv): verificação real por commits e PRs, não autodeclaração
+- O Diário de Aprendizado é um produto dentro do produto — nenhum concorrente tem isso
+- GitHub tem 27M+ devs; LinkedIn tem 1B+ usuários; a interseção que quer portfólio verificável é enorme
+- domínio `devprint.io` disponível a R$0,01 no primeiro ano
+
+### Prioridade 3 — Elucya Talk
+
+**Por que terceiro:**
+- Mercado B2B premium: psicólogos, mediadores de conflito e gestores de RH pagam mais e têm menor churn
+- O produto não armazena dados (privacy-first) — isso elimina a barreira de confiança para usuários com conversas sensíveis
+- Protótipos de UI prontos — o esforço está nas integrações backend (Whisper/AssemblyAI + LLM)
+- Ciclo de venda é mais longo (B2B2C), mas o ticket é maior
+
+### Prioridade 4 — Ascend
+
+**Por que quarto:**
+- O mercado de concursos públicos no Brasil é imenso: ~8 milhões de candidatos por ano
+- Porém o ciclo de preparação é longo (meses) — o produto precisa de mais conteúdo para ser valioso
+- A integração com editais reais requer curadoria constante
+
+### Ágora Global — Projeto de Impacto (não monetização direta)
+
+A Ágora Global é open-source por design e não deve ser tratada como produto comercial. Seu valor para o Kairos Labs é:
+- Demonstração de ambição e capacidade técnica para parceiros institucionais
+- Potencial de financiamento público ou via editais de inovação cívica (Fapesp, MCTI, fundações internacionais)
+- Credibilidade institucional para os demais produtos
+
+---
+
+## 4. Modelo de Receita por Produto
+
+### 4.1 Talvrix — Freemium SaaS
 
 | Plano | Preço | O que inclui |
 |---|---|---|
-| **Free** | R$ 0 | Perfil público, 1 projeto em destaque, URL `devprint.app/username` |
-| **Pro** | R$ 29/mês ou R$ 249/ano | Domínio customizado, analytics de visitas, projetos ilimitados, badge verificado de commits |
-| **Team** | R$ 79/mês | Até 5 membros, página de time, showcase coletivo |
+| **Free** | R$ 0 | 1 busca/semana · 1 site de vagas · 5 resultados por salário (sem matching IA) |
+| **Basic** | R$ 29/mês | Buscas ilimitadas · 1 site · 20 resultados · exportação CSV |
+| **Pro** | R$ 79/mês | 5 sites simultâneos · resultados ilimitados · alertas por e-mail · score de compatibilidade detalhado |
+| **Enterprise** | R$ 299/mês | Sites ilimitados · IA recomenda sites · API para headhunters · suporte prioritário |
 
 **Projeção conservadora (12 meses após lançamento):**
 
-| Mês | Usuários Free | Usuários Pro (conv. 3%) | MRR |
-|---|---|---|---|
-| 3 | 200 | 6 | R$ 174 |
-| 6 | 600 | 18 | R$ 522 |
-| 9 | 1.200 | 36 | R$ 1.044 |
-| 12 | 2.000 | 60 | R$ 1.740 |
-
-> Uma taxa de conversão de 3% free→paid é conservadora para SaaS de produtividade B2C. Produtos como Notion, Linear e Vercel operam entre 3-8%.
+| Mês | Usuários Free | Basic (conv. 4%) | Pro (conv. 1%) | MRR |
+|---|---|---|---|---|
+| 3 | 300 | 12 | 3 | R$ 585 |
+| 6 | 800 | 32 | 8 | R$ 1.560 |
+| 9 | 1.500 | 60 | 15 | R$ 2.925 |
+| 12 | 2.500 | 100 | 25 | R$ 4.875 |
 
 ---
 
-### 3.2 AI & SaaS — Receita por Projeto (fase 2)
+### 4.2 DevPrint — Freemium SaaS
 
-Antes de construir um produto próprio, Cesar pode monetizar sua expertise em IA vendendo **serviços de implementação** para clientes que precisam de automação:
-
-- Agentes LLM customizados (Claude API)
-- Integrações n8n / Make com modelos de linguagem
-- Dashboards de analytics com AI
-
-**Modelo:** Projetos fixos R$ 3.000–15.000 + manutenção mensal R$ 500–2.000.
-
-Isso não requer construir nada novo — apenas usar o Kairos Labs como porta de entrada para capturar leads de empresas interessadas.
+| Plano | Preço | O que inclui |
+|---|---|---|
+| **Free** | R$ 0 | Até 3 repositórios · perfil público `devprint.io/username` · currículo básico |
+| **Pro** | R$ 39/mês ou R$ 349/ano | Repositórios ilimitados · exportação PDF avançada · analytics de visitantes · domínio personalizado · badge verificado |
+| **Teams** | R$ 99/mês | Empresas avaliam candidatos com perfil DevPrint verificado |
 
 ---
 
-### 3.3 Audio Tech e Blockchain — Validar antes de construir
+### 4.3 Elucya Talk — Freemium + B2B
 
-Esses dois produtos têm nichos menores e ciclos de venda mais longos. A estratégia correta é:
+| Plano | Preço | O que inclui |
+|---|---|---|
+| **Free** | R$ 0 | 1 análise/mês · áudios até 5 min · relatório básico |
+| **Pro** | R$ 49/mês | Análises ilimitadas · áudios até 60 min · exportação PDF · histórico de 90 dias |
+| **Terapeuta/RH** | R$ 149/mês | Multi-paciente · comparativo evolutivo de sessões · relatório clínico formatado |
 
-1. Manter as páginas de waitlist ativas coletando leads
-2. Quando a waitlist de algum deles atingir 100+ inscritos, iniciar uma entrevista de usuário com os 10 primeiros
-3. Só então planejar construção
-
-**Não construir o que não tem demanda comprovada** é a principal vantagem de ter construído o MVP desta forma.
-
----
-
-## 4. Receita Imediata — O Que Fazer Esta Semana
-
-O maior erro de fundadores solo é esperar o produto estar pronto para cobrar. A estratégia correta é cobrar antes de construir.
-
-### 4.1 Consulting via portfólio (começa hoje, zero esforço)
-
-O repositório `kairos-labs` demonstra:
-- Arquitetura Next.js 15 + Supabase de nível profissional
-- Pipeline CI/CD com Quality Gate (SonarCloud)
-- Testes unitários, integração e E2E
-- Conventional Commits, código limpo, documentação técnica
-
-**Ação:** Adicionar na landing page uma seção "Contrate o Fundador" ou um link discreto no footer para um formulário de contato de projetos freelance. Devs com portfólio verificável cobram 30-50% mais.
-
-**Potencial:** 1-2 projetos/mês · R$ 3.000–8.000 por projeto = R$ 3.000–16.000/mês de receita imediata enquanto os produtos SaaS amadurecem.
+O plano B2B (Terapeuta/RH) tem o maior potencial: psicólogos cobram R$150–400/sessão e pagariam R$149/mês sem hesitar se o produto ajudar a conduzir melhores sessões.
 
 ---
 
-### 4.2 Founding Member Pre-Sale (próximos 30 dias)
+### 4.4 Ascend — Assinatura
 
-Antes de construir qualquer linha de código do DevPrint, enviar um email para toda a waitlist com a seguinte oferta:
+| Plano | Preço | O que inclui |
+|---|---|---|
+| **Free** | R$ 0 | Análise básica do perfil vs. edital · roadmap genérico |
+| **Pro** | R$ 59/mês | Plano adaptativo personalizado · simulados · chat com professor IA · alertas de novos editais |
 
-> *"DevPrint está sendo construído. Os primeiros 50 inscritos que pagarem R$ 97 agora ganham acesso vitalício ao plano Pro. Essa oferta não se repete."*
+---
 
-**Por que isso funciona:**
+## 5. Receita Imediata — O Que Fazer Esta Semana
+
+### 5.1 Consulting via portfólio (começa hoje)
+
+O repositório `kairos-labs` demonstra arquitetura Next.js 15 + Supabase de nível profissional, pipeline CI/CD, Quality Gate SonarCloud, testes E2E e documentação técnica. Isso vale dinheiro imediatamente.
+
+**Ação:** Adicionar na landing page uma seção ou link discreto para contato de projetos freelance. Devs com portfólio verificável cobram 30–50% mais.
+
+**Potencial:** 1–2 projetos/mês · R$3.000–8.000 por projeto = **R$3.000–16.000/mês** enquanto os produtos SaaS amadurecem.
+
+---
+
+### 5.2 Founding Member Pre-Sale — Talvrix (próximos 30 dias)
+
+Antes de escrever uma linha do Talvrix, enviar para a waitlist:
+
+> *"Talvrix está sendo construído: IA que faz o matching perfeito entre o seu currículo e vagas em múltiplos sites, ordenado por salário. Os primeiros 50 que pagarem R$97 agora têm acesso vitalício ao plano Basic. Sem renovação mensal, para sempre."*
+
+**Por que funciona:**
 - Valida willingness to pay antes de investir meses de desenvolvimento
-- Gera caixa imediato para cobrir domínios, custos opcionais e tempo de desenvolvimento
-- Cria um grupo de early adopters comprometidos que vão dar feedback e fazer marketing boca a boca
-- 50 founding members × R$ 97 = **R$ 4.850** antes de escrever uma linha de código do DevPrint
-
-**Como executar:** Formulário de pagamento via Hotmart, Kiwify ou Stripe (todos aceitam sem CNPJ inicial como PF).
+- 50 founding members × R$97 = **R$4.850** antes de escrever uma linha de código
+- Cria beta testers comprometidos que vão relatar bugs e fazer marketing orgânico
+- Plataforma de pagamento: Hotmart, Kiwify ou Stripe (sem CNPJ inicial)
 
 ---
 
-## 5. Go-to-Market Strategy
+### 5.3 Adicionar Talvrix ao Site (próximas 2 semanas)
+
+O Talvrix ainda não tem card na landing page. Adicionar o card com o mesmo padrão dos outros produtos cria um quinto ponto de captura de leads — e a waitlist começa a revelar se há demanda antes de qualquer linha de código.
+
+---
+
+## 6. Go-to-Market Strategy
 
 ### Fase 1 — Awareness (Agora, com o que já existe)
 
-O Kairos Labs em si **é** a estratégia de marketing. O repositório público demonstra competência. As ações:
+1. **LinkedIn:** Postar sobre decisões técnicas do Kairos Labs. "Como usei o dashboard de waitlist para priorizar qual produto construir primeiro" — esse tipo de post atrai devs, recrutadores e potenciais clientes de consultoria.
 
-1. **LinkedIn:** Postar sobre cada decisão técnica tomada durante a construção do projeto. "Como protegi meu dashboard com RLS no Supabase", "Por que escolhi App Router sobre Pages Router". Cada post é conteúdo técnico que atrai devs e recrutadores.
+2. **Twitter/X:** Thread "Construindo 5 produtos SaaS do zero como solo founder, custo R$0/mês". Viraliza na comunidade dev brasileira.
 
-2. **GitHub:** O repositório bem documentado com README, CONTRIBUTING e arquitetura documentada aparece em buscas. Stars e forks são social proof.
+3. **GitHub:** Repositório bem documentado gera stars e aparece em buscas. O README é marketing.
 
-3. **Twitter/X:** Thread sobre "Construindo um SaaS do zero, sem backend próprio, custo R$0/mês". Esse tipo de conteúdo viraliza na comunidade dev brasileira.
-
-### Fase 2 — Lead Nurturing (Waitlist → Clientes)
-
-Quando a waitlist atingir 200 inscritos totais:
+### Fase 2 — Lead Nurturing (quando waitlist atingir 200 inscritos)
 
 1. Segmentar por produto (o dashboard já faz isso)
 2. Enviar email personalizado por produto com oferta founding member
-3. Criar um canal no Discord/WhatsApp para os founding members — comunidade antes de produto
+3. Criar canal Discord/WhatsApp para early adopters de cada produto
 
-### Fase 3 — Lançamento DevPrint (mês 3-6)
+### Fase 3 — Lançamento Talvrix (mês 2–4)
 
-1. Product Hunt Launch (produto gratuito para maximizar upvotes e visibilidade)
-2. Post no Hacker News "Show HN: DevPrint — verified portfolio for developers"
-3. Lista de email dos founding members como primeiros promotores
+1. Product Hunt Launch (free para maximizar upvotes)
+2. Post Hacker News "Show HN: Talvrix — AI job matcher for the Brazilian market"
+3. Grupos de WhatsApp e Telegram de busca de emprego / recolocação de devs
+
+### Fase 4 — Lançamento DevPrint (mês 4–8)
+
+1. Product Hunt + Hacker News
+2. Comunidades de devs: Rocketseat, Alura Alumni, Discord de Next.js Brasil
 
 ---
 
-## 6. Estrutura de Custos
+## 7. Estrutura de Custos
 
 | Item | Custo atual | Custo pós-escala |
 |---|---|---|
-| Hosting (Vercel) | R$ 0 | R$ 0–110/mês (Pro quando necessário) |
-| Banco de dados (Supabase) | R$ 0 | R$ 110/mês (Pro quando >500MB) |
-| Domínio | ~R$ 60/ano | ~R$ 60/ano |
-| Claude API (AI & SaaS) | Pay-per-use | ~R$ 200–500/mês |
-| Total | **~R$ 5/mês** | **~R$ 300–700/mês** |
+| Hosting Kairos Labs (Vercel) | R$ 0 | R$ 0–110/mês |
+| Banco de dados (Supabase) | R$ 0 | R$ 110/mês (quando >500MB) |
+| Domínio kairos-labs | ~R$ 60/ano | ~R$ 60/ano |
+| Claude API / Gemini API (produtos AI) | Pay-per-use | R$ 200–600/mês |
+| Whisper/AssemblyAI (Elucya Talk) | Pay-per-uso | R$ 100–300/mês |
+| Domínio devprint.io | R$ 0,01 (1º ano) | ~R$ 80/ano |
+| **Total atual** | **~R$ 5/mês** | **~R$ 600–1.200/mês** |
 
-A arquitetura free-tier-first foi uma decisão estratégica correta: **zero custo fixo até atingir receita**.
+A arquitetura free-tier-first garante **zero custo fixo até atingir receita.**
 
 ---
 
-## 7. Marcos de Validação
+## 8. Marcos de Validação
 
 | Marco | Indicador | Prazo |
 |---|---|---|
 | Portfólio gerando leads | 1 contato de projeto freelance via site | Semana 1–2 |
-| Waitlist com tração | 100 inscritos totais | Mês 1 |
-| Willingness to pay validada | 10 founding members pagos | Mês 1–2 |
-| Produto com receita recorrente | R$ 500 MRR | Mês 6 |
-| Produto sustentável | R$ 2.000 MRR | Mês 12 |
-| Independência financeira parcial | R$ 8.000 MRR | Mês 24 |
+| Talvrix no site | Card adicionado + waitlist ativa | Semana 2 |
+| Waitlist com tração | 100 inscritos totais (todos os produtos) | Mês 1 |
+| Willingness to pay validada | 10 founding members pagos (Talvrix) | Mês 1–2 |
+| Talvrix MVP ao vivo | Usuário faz upload do currículo e recebe vagas ranqueadas | Mês 3–4 |
+| Primeiro MRR | R$ 500/mês | Mês 4–5 |
+| Produto sustentável | R$ 2.000 MRR | Mês 10–12 |
+| Independência financeira parcial | R$ 8.000 MRR | Mês 20–24 |
 
-> R$ 8.000 MRR ≈ 275 usuários Pro no DevPrint a R$ 29/mês. Alcançável com uma audiência de 10.000 usuários free (conv. 2,75%).
+> R$ 8.000 MRR é realista com: 100 usuários Basic Talvrix (R$2.900) + 60 usuários Pro DevPrint (R$2.340) + 20 licenças Elucya Terapeuta (R$2.980) = R$8.220 MRR com ~180 clientes pagantes.
 
 ---
 
-## 8. Vantagens Competitivas
+## 9. Vantagens Competitivas
 
-1. **Marca registrada (INPI):** Proteção legal da marca Kairos Labs e DevPrint impede cópia direta no Brasil.
+1. **Marca registrada (INPI):** Proteção legal da marca Kairos Labs em Classe 42 impede cópia direta no Brasil.
 2. **Custo zero de infraestrutura:** Permite operar indefinidamente sem receita enquanto valida o mercado.
-3. **Fundador é o usuário:** Cesar constrói ferramentas que ele mesmo precisaria — isso elimina o risco de construir algo que ninguém quer.
-4. **Qualidade demonstrável:** O próprio repositório é um argumento de venda para clientes de consultoria.
+3. **Fundador é o usuário em múltiplos produtos:** Cesar usa DevPrint para documentar seu próprio crescimento, usa Talvrix para monitorar o mercado de vagas, usa Ascend para preparação. Isso elimina o risco de construir o que ninguém quer.
+4. **Qualidade demonstrável:** O repositório Kairos Labs é um argumento de venda para clientes de consultoria.
 5. **Data-driven prioritization:** O dashboard de demanda garante que nenhum produto é construído sem evidência de interesse real.
+6. **Ecossistema, não produto isolado:** Cada produto lançado amplifica a credibilidade dos demais sob a marca Kairos Labs.
 
 ---
 
-## 9. Riscos e Mitigações
+## 10. Riscos e Mitigações
 
 | Risco | Probabilidade | Mitigação |
 |---|---|---|
+| Sites de vagas bloqueiam scraping (Talvrix) | Alta | Rotação de user-agent · rate limiting respeitoso · priorizar APIs públicas |
+| Custo de IA por análise (Elucya Talk) | Média | IA restrita a planos pagos — receita da assinatura cobre o custo |
 | Waitlist não converte em pagantes | Média | Pre-sale founding member valida antes de construir |
-| Concorrente lança produto similar | Média | Velocidade de execução solo + marca registrada |
+| Concorrente lança produto similar | Média | Velocidade de execução + marca registrada + foco no mercado BR |
 | Solo founder burnout | Alta | Focar em 1 produto por vez; consulting gera renda enquanto SaaS matura |
-| Supabase Free atingir limite | Baixa | Migração para Pro (R$ 110/mês) só quando houver receita para cobrir |
+| APIs de terceiros mudam preços (Whisper, AssemblyAI) | Baixa | Abstrair provider — trocar de API sem alterar produto |
 
 ---
 
-## 10. Próximos 90 Dias — Plano de Ação
+## 11. Próximos 90 Dias — Plano de Ação
 
 | Semana | Ação |
 |---|---|
-| 1–2 | Adicionar CTA de contato freelance na landing page. Postar primeiro conteúdo técnico no LinkedIn. |
-| 3–4 | Enviar email para waitlist com oferta founding member DevPrint. Abrir canal de early adopters. |
-| 5–8 | Iniciar construção do DevPrint MVP (perfil público + 1 projeto). Usar founding members como beta testers. |
-| 9–12 | Lançar DevPrint no Product Hunt. Ativar cobrança do plano Pro. |
+| 1–2 | Adicionar Talvrix ao site (card + waitlist). Adicionar CTA de contato freelance na landing. Postar primeiro conteúdo técnico no LinkedIn. |
+| 3–4 | Enviar email para waitlist com oferta founding member Talvrix. Abrir canal de early adopters. |
+| 5–10 | Construir Talvrix MVP: upload de currículo → 1 site de vagas → 10 vagas ranqueadas por salário + score. |
+| 11–12 | Lançar Talvrix no Product Hunt. Ativar cobrança do plano Basic. |
+| 13–16 | Iniciar DevPrint MVP usando o próprio Kairos Labs como primeiro projeto conectado. |
 
 ---
 
-*Kairos Labs · Cesar Antonio Brito Pizarro · business_plan.md v1.0*
+*Kairos Labs · Cesar Antonio Brito Pizarro · business_plan.md v1.1*
