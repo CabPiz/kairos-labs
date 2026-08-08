@@ -1,28 +1,21 @@
-import type { MetadataRoute } from 'next'
-
-const slugs = ['devprint', 'ascend', 'elucya-talk', 'agora-global', 'kairos-labs']
+import type { MetadataRoute } from "next";
+import { getProducts } from "@/lib/products";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const solucoes: MetadataRoute.Sitemap = slugs.map((slug) => ({
-    url: `https://kairoslabs.com.br/solucoes/${slug}`,
+  const produtos: MetadataRoute.Sitemap = getProducts().map((p) => ({
+    url: `https://kairoslabs.com.br/${p.slug}`,
     lastModified: new Date(),
-    changeFrequency: 'monthly',
-    priority: 0.7,
-  }))
+    changeFrequency: "monthly",
+    priority: 0.8,
+  }));
 
   return [
     {
-      url: 'https://kairoslabs.com.br',
+      url: "https://kairoslabs.com.br",
       lastModified: new Date(),
-      changeFrequency: 'monthly',
+      changeFrequency: "monthly",
       priority: 1.0,
     },
-    {
-      url: 'https://kairoslabs.com.br/solucoes',
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    ...solucoes,
-  ]
+    ...produtos,
+  ];
 }
