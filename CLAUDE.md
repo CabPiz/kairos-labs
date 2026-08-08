@@ -7,44 +7,36 @@ Repositório: `CabPiz/kairos-labs` | Owner: `CabPiz` | Project Board: nº 3
 
 ## ⚙️ PERMISSÕES DO CLAUDE CODE NESTA SESSÃO
 
-### ✅ PERMITIDO
+### ✅ PERMITIDO — execução autônoma pelo Claude Code
 - Ler qualquer arquivo do repositório
 - Criar e editar arquivos de código-fonte diretamente no disco
 - Criar e editar arquivos de documentação (`.md`) diretamente no disco
 - Rodar `npm run build` para validar o build
+- Rodar `npm test` para rodar a suite de testes
 - Rodar `npm run lint` para verificar conformidade ESLint
 - Ler issues do GitHub com `gh issue view [NUMERO]` e `gh issue list`
 - Ler o arquivo `saida.log` na raiz do projeto para analisar resultados de comandos
+- Rodar `gh pr checks [N] --watch` para acompanhar CI
+- Executar o bloco de merge da FASE 4: `gh pr merge --squash --delete-branch`, `git checkout main`, `git pull origin main`, `gh issue view [N]`
+- Executar commits atômicos da FASE 3: `git add`, `git commit`
+- Executar push da branch: `git push origin [branch]`
+- Abrir PR: `gh pr create`
+- Adicionar issues ao board: `gh project item-add 3 --owner CabPiz --url [url]`
+- Consultar labels reais com `gh label list` antes de criar issues
+- Consultar milestones reais com `gh api repos/CabPiz/kairos-labs/milestones --jq '.[].title'` antes de criar issues
+- Executar `gh issue edit` (labels, assignees)
+- Executar `gh project item-edit` (movimento de card no Board)
+- Executar queries `gh api graphql`
 
 ### 📋 PADRÃO DE SAÍDA DE COMANDOS — tee para saida.log
 
-Todo comando que o Claude Code instruir o usuário a executar e cujo resultado precise ser analisado (build, lint, testes, instalação de dependências, etc.) deve ser executado com `tee` para exibir a saída no terminal **e** gravar em `saida.log` simultaneamente:
+Todo comando executado pelo Claude Code cujo resultado precise ser analisado deve usar `tee saida.log`:
 
 ```bash
-# PowerShell
 comando 2>&1 | tee saida.log
-
-# Exemplos
-npm run build 2>&1 | tee saida.log
-npm run lint 2>&1 | tee saida.log
-npm test 2>&1 | tee saida.log
-npm run test:e2e 2>&1 | tee saida.log
-npm install 2>&1 | tee saida.log
 ```
 
-Após o usuário executar o comando, o Claude Code lê o `saida.log` diretamente com a ferramenta Read para analisar o resultado completo — sem depender de prints ou cópias manuais. O arquivo `saida.log` é sobrescrito a cada execução (sem acumulação).
-
-### 🚫 PROIBIDO — EXECUÇÃO AUTOMÁTICA
-Os comandos abaixo **NUNCA** devem ser executados automaticamente.
-O Claude Code deve **gerar o bloco de comandos formatado** para o usuário executar manualmente:
-
-- Qualquer comando `git` (`checkout`, `add`, `commit`, `push`, `pull`, `merge`)
-- Qualquer comando `gh issue edit` (labels, assignees)
-- Qualquer comando `gh project item-edit` (movimento de card no Board)
-- Qualquer comando `gh pr create`, `gh pr merge`, `gh pr diff`, `gh pr status`
-- Qualquer query `gh api graphql`
-
-**Regra:** o versionamento é 100% manual pelo usuário. O Claude Code entrega o bloco de comandos pronto, sequenciado e comentado — nunca executa.
+O arquivo `saida.log` é sobrescrito a cada execução (sem acumulação).
 
 ---
 
@@ -87,21 +79,19 @@ Em seguida, **obrigatoriamente**, lê o arquivo `BUILD_ERRORS.md` na raiz do pro
 
 ### FASE 1 — Início do Versionamento (SOMENTE após aprovação explícita da Proposta Técnica)
 
-Após aprovação explícita, o Claude Code entrega o bloco **completo** abaixo — incluindo captura de IDs do Board e movimentação do card. Nunca omitir nenhuma etapa:
+Após aprovação explícita, o Claude Code executa diretamente, nesta ordem:
 
 ```bash
-# 1. Atualizar a main
+# 1. Atualizar a main e criar branch
 git checkout main
 git pull origin main
-
-# 2. Criar a branch da issue
 git checkout -b tipo/[NUMERO]-descricao-curta
 
-# 3. Atribuir e mover para In Progress
+# 2. Atribuir e mover para In Progress
 gh issue edit [NUMERO] --add-assignee "@me"
 gh issue edit [NUMERO] --add-label "status: in progress"
 
-# 4. Capturar IDs do Board
+# 3. Capturar IDs do Board e mover card para "In Progress"
 PROJECT_NUMBER=3
 OWNER="CabPiz"
 ISSUE_NUM=[NUMERO]
@@ -128,11 +118,8 @@ STATUS_FIELD_ID=$(echo $PROJECT_META | jq -r '.data.user.projectV2.field.id')
 IN_PROGRESS_OPTION_ID=$(echo $PROJECT_META | jq -r '.data.user.projectV2.field.options[] | select(.name=="In Progress") | .id')
 IN_REVIEW_OPTION_ID=$(echo $PROJECT_META | jq -r '.data.user.projectV2.field.options[] | select(.name=="In Review") | .id')
 
-# 5. Mover card para "In Progress"
 gh project item-edit --id $ITEM_ID --project-id $PROJECT_ID --field-id $STATUS_FIELD_ID --single-select-option-id $IN_PROGRESS_OPTION_ID
 ```
-
-**Somente após confirmação do usuário de que os comandos foram executados, o desenvolvimento começa.**
 
 ---
 
@@ -197,11 +184,9 @@ O Claude Code lê o `saida.log` para confirmar resultado. Se o fluxo implementad
 
 ---
 
-### FASE 3 — Commits Atômicos (bloco gerado para o usuário executar)
+### FASE 3 — Commits Atômicos (Claude Code executa diretamente)
 
 **Regra:** cada commit cobre UMA mudança lógica. Commits intermediários usam `Ref #[NUMERO]`. Apenas o último usa `Closes #[NUMERO]`.
-
-O Claude Code entrega os commits sequenciados prontos. Exemplo:
 
 ```bash
 git add .
@@ -221,7 +206,7 @@ Corpo explicando o porquê.
 Closes #[NUMERO]"
 ```
 
-Após confirmação dos commits, o Claude Code entrega o bloco de abertura de PR:
+Após os commits, o Claude Code executa diretamente o bloco de abertura de PR:
 
 ```bash
 # Enviar branch
@@ -459,6 +444,21 @@ Use sempre o binário local instalado pelo `npm ci`, que já tem versão travada
 - run: npx playwright install --with-deps chromium
 - run: npx wait-on http://localhost:3000
 ```
+
+### Actions externas devem ser fixadas no SHA completo (`githubactions:S7637`)
+Sonar aponta Security High quando uma GitHub Action usa tag de versão (ex: `@v3`) em vez do SHA completo do commit. O SHA é imutável; a tag pode ser reescrita.
+
+```yaml
+# ✅ Correto — SHA completo garante imutabilidade
+- name: Análise SonarCloud
+  uses: SonarSource/sonarcloud-github-action@383f7e52eae3ab0510c3cb0e7d9d150bbaeab838
+
+# ❌ Errado — Sonar S7637: tag mutável, risco de supply chain
+- name: Análise SonarCloud
+  uses: SonarSource/sonarcloud-github-action@v3
+```
+
+Para descobrir o SHA de qualquer Action: olhar o log do CI — o step "Set up job" exibe `(SHA:xxxxxxxx)` ao baixar a Action.
 
 ---
 
