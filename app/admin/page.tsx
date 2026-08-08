@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { createServerAdminClient } from "@/lib/supabase-server";
+import { createServerSupabaseClient } from "@/lib/supabase-server";
 import type { Database } from "@/lib/types";
 import { productNames } from "@/lib/product-names";
 import { KPICard } from "@/components/admin/KPICard";
@@ -10,9 +10,10 @@ import { LeadsTable } from "@/components/admin/LeadsTable";
 type WaitlistRow = Database["public"]["Tables"]["waitlist"]["Row"];
 type FeedbackRow = Database["public"]["Tables"]["feedback"]["Row"];
 
-function sevenDaysAgoISO(): string {
-  const ms = 7 * 24 * 60 * 60 * 1000;
-  return new Date(Date.now() - ms).toISOString();
+interface DashboardKpis {
+  all_leads: WaitlistRow[];
+  recent_count: number;
+  all_feedback: FeedbackRow[];
 }
 
 function getMostDemandedProduct(leads: WaitlistRow[]): string {
@@ -26,28 +27,15 @@ function getMostDemandedProduct(leads: WaitlistRow[]): string {
 }
 
 export default async function AdminPage() {
-  const supabase = createServerAdminClient();
+  const supabase = await createServerSupabaseClient();
 
-  const sevenDaysAgo = sevenDaysAgoISO();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data } = await (supabase as any).rpc("get_dashboard_kpis");
+  const kpis = (data ?? { all_leads: [], recent_count: 0, all_feedback: [] }) as DashboardKpis;
 
-  const { data: allLeadsData } = await supabase
-    .from("waitlist")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  const { data: recentLeadsData } = await supabase
-    .from("waitlist")
-    .select("*")
-    .gte("created_at", sevenDaysAgo);
-
-  const { data: feedbackData } = await supabase
-    .from("feedback")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  const allLeads: WaitlistRow[] = (allLeadsData as WaitlistRow[] | null) ?? [];
-  const recentLeads: WaitlistRow[] = (recentLeadsData as WaitlistRow[] | null) ?? [];
-  const sugestoes: FeedbackRow[] = (feedbackData as FeedbackRow[] | null) ?? [];
+  const allLeads: WaitlistRow[] = kpis.all_leads ?? [];
+  const recentCount: number = kpis.recent_count ?? 0;
+  const sugestoes: FeedbackRow[] = kpis.all_feedback ?? [];
 
   const topProduct = getMostDemandedProduct(allLeads);
 
@@ -120,7 +108,7 @@ export default async function AdminPage() {
           />
           <KPICard
             label="Últimos 7 dias"
-            value={recentLeads.length}
+            value={recentCount}
             sublabel="novos inscritos"
           />
           <KPICard
