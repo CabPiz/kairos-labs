@@ -8,7 +8,7 @@ jest.mock("next/navigation", () => ({
 jest.mock("@/lib/supabase-server", () => ({
   createServerSupabaseClient: jest.fn().mockResolvedValue({
     auth: {
-      getUser: jest.fn().mockResolvedValue({ data: { user: null } }),
+      getSession: jest.fn().mockResolvedValue({ data: { session: null } }),
     },
   }),
 }));

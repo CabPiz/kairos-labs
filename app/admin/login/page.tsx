@@ -5,9 +5,9 @@ import { LoginForm } from "./_components/LoginForm";
 export default async function LoginPage() {
   const supabase = await createServerSupabaseClient();
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user) redirect("/admin");
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (session) redirect("/admin");
   return (
     <main
       style={{
