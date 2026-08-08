@@ -328,6 +328,25 @@ O Claude Code **edita o arquivo `diario_de_aprendizado.md` diretamente no disco*
 
 ## 🔍 PADRÕES SONAR — REFERÊNCIA RÁPIDA
 
+### Supabase: `service_role` exclusivo para writes; reads via SECURITY DEFINER
+
+```ts
+// ✅ Leituras do dashboard admin — usar SSR client + RPC
+const supabase = await createServerSupabaseClient();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const { data } = await (supabase as any).rpc("get_dashboard_kpis");
+
+// ✅ Writes/operações admin (INSERT, UPDATE, DELETE) — usar admin client
+const supabase = createServerAdminClient();
+await (supabase as any).from("tabela").insert({ ... });
+
+// ❌ Errado — service_role (BYPASSRLS) para leituras de agregação
+const supabase = createServerAdminClient();
+const { data } = await supabase.from("waitlist").select("*");
+```
+
+Funções PostgreSQL de leitura do dashboard devem usar `SECURITY DEFINER` + `SET search_path = public` e ter `GRANT EXECUTE ... TO authenticated`.
+
 ### Props `readonly`
 ```tsx
 // ✅ Correto
