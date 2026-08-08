@@ -131,6 +131,47 @@ describe("WaitlistModal", () => {
     });
   });
 
+  describe("fechar modal (handleOpenChange)", () => {
+    it("botão OK no painel de sucesso chama onOpenChange(false)", async () => {
+      const onOpenChange = jest.fn();
+      mockAction.mockResolvedValueOnce({
+        status: "success",
+        email: "test@example.com",
+      });
+      render(<WaitlistModal {...defaultProps} onOpenChange={onOpenChange} />);
+      await userEvent.type(
+        screen.getByLabelText(/e-mail/i),
+        "test@example.com"
+      );
+      await userEvent.click(
+        screen.getByRole("button", { name: /garantir acesso antecipado/i })
+      );
+      await waitFor(() =>
+        expect(screen.getByText(/você está na lista/i)).toBeInTheDocument()
+      );
+      await userEvent.click(screen.getByRole("button", { name: /ok/i }));
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+
+    it("botão OK no painel de duplicado chama onOpenChange(false)", async () => {
+      const onOpenChange = jest.fn();
+      mockAction.mockResolvedValueOnce({ status: "duplicate" });
+      render(<WaitlistModal {...defaultProps} onOpenChange={onOpenChange} />);
+      await userEvent.type(
+        screen.getByLabelText(/e-mail/i),
+        "dup@example.com"
+      );
+      await userEvent.click(
+        screen.getByRole("button", { name: /garantir acesso antecipado/i })
+      );
+      await waitFor(() =>
+        expect(screen.getByText(/já registrado/i)).toBeInTheDocument()
+      );
+      await userEvent.click(screen.getByRole("button", { name: /ok/i }));
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+  });
+
   describe("estado error", () => {
     it("exibe banner de erro quando a action retorna erro", async () => {
       mockAction.mockResolvedValueOnce({
