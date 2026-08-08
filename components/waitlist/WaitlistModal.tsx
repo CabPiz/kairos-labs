@@ -141,7 +141,7 @@ export function WaitlistModal({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         showCloseButton={true}
-        className="border-0 p-0 overflow-hidden"
+        className="border-0 p-0"
         style={{
           background: "#0b1221",
           border: "1px solid rgba(59,130,246,0.2)",
@@ -152,6 +152,7 @@ export function WaitlistModal({
         <div
           style={{
             height: "3px",
+            borderRadius: "8px 8px 0 0",
             background: `linear-gradient(to right, ${productColor}, transparent)`,
           }}
         />
