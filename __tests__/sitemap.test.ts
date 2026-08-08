@@ -8,34 +8,26 @@ describe("sitemap", () => {
     expect(root?.priority).toBe(1.0);
   });
 
-  it("inclui a URL de soluções com prioridade 0.8", () => {
-    const result = sitemap();
-    const solucoes = result.find(
-      (e) => e.url === "https://kairoslabs.com.br/solucoes"
-    );
-    expect(solucoes).toBeDefined();
-    expect(solucoes?.priority).toBe(0.8);
-  });
-
-  it("inclui as 5 páginas de produto com prioridade 0.7", () => {
+  it("inclui as 6 páginas de produto com prioridade 0.8", () => {
     const slugs = [
       "devprint",
       "ascend",
       "elucya-talk",
       "agora-global",
+      "talvrix",
       "kairos-labs",
     ];
     const result = sitemap();
     slugs.forEach((slug) => {
       const entry = result.find(
-        (e) => e.url === `https://kairoslabs.com.br/solucoes/${slug}`
+        (e) => e.url === `https://kairoslabs.com.br/${slug}`
       );
       expect(entry).toBeDefined();
-      expect(entry?.priority).toBe(0.7);
+      expect(entry?.priority).toBe(0.8);
     });
   });
 
-  it("retorna 7 entradas no total", () => {
+  it("retorna 7 entradas no total (raiz + 6 produtos)", () => {
     expect(sitemap()).toHaveLength(7);
   });
 
@@ -43,5 +35,11 @@ describe("sitemap", () => {
     sitemap().forEach((entry) => {
       expect(entry.lastModified).toBeInstanceOf(Date);
     });
+  });
+
+  it("não contém URLs /solucoes (rota migrada para /<slug>)", () => {
+    const result = sitemap();
+    const solucoes = result.filter((e) => e.url.includes("/solucoes"));
+    expect(solucoes).toHaveLength(0);
   });
 });

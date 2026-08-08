@@ -1,8 +1,8 @@
 # PRD — Kairos Labs Landing Page & Founder Analytics
 **Product Requirements Document**
-Version: 1.1.0 — Expanded Draft
+Version: 1.2.0
 Status: Ready for Execution
-Last updated: 2026-07-28
+Last updated: 2026-08-08
 
 ---
 
@@ -10,11 +10,12 @@ Last updated: 2026-07-28
 
 **Kairos Labs** is the institutional portal, innovation showcase, and **demand validation hub** for the technology solutions ecosystem founded by Cesar Antonio Brito Pizarro.
 
-The platform serves four strategic pillars:
+The platform serves five strategic pillars:
 1. **Public Brand Proof:** Guaranteed commercial presence and public use of the trademark registered with INPI (Process nº 944610498).
-2. **Solutions Showcase & Portfolio:** Clear presentation of the ecosystem of products under development (DevPrint, AI & SaaS, Audio Tech, and Blockchain).
+2. **Solutions Showcase & Portfolio:** Clear presentation of the ecosystem of products under development.
 3. **Segmented Lead Capture (Waitlist per Product):** Converting visitors into waiting lists specific to each product in the ecosystem.
 4. **Founder Dashboard (Founder Analytics):** Private panel protected by authentication for the founder to visualize real-time metrics, comparing demand across applications to guide development priority.
+5. **DevPrint Integration Platform (Roadmap):** Future capability to consume product data directly from the DevPrint API, transforming Kairos Labs into a reusable portfolio platform for any developer.
 
 ---
 
@@ -35,7 +36,7 @@ The platform serves four strategic pillars:
 
 ---
 
-## 4. MVP Features (Version 1.1.0)
+## 4. MVP Features (Version 1.2.0)
 
 ### 4.1 Header & Hero Section (Public)
 - **Branding:** Display of the official **Kairos Labs** logo and registered trade name.
@@ -43,15 +44,22 @@ The platform serves four strategic pillars:
 - **Status Badges:** Visual indicator of trademark filed with INPI.
 
 ### 4.2 Product Showcase & Segmented Capture (Public)
-Interactive cards covering the products and Class 42 scope:
-- **DevPrint:** Living resume and verifiable portfolio platform.
-- **AI & SaaS Solutions:** Automation and AIaaS platforms.
-- **Audio Tech & Acoustic Measurement:** Software for audio processing.
-- **Blockchain & Smart Contracts:** Smart contracts and decentralized solutions.
+
+Interactive cards on both the landing page (`/`) and the solutions index (`/solucoes`), covering all ecosystem products:
+
+| Product | Description |
+|---|---|
+| **DevPrint** | Living resume and verifiable portfolio platform. |
+| **Ascend** | Adaptive preparation platform for high-paying remote tech roles. |
+| **Elucya Talk** | AI-based platform for analysis and improvement of interpersonal communication. |
+| **Plataforma Ágora Global** | Open-source public governance and citizen participation system. |
+| **Talvrix** | AI-powered SaaS for intelligent resume-to-job matching across multiple sites. |
+| **Kairos Labs** | The institutional portal and central demand validation hub. |
 
 **Capture Behavior:**
-- Each card has its own *"Guarantee Early Access"* button.
-- The registration modal/form sends the user's email to the database linked to the corresponding **`product_id`** (e.g., `devprint`, `audio_tech`, `blockchain`).
+- Each card on the landing page has its own *"Guarantee Early Access"* button linked to the segmented waitlist.
+- Each card links to a dedicated detail page (`/solucoes/[slug]`) with full PRD content and CTAs.
+- The registration modal sends the user's email to the database linked to the corresponding **`product_id`**.
 
 ### 4.3 Founder Dashboard (`/admin`) (Private / Restricted)
 - **Secure Authentication:** Exclusive login via Supabase Auth (founder email/password).
@@ -74,6 +82,9 @@ Interactive cards covering the products and Class 42 scope:
 - **Tailwind CSS v4 + shadcn/ui:** Modern, responsive interface with accessible components.
 - **Recharts / Lucide React:** Lightweight charting library for the metrics dashboard.
 
+### Product Data Layer
+- **`lib/products/`:** Single Source of Truth for all product data. The `getProducts()` function is the integration seam — today it returns a static array; in the future it will fetch from the DevPrint API with zero breaking changes to consuming components.
+
 ### Backend & Database
 - **Supabase (Free Tier):**
   - **Database (PostgreSQL):** `waitlist` table (id, email, product_id, created_at).
@@ -94,25 +105,59 @@ Interactive cards covering the products and Class 42 scope:
 CREATE TABLE public.waitlist (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   email TEXT NOT NULL,
-  product_id TEXT NOT NULL, -- e.g.: 'devprint', 'audio-tech', 'blockchain', 'ai-saas'
+  product_id TEXT NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- Enable RLS (Row Level Security)
 ALTER TABLE public.waitlist ENABLE ROW LEVEL SECURITY;
 
--- Policy 1: Allow ANYONE to join the waitlist
 CREATE POLICY "Allow public insert" ON public.waitlist
   FOR INSERT WITH CHECK (true);
 
--- Policy 2: Allow ONLY THE FOUNDER to read the data
 CREATE POLICY "Founder-only access" ON public.waitlist
   FOR SELECT USING (auth.jwt() ->> 'email' = 'YOUR_EMAIL_HERE');
 ```
 
 ---
 
-## 7. Intellectual Property & License
+## 7. DevPrint Integration Platform (Roadmap)
+
+### Vision
+
+The current architecture anticipates a future where product data no longer lives in a static file but is consumed from the **DevPrint API** — a platform that reads GitHub repositories and generates structured product/portfolio data automatically.
+
+This opens two business models:
+
+| Model | Description |
+|---|---|
+| **Self-hosted** | Any developer can clone the Kairos Labs site, connect their DevPrint account, and automatically display their own GitHub projects as product cards — no manual data entry. |
+| **Hosted Portfolio** | Developers without their own site subscribe to Kairos Labs as a white-label portfolio hosting service powered by DevPrint data. |
+
+### Integration Point
+
+The function `getProducts()` in `lib/products/index.tsx` is the seam. Today:
+
+```ts
+export function getProducts(): Product[] {
+  return products; // static array
+}
+```
+
+Post-DevPrint integration:
+
+```ts
+export async function getProducts(): Promise<Product[]> {
+  return fetch("https://api.devprint.io/v1/products", {
+    next: { revalidate: 3600 },
+  }).then((r) => r.json());
+}
+```
+
+All consuming components (`app/page.tsx`, `app/solucoes/page.tsx`, `app/solucoes/[slug]/page.tsx`, `DemandChart`) require **zero changes** — they call `getProducts()` and render whatever it returns.
+
+---
+
+## 8. Intellectual Property & License
 
 - Source code: All Rights Reserved — Cesar Antonio Brito Pizarro
 - Trademark: Registered with INPI, Process nº 944610498, Class 42

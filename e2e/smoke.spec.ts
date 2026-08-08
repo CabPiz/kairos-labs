@@ -15,21 +15,20 @@ async function loginAsAdmin(page: import("@playwright/test").Page) {
 test.describe("Smoke — Home", () => {
   test("landing page carrega e exibe CTA principal", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("button", { name: /explorar soluções/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /explorar soluções/i })).toBeVisible();
   });
-});
 
-test.describe("Smoke — /solucoes", () => {
-  test("página de soluções exibe cards dos produtos", async ({ page }) => {
-    await page.goto("/solucoes");
+  test("seção de portfólio exibe cards dos produtos", async ({ page }) => {
+    await page.goto("/");
     await expect(page.getByText("DevPrint")).toBeVisible();
     await expect(page.getByText("Ascend")).toBeVisible();
+    await expect(page.getByText("Talvrix")).toBeVisible();
   });
 
-  test("card de produto leva à página individual", async ({ page }) => {
-    await page.goto("/solucoes");
+  test("link Saiba mais leva à página individual do produto", async ({ page }) => {
+    await page.goto("/");
     await page.getByRole("link", { name: /saiba mais/i }).first().click();
-    await expect(page).toHaveURL(/\/solucoes\//);
+    await expect(page).toHaveURL(/^https?:\/\/[^/]+\/[^/]+$/);
   });
 });
 

@@ -453,6 +453,27 @@ const EMAIL = process.env.E2E_EMAIL!;
 // ✅ Remover qualquer import não utilizado no arquivo
 ```
 
+### Array index como key é proibido (`typescript:S6479`)
+```tsx
+// ❌ Errado — Sonar S6479: index não é estável se a lista mudar
+{lista.map((item, i) => <div key={i}>{item.titulo}</div>)}
+
+// ✅ Correto — usar valor único e estável do item
+{lista.map((item) => <div key={item.titulo}>{item.titulo}</div>)}
+// Para strings simples em arrays de texto:
+{lista.map((str) => <li key={str}>{str}</li>)}
+```
+
+### `<Link>` para rotas de ação (logout) deve ter `prefetch={false}` (`next/link`)
+```tsx
+// ❌ Errado — Link com href de route handler (GET action) faz prefetch automático,
+//            o que executa a action antes do clique (ex: signOut() no handler /admin/logout)
+<Link href="/admin/logout">Sair</Link>
+
+// ✅ Correto — desativa prefetch para rotas que disparam ações com efeito colateral
+<Link href="/admin/logout" prefetch={false}>Sair</Link>
+```
+
 ### `npm ci` em workflows GitHub Actions
 ```yaml
 # ✅ Correto — evita execução de lifecycle scripts de pacotes durante instalação
