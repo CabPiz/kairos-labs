@@ -5,7 +5,7 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=CabPiz_kairos-labs&metric=coverage)](https://sonarcloud.io/summary/overall?id=CabPiz_kairos-labs)
 ![INPI](https://img.shields.io/badge/Marca_Registrada_INPI-Proc._944610498-16a34a?style=flat)
 
-> Portal institucional, vitrine de inovação e hub de validação de demanda para um ecossistema de soluções em tecnologia — DevPrint, AI & SaaS, Audio Tech, Blockchain.
+> Portal institucional, vitrine de inovação e hub de validação de demanda para um ecossistema de soluções em tecnologia — DevPrint, Elucya Talk, Ágora Global, Ascend e Talvrix.
 
 🇺🇸 [Read in English](./README.md)
 
@@ -92,6 +92,8 @@ npm run dev
 ```
 
 Abra [http://localhost:3000](http://localhost:3000) no navegador.
+
+> **Banco de dados:** a aplicação requer um projeto Supabase com o schema descrito em [`docs/PRD.md`](./docs/PRD.md#6-database-schema-supabase--postgres). Um script de migration pronto para execução está registrado como [issue conhecida](https://github.com/CabPiz/kairos-labs/issues).
 
 Para o guia completo de setup, comandos de teste e padrões de contribuição, veja [docs/CONTRIBUTING.pt-BR.md](./docs/CONTRIBUTING.pt-BR.md).
 
