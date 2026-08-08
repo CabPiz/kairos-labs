@@ -1,46 +1,48 @@
-# Contribuindo com Kairos Labs
+# Contributing to Kairos Labs
 
-Guia para qualquer pessoa clonar, configurar e rodar o projeto localmente.
+Guide for anyone to clone, set up, and run the project locally.
 
----
-
-## Pré-requisitos
-
-- **Node.js** >= 22 (`node --version` para verificar)
-- **npm** >= 10 (incluído com o Node.js)
-- Conta no [Supabase](https://supabase.com) para obter as variáveis de ambiente
+🇧🇷 [Leia em Português](./docs/CONTRIBUTING.pt-BR.md)
 
 ---
 
-## Setup local
+## Prerequisites
+
+- **Node.js** >= 22 (check with `node --version`)
+- **npm** >= 10 (bundled with Node.js)
+- A [Supabase](https://supabase.com) account to obtain the environment variables
+
+---
+
+## Local Setup
 
 ```bash
-# 1. Clone o repositório
+# 1. Clone the repository
 git clone https://github.com/CabPiz/kairos-labs.git
 cd kairos-labs
 
-# 2. Configure as variáveis de ambiente
+# 2. Set up environment variables
 cp .env.example .env.local
-# Edite .env.local com suas credenciais do Supabase
+# Edit .env.local with your Supabase credentials
 
-# 3. Instale as dependências
+# 3. Install dependencies
 npm install
 
-# 4. Inicie o servidor de desenvolvimento
+# 4. Start the development server
 npm run dev
 ```
 
-A aplicação estará disponível em `http://localhost:3000`.
+The application will be available at `http://localhost:3000`.
 
 ---
 
-## Testes unitários
+## Unit Tests
 
 ```bash
-# Rodar todos os testes
+# Run all tests
 npm test
 
-# Rodar com relatório de cobertura
+# Run with coverage report
 npm run test:coverage
 ```
 
@@ -48,75 +50,75 @@ Stack: [Jest](https://jestjs.io) + [React Testing Library](https://testing-libra
 
 ---
 
-## Testes E2E
+## E2E Tests
 
 Stack: [Playwright](https://playwright.dev) + Chromium.
 
-Os testes E2E validam os fluxos críticos da aplicação no browser real. Os specs ficam na pasta `e2e/`.
+E2E tests validate the critical application flows in a real browser. Specs live in the `e2e/` folder.
 
-**Pré-requisito (apenas na primeira vez):**
+**Prerequisite (first time only):**
 
 ```bash
-npx playwright install --with-deps chromium
+./node_modules/.bin/playwright install --with-deps chromium
 ```
 
-**Rodar os testes E2E:**
+**Run E2E tests:**
 
 ```bash
 npm run test:e2e
 ```
 
-O servidor de desenvolvimento (`npm run dev`) precisa estar rodando em `localhost:3000`, ou você pode usar o `webServer` automático do Playwright (configurado no `playwright.config.ts`).
+The development server (`npm run dev`) must be running at `localhost:3000`, or you can use Playwright's automatic `webServer` (configured in `playwright.config.ts`).
 
-**Relatório HTML após a execução:**
+**HTML report after execution:**
 
 ```bash
-npx playwright show-report
+./node_modules/.bin/playwright show-report
 ```
 
-**Fluxos cobertos:**
+**Covered flows:**
 
-| Spec | Fluxo validado |
+| Spec | Validated flow |
 | :--- | :--- |
-| `e2e/waitlist.spec.ts` | Abre modal de waitlist → preenche e-mail → submete → vê confirmação |
+| `e2e/waitlist.spec.ts` | Opens waitlist modal → fills email → submits → sees confirmation |
 
-No CI (GitHub Actions), os testes E2E rodam automaticamente no job `e2e`, após o job `ci`. Screenshots de falha são salvas como artefatos por 7 dias.
+In CI (GitHub Actions), E2E tests run automatically in the `e2e` job, after the `ci` job. Failure screenshots are saved as artifacts for 7 days.
 
 ---
 
-## Hooks de pre-commit
+## Pre-commit Hooks
 
-[Husky](https://typicode.github.io/husky) + [lint-staged](https://github.com/lint-staged/lint-staged) estão configurados. Ao executar `git commit`, o ESLint roda automaticamente nos arquivos `.ts` e `.tsx` modificados. Commits com erros ou warnings de lint são bloqueados.
+[Husky](https://typicode.github.io/husky) + [lint-staged](https://github.com/lint-staged/lint-staged) are configured. When running `git commit`, ESLint runs automatically on modified `.ts` and `.tsx` files. Commits with lint errors or warnings are blocked.
 
 ---
 
-## Convenções de branch
+## Branch Conventions
 
-| Tipo | Padrão |
+| Type | Pattern |
 | :--- | :--- |
-| Nova funcionalidade | `feature/[N]-descricao-curta` |
-| Correção de bug | `fix/[N]-descricao-curta` |
-| Setup / config | `chore/[N]-descricao-curta` |
-| Documentação | `docs/[N]-descricao-curta` |
+| New feature | `feature/[N]-short-description` |
+| Bug fix | `fix/[N]-short-description` |
+| Setup / config | `chore/[N]-short-description` |
+| Documentation | `docs/[N]-short-description` |
 
 ---
 
 ## Conventional Commits
 
-Toda mensagem de commit segue o padrão `tipo(escopo): descrição no imperativo em português`.
+All commit messages follow the pattern `type(scope): imperative description in Portuguese`.
 
-| Tipo | Quando usar |
+| Type | When to use |
 | :--- | :--- |
-| `feat` | Nova funcionalidade |
-| `fix` | Correção de bug |
-| `chore` | Setup, config, dependências |
-| `docs` | Documentação |
-| `style` | Formatação sem mudança de lógica |
-| `refactor` | Refatoração sem mudança funcional |
-| `test` | Adição ou correção de testes |
-| `ci` | Mudanças em CI/CD |
+| `feat` | New feature |
+| `fix` | Bug fix |
+| `chore` | Setup, config, dependencies |
+| `docs` | Documentation |
+| `style` | Formatting, no logic change |
+| `refactor` | Refactoring without functional change |
+| `test` | Adding or fixing tests |
+| `ci` | CI/CD changes |
 
-**Exemplos:**
+**Examples:**
 
 ```
 feat(waitlist): adiciona validação de e-mail duplicado
