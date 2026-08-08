@@ -13,7 +13,7 @@ Repositório: `CabPiz/kairos-labs` | Project Board: nº 3
 | **M2 — Public Landing Page** | Hero, vitrine de produtos, modal de waitlist, SEO | ✅ Concluído |
 | **M5 — Quality Engineering** | Infraestrutura de testes, CI automatizado e documentação | ✅ Concluído |
 | **M3 — Founder Dashboard** | Rota /admin protegida, KPIs, gráficos e exportação CSV | ✅ Concluído |
-| **M4 — Polish & Launch** | Acessibilidade, domínio customizado, README e go-live | ⚪ Planejado |
+| **M4 — Polish & Launch** | Acessibilidade, domínio customizado, README e go-live | ✅ Concluído |
 
 > **Regra de execução:** nenhuma issue downstream é iniciada sem o merge da upstream que a desbloqueia.
 
@@ -22,7 +22,7 @@ Repositório: `CabPiz/kairos-labs` | Project Board: nº 3
 ## Sequência de Execução
 
 ```
-[M1 ✅] → [M2 ✅ #11→#12] → [M5 ✅ #33→#34→#35→#36→#37→#38→#39] → [M3 ✅ #13→#14→#15→#16] → [M4 ⚪ #17→#18→#19→#20]
+[M1 ✅] → [M2 ✅ #11→#12] → [M5 ✅ #33→#34→#35→#36→#37→#38→#39] → [M3 ✅ #13→#14→#15→#16] → [M4 ✅ #17→#18→#19→#20]
 ```
 
 ```mermaid
@@ -53,9 +53,9 @@ flowchart TD
         i13("#13 Auth /admin"):::done --> i14("#14 KPI Cards"):::done --> i15("#15 Gráfico de Demanda"):::done --> i16("#16 Tabela de Leads CSV"):::done
     end
 
-    subgraph M4["⚪ M4 — Polish & Launch"]
+    subgraph M4["✅ M4 — Polish & Launch"]
         direction LR
-        i17("#17 Testes a11y"):::planned --> i18("#18 Domínio customizado"):::planned --> i19("#19 README.md"):::planned --> i20("#20 Smoke tests"):::planned
+        i17("#17 Testes a11y"):::done --> i18("#18 Domínio customizado"):::done --> i19("#19 README.md"):::done --> i20("#20 Smoke tests"):::done
     end
 
     M1 --> M2 --> M5 --> M3 --> M4
@@ -119,16 +119,16 @@ Desbloqueado após conclusão do M5. A autenticação (#13) é pré-requisito pa
 
 ---
 
-## M4 — Polish & Launch ⚪ Planejado
+## M4 — Polish & Launch ✅ Concluído
 
 Etapa final antes do go-live. Executada após o M3 completo.
 
 | # | Issue | Status |
 |---|---|---|
-| #17 | Testes de acessibilidade (a11y) | ⚪ |
-| #18 | Configurar domínio customizado na Vercel | ⚪ |
-| #19 | README.md completo do projeto | ⚪ |
-| #20 | Smoke tests pré-lançamento | ⚪ |
+| #17 | Testes de acessibilidade (a11y) | ✅ |
+| #18 | Configurar domínio customizado na Vercel | ✅ |
+| #19 | README.md completo do projeto | ✅ |
+| #20 | Smoke tests pré-lançamento | ✅ |
 
 ---
 
@@ -141,4 +141,4 @@ Etapa final antes do go-live. Executada após o M3 completo.
 
 ---
 
-*ROADMAP.md v2.3 — M3 concluído (issues #13–#16 mergeadas) | Kairos Labs*
+*ROADMAP.md v2.4 — M4 concluído (issues #17–#20 mergeadas) — go-live alcançado | Kairos Labs*
