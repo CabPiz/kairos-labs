@@ -132,6 +132,18 @@ Etapa final antes do go-live. Executada após o M3 completo.
 
 ---
 
+## M6 — DevPrint Integration Platform (Planejado)
+
+Transforma `getProducts()` de estático para API-driven. Habilita o modelo de plataforma onde qualquer dev pode usar o Kairos Labs como vitrine hospedada do seu portfólio DevPrint.
+
+| # | Issue | Dependência | Status |
+|---|---|---|---|
+| TBD | Substituir `getProducts()` estático por fetch à API do DevPrint | DevPrint API disponível | 🔜 |
+| TBD | Suporte multi-tenant: outros devs usam o site como vitrine | Issue anterior | 🔜 |
+| TBD | Cache e revalidação ISR dos dados de produto | Issue anterior | 🔜 |
+
+---
+
 ## Governança
 
 1. **Ordem de dependência:** nenhuma issue downstream é iniciada sem merge da upstream que a desbloqueia.
