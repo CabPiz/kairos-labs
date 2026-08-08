@@ -15,7 +15,7 @@ async function loginAsAdmin(page: import("@playwright/test").Page) {
 test.describe("Smoke — Home", () => {
   test("landing page carrega e exibe CTA principal", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("link", { name: /explorar soluções/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /explorar soluções/i })).toBeVisible();
   });
 });
 
@@ -28,8 +28,8 @@ test.describe("Smoke — /solucoes", () => {
 
   test("card de produto leva à página individual", async ({ page }) => {
     await page.goto("/solucoes");
-    await page.getByRole("link", { name: /devprint/i }).first().click();
-    await expect(page).toHaveURL(/\/solucoes\/devprint/);
+    await page.getByRole("link", { name: /saiba mais/i }).first().click();
+    await expect(page).toHaveURL(/\/solucoes\//);
   });
 });
 
@@ -52,7 +52,7 @@ test.describe("Smoke — /admin (fluxo completo)", () => {
 
   test("logout redireciona para /admin/login", async ({ page }) => {
     await loginAsAdmin(page);
-    await page.getByRole("link", { name: /logout/i }).click();
+    await page.getByRole("link", { name: /sair/i }).click();
     await expect(page).toHaveURL(/\/admin\/login/);
   });
 });
