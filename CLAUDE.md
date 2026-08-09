@@ -276,7 +276,74 @@ Em seguida, **sem aguardar confirmação**, move os cards para Done e gera o Di�
 
 ---
 
-### Encerramento da sessão
+### FASE 4.5 — Controle de Dívida Técnica (executada ao fechar cada Milestone)
+
+Esta fase não é por issue — é executada **uma vez por milestone**, após o merge da última issue do milestone, antes de iniciar o próximo.
+
+#### Checklist obrigatório
+
+**1. Code Review Ultra (multi-agente)**
+
+```bash
+/code-review ultra
+```
+
+Revisão independente de toda a branch desde o início do milestone. Detecta problemas que o Sonar não vê: acoplamento entre camadas, responsabilidades mal alocadas, abstrações ausentes ou prematuras. O Claude Code lê o relatório e abre issues de dívida técnica para tudo que for acionável.
+
+**2. Auditoria de dependências entre camadas**
+
+Violações a detectar (via `grep`):
+- `lib/` importando de `components/` ou `app/` → inversão de dependência
+- `components/` importando de `app/` → componente acoplado a rota específica
+- Client Component com `"use client"` importando de `supabase-server` ou `server-only`
+
+```bash
+grep -rE "from.*@/(components|app)" lib/ --include="*.ts" --include="*.tsx" -l
+grep -r "from.*@/app" components/ --include="*.ts" --include="*.tsx" -l
+grep -rl '"use client"' components/ --include="*.tsx" | xargs grep -l "supabase-server\|server-only" 2>/dev/null
+```
+
+**3. Auditoria de consistência de estilo**
+
+O projeto adota Tailwind para layout/tipografia estática e `style={{}}` apenas para valores dinâmicos de runtime (ex: cor de produto). Arquivos que misturam os dois sem necessidade são candidatos a refatoração:
+
+```bash
+# Arquivos com MUITOS inline styles que deveriam ser Tailwind:
+grep -rc "style={{" app/ components/ --include="*.tsx" | sort -t: -k2 -rn | head -15
+```
+
+Threshold: mais de 5 `style={{` num arquivo que não lida com valores dinâmicos → candidato a migração.
+
+**4. Auditoria de cobertura de testes por camada**
+
+Arquivos de lógica crítica sem teste unitário:
+
+```bash
+# Arquivos sem teste correspondente em __tests__/
+# Exclui Next.js special files (basename ambíguo — cobertos por testes PascalCase da rota)
+for f in $(find app components lib -name "*.tsx" -o -name "*.ts" | grep -v "node_modules\|\.test\.\|__tests__\|__mocks__\|\.d\.ts\|types\.ts\|page\.tsx\|layout\.tsx\|route\.ts\|loading\.tsx\|error\.tsx\|not-found\.tsx\|template\.tsx\|default\.tsx"); do
+  name=$(basename "$f" .tsx); name=$(basename "$name" .ts)
+  if ! find __tests__ -name "${name}.test.*" 2>/dev/null | grep -q .; then
+    echo "SEM TESTE: $f"
+  fi
+done
+```
+
+Prioridade de cobertura: middleware (`proxy.ts`), route handlers, Server Actions, lib utilities. Pages e layouts têm menor prioridade se já cobertos por E2E.
+
+**5. Registro de ADR para decisões não óbvias**
+
+Toda decisão arquitetural que um dev novo não conseguiria deduzir lendo o código deve ter uma entrada em `docs/architecture.md` na seção `## Key Architectural Decisions`, no formato:
+
+```markdown
+### [Decisão tomada]
+**Alternativa descartada:** [O que foi considerado e por que foi rejeitado].
+**Motivo:** [Constraint real — performance, segurança, custo, prazo].
+```
+
+---
+
+### Encerramento da sessão (por issue)
 
 Imediatamente após o merge, o Claude Code executa de forma autônoma:
 
@@ -286,7 +353,7 @@ Imediatamente após o merge, o Claude Code executa de forma autônoma:
 O Claude Code **edita o arquivo `1.diario_de_aprendizado.md` diretamente no disco**, inserindo a nova entrada imediatamente após o cabeçalho do arquivo (logo abaixo da linha `---` que segue o parágrafo introdutório). O arquivo é ordenado em ordem decrescente — a entrada mais recente sempre no topo. Nunca adicionar ao final.
 
 - **`[N]`** é um número sequencial que reseta para `1` a cada novo dia. Primeira entrada do dia = `1`, segunda = `2`, e assim por diante. Nunca usar `[N]` como placeholder — sempre substituir pelo número real.
-- O Claude Code escolhe automaticamente o formato mais adequado (A, B ou C) com base no tipo de issue resolvida e indica o formato escolhido antes de editar o arquivo.
+- O Claude Code avalia todos os formatos (A, B, C) e **usa todos os que forem aplicáveis** à sessão — uma única sessão pode gerar múltiplas entradas. Por exemplo, se houve uma decisão arquitetural importante (A) E um bug complexo corrigido sob pressão (B), ambas as entradas devem ser escritas. O Claude Code indica os formatos escolhidos antes de editar o arquivo.
 
 ---
 
