@@ -5,6 +5,26 @@ Cada entrada documenta um erro já resolvido, sua causa raiz e o padrão correto
 
 ---
 
+## CI Workflow Failures
+
+### [CI-001] Playwright E2E: todos os locators PT falham em CI por locale errado
+
+**Issue de origem:** #88  
+**Sintoma:** Testes E2E que passam localmente falham em CI com "element(s) not found" para elementos escritos em português (e.g., `/explorar soluções/i`, `"Entrar"`).  
+**Causa:** Em CI, Playwright usa `Accept-Language: en-US` por padrão. O middleware next-intl detecta `en` e redireciona para `/en/`, servindo conteúdo em inglês. Todos os locators em português falham.  
+**Correção:** Adicionar `locale: "pt-BR"` na seção `use` do `playwright.config.ts`. Isso força o header `Accept-Language: pt-BR` em todos os projetos, garantindo que o middleware redirecione para `/pt/` tanto em local quanto em CI.  
+**Padrão a seguir:**
+```ts
+// playwright.config.ts
+use: {
+  baseURL: "http://localhost:3000",
+  locale: "pt-BR", // obrigatório quando o site tem i18n com autodetecção por Accept-Language
+},
+```
+**Nota:** Testes de múltiplos locales (e.g., i18n.spec.ts) devem usar `test.use({ locale: "en-US" })` inline para sobrescrever o padrão.
+
+---
+
 ## [ERR-001] ZodError: Property 'errors' does not exist
 
 **Issue de origem:** #12  
