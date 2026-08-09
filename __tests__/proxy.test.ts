@@ -1,0 +1,83 @@
+import type { NextRequest } from "next/server";
+
+const mockNextResponse = {
+  cookies: { set: jest.fn() },
+};
+
+const mockNext = jest.fn(() => mockNextResponse);
+const mockRedirect = jest.fn();
+
+jest.mock("next/server", () => ({
+  NextResponse: {
+    next: (...args: unknown[]) => mockNext(...args),
+    redirect: (...args: unknown[]) => mockRedirect(...args),
+  },
+}));
+
+const mockGetUser = jest.fn();
+
+jest.mock("@supabase/ssr", () => ({
+  createServerClient: jest.fn(() => ({
+    auth: { getUser: mockGetUser },
+  })),
+}));
+
+function makeRequest(pathname: string): NextRequest {
+  return {
+    nextUrl: {
+      pathname,
+      clone() {
+        const obj = { pathname } as { pathname: string };
+        return obj;
+      },
+    },
+    cookies: { getAll: () => [] },
+  } as unknown as NextRequest;
+}
+
+describe("proxy", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockNext.mockReturnValue(mockNextResponse);
+  });
+
+  it("redireciona usuário não autenticado em /admin para /admin/login", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const { proxy } = await import("@/proxy");
+    await proxy(makeRequest("/admin"));
+    expect(mockRedirect).toHaveBeenCalledWith(
+      expect.objectContaining({ pathname: "/admin/login" })
+    );
+  });
+
+  it("redireciona usuário não autenticado em /admin/dashboard para /admin/login", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const { proxy } = await import("@/proxy");
+    await proxy(makeRequest("/admin/dashboard"));
+    expect(mockRedirect).toHaveBeenCalledWith(
+      expect.objectContaining({ pathname: "/admin/login" })
+    );
+  });
+
+  it("redireciona usuário autenticado em /admin/login para /admin", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: { id: "user-1" } } });
+    const { proxy } = await import("@/proxy");
+    await proxy(makeRequest("/admin/login"));
+    expect(mockRedirect).toHaveBeenCalledWith(
+      expect.objectContaining({ pathname: "/admin" })
+    );
+  });
+
+  it("permite acesso de usuário autenticado em /admin/dashboard (retorna supabaseResponse)", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: { id: "user-1" } } });
+    const { proxy } = await import("@/proxy");
+    const result = await proxy(makeRequest("/admin/dashboard"));
+    expect(mockRedirect).not.toHaveBeenCalled();
+    expect(result).toBe(mockNextResponse);
+  });
+
+  it("exporta config com matcher cobrindo /admin/:path*", async () => {
+    const { config } = await import("@/proxy");
+    expect(config.matcher).toContain("/admin/:path*");
+  });
+});

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import type { Database } from "@/lib/types";
 import { productNames } from "@/lib/product-names";
+import { getMostDemandedProduct } from "@/lib/admin/analytics";
 import { KPICard } from "@/components/admin/KPICard";
 import { DemandChart } from "@/components/admin/DemandChart";
 import { LeadsTable } from "@/components/admin/LeadsTable";
@@ -15,16 +16,6 @@ interface DashboardKpis {
   all_leads: WaitlistRow[];
   recent_count: number;
   all_feedback: FeedbackRow[];
-}
-
-function getMostDemandedProduct(leads: WaitlistRow[]): string {
-  if (leads.length === 0) return "—";
-  const counts: Record<string, number> = {};
-  for (const row of leads) {
-    counts[row.product_id] = (counts[row.product_id] ?? 0) + 1;
-  }
-  const topId = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
-  return productNames[topId] ?? topId;
 }
 
 export default async function AdminPage() {
@@ -42,67 +33,30 @@ export default async function AdminPage() {
 
   return (
     <main
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#050a14",
-        color: "#fff",
-        fontFamily: "var(--font-inter), sans-serif",
-        padding: "3rem 2.5rem",
-      }}
+      className="min-h-screen bg-[#050a14] text-white px-10 py-12"
+      style={{ fontFamily: "var(--font-inter), sans-serif" }}
     >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem" }}>
+      <div className="flex items-center justify-between mb-8">
         <h1
-          style={{
-            margin: 0,
-            fontFamily: "var(--font-orbitron), sans-serif",
-            fontSize: "1.2rem",
-            fontWeight: 800,
-            letterSpacing: "0.06em",
-            textTransform: "uppercase",
-            color: "#d4a017",
-          }}
+          className="m-0 text-[1.2rem] font-black tracking-[0.06em] uppercase text-[#d4a017]"
+          style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
         >
           Founder Dashboard
         </h1>
         <Link
           href="/admin/logout"
           prefetch={false}
-          style={{
-            fontSize: "0.75rem",
-            fontWeight: 600,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: "rgba(255,255,255,0.4)",
-            textDecoration: "none",
-            border: "1px solid rgba(255,255,255,0.12)",
-            borderRadius: "6px",
-            padding: "0.4rem 0.9rem",
-          }}
+          className="text-xs font-semibold tracking-[0.08em] uppercase text-white/40 no-underline border border-white/[0.12] rounded-[6px] px-[0.9rem] py-[0.4rem]"
         >
           Sair
         </Link>
       </div>
 
-      <section style={{ marginBottom: "3rem" }}>
-        <h2
-          style={{
-            margin: "0 0 1.25rem",
-            fontSize: "0.72rem",
-            fontWeight: 700,
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            color: "rgba(255,255,255,0.35)",
-          }}
-        >
+      <section className="mb-12">
+        <h2 className="m-0 mb-5 text-[0.72rem] font-bold tracking-[0.22em] uppercase text-white/35">
           KPIs
         </h2>
-        <div
-          style={{
-            display: "flex",
-            gap: "1.25rem",
-            flexWrap: "wrap",
-          }}
-        >
+        <div className="flex gap-5 flex-wrap">
           <KPICard
             label="Total na Waitlist"
             value={allLeads.length}
@@ -122,117 +76,57 @@ export default async function AdminPage() {
         </div>
       </section>
 
-      <section style={{ marginBottom: "3rem" }}>
-        <h2
-          style={{
-            margin: "0 0 1.25rem",
-            fontSize: "0.72rem",
-            fontWeight: 700,
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            color: "rgba(255,255,255,0.35)",
-          }}
-        >
+      <section className="mb-12">
+        <h2 className="m-0 mb-5 text-[0.72rem] font-bold tracking-[0.22em] uppercase text-white/35">
           Demanda por Produto
         </h2>
         <DemandChart leads={allLeads} />
       </section>
 
-      <section style={{ marginBottom: "3rem" }}>
-        <h2
-          style={{
-            margin: "0 0 1.25rem",
-            fontSize: "0.72rem",
-            fontWeight: 700,
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            color: "rgba(255,255,255,0.35)",
-          }}
-        >
+      <section className="mb-12">
+        <h2 className="m-0 mb-5 text-[0.72rem] font-bold tracking-[0.22em] uppercase text-white/35">
           Leads da Waitlist
         </h2>
         <LeadsTable leads={allLeads} />
       </section>
 
       <section>
-        <h2
-          style={{
-            margin: "0 0 1.25rem",
-            fontSize: "0.72rem",
-            fontWeight: 700,
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            color: "rgba(255,255,255,0.35)",
-          }}
-        >
+        <h2 className="m-0 mb-5 text-[0.72rem] font-bold tracking-[0.22em] uppercase text-white/35">
           Sugestões Recebidas ({sugestoes.length})
         </h2>
 
         {sugestoes.length === 0 && (
-          <p style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.88rem" }}>
+          <p className="text-white/35 text-[0.88rem]">
             Nenhuma sugestão recebida ainda.
           </p>
         )}
 
         {sugestoes.length > 0 && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: "860px" }}>
+          <div className="flex flex-col gap-4 max-w-[860px]">
             {sugestoes.map((s) => (
               <div
                 key={s.id}
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(59,130,246,0.14)",
-                  borderRadius: "10px",
-                  padding: "1.25rem 1.5rem",
-                }}
+                className="bg-white/[0.03] border border-[rgba(59,130,246,0.14)] rounded-[10px] px-6 py-5"
               >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.75rem",
-                    marginBottom: "0.75rem",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: "0.68rem",
-                      fontWeight: 700,
-                      letterSpacing: "0.14em",
-                      textTransform: "uppercase",
-                      color: "#d4a017",
-                      background: "rgba(212,160,23,0.12)",
-                      border: "1px solid rgba(212,160,23,0.3)",
-                      borderRadius: "4px",
-                      padding: "0.2rem 0.6rem",
-                    }}
-                  >
+                <div className="flex items-center gap-3 mb-3 flex-wrap">
+                  <span className="text-[0.68rem] font-bold tracking-[0.14em] uppercase text-[#d4a017] bg-[rgba(212,160,23,0.12)] border border-[rgba(212,160,23,0.3)] rounded-[4px] px-[0.6rem] py-[0.2rem]">
                     {productNames[s.product_id] ?? s.product_id}
                   </span>
-                  <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.78rem" }}>
+                  <span className="text-white/30 text-[0.78rem]">
                     {new Date(s.created_at).toLocaleString("pt-BR")}
                   </span>
                   {s.nome && (
-                    <span style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.78rem" }}>
+                    <span className="text-white/55 text-[0.78rem]">
                       {s.nome}
                     </span>
                   )}
                   {s.email && (
-                    <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.78rem" }}>
+                    <span className="text-white/40 text-[0.78rem]">
                       {s.email}
                     </span>
                   )}
                 </div>
-                <p
-                  style={{
-                    margin: 0,
-                    color: "rgba(255,255,255,0.7)",
-                    fontSize: "0.88rem",
-                    lineHeight: 1.7,
-                    whiteSpace: "pre-wrap",
-                  }}
-                >
+                <p className="m-0 text-white/70 text-[0.88rem] leading-[1.7] whitespace-pre-wrap">
                   {s.mensagem}
                 </p>
               </div>

@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CheckCircle, AlertCircle, Loader2, Mail } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 import {
   Dialog,
@@ -33,11 +34,11 @@ type FormValues = z.infer<typeof formSchema>;
 // Props
 // ─────────────────────────────────────────────────────────────
 interface WaitlistModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  productId: string;
-  productName: string;
-  productColor: string;
+  readonly open: boolean;
+  readonly onOpenChange: (open: boolean) => void;
+  readonly productId: string;
+  readonly productName: string;
+  readonly productColor: string;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -141,36 +142,22 @@ export function WaitlistModal({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         showCloseButton={true}
-        className="border-0 p-0"
-        style={{
-          background: "#0b1221",
-          border: "1px solid rgba(59,130,246,0.2)",
-          maxWidth: "420px",
-        }}
+        className="border-0 p-0 bg-[#0b1221] border border-[rgba(59,130,246,0.2)] max-w-[420px]"
       >
         {/* Barra de destaque na cor do produto */}
         <div
-          style={{
-            height: "3px",
-            borderRadius: "8px 8px 0 0",
-            background: `linear-gradient(to right, ${productColor}, transparent)`,
-          }}
+          className="h-[3px] rounded-t-[8px]"
+          style={{ background: `linear-gradient(to right, ${productColor}, transparent)` }}
         />
 
-        <div style={{ padding: "1.8rem 2rem 2rem" }}>
-          <DialogHeader style={{ marginBottom: "1.5rem" }}>
+        <div className="px-8 pt-[1.8rem] pb-8">
+          <DialogHeader className="mb-6">
             {/* Ícone de e-mail */}
             <div
+              className="w-11 h-11 rounded-[8px] flex items-center justify-center mb-4"
               style={{
-                width: "44px",
-                height: "44px",
-                borderRadius: "8px",
                 background: `${productColor}18`,
                 border: `1px solid ${productColor}40`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "1rem",
                 color: productColor,
               }}
             >
@@ -178,25 +165,12 @@ export function WaitlistModal({
             </div>
 
             <DialogTitle
-              style={{
-                color: "#fff",
-                fontSize: "1rem",
-                fontWeight: 700,
-                fontFamily: "var(--font-orbitron), sans-serif",
-                letterSpacing: "0.04em",
-                textTransform: "uppercase",
-              }}
+              className="text-white text-base font-bold tracking-[0.04em] uppercase"
+              style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
             >
               Acesso Antecipado
             </DialogTitle>
-            <DialogDescription
-              style={{
-                color: "rgba(255,255,255,0.5)",
-                fontSize: "0.83rem",
-                lineHeight: 1.6,
-                marginTop: "0.4rem",
-              }}
-            >
+            <DialogDescription className="text-white/50 text-[0.83rem] leading-[1.6] mt-[0.4rem]">
               Entre na lista de espera de{" "}
               <span style={{ color: productColor, fontWeight: 600 }}>
                 {productName}
@@ -207,18 +181,10 @@ export function WaitlistModal({
 
           {/* Formulário */}
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div style={{ marginBottom: "1rem" }}>
+            <div className="mb-4">
               <label
                 htmlFor="waitlist-email"
-                style={{
-                  display: "block",
-                  marginBottom: "0.4rem",
-                  color: "rgba(255,255,255,0.7)",
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                }}
+                className="block mb-[0.4rem] text-white/70 text-xs font-semibold tracking-[0.12em] uppercase"
               >
                 E-mail
               </label>
@@ -229,21 +195,11 @@ export function WaitlistModal({
                 placeholder="seu@email.com"
                 disabled={isPending}
                 {...register("email")}
-                style={{
-                  width: "100%",
-                  padding: "0.65rem 0.9rem",
-                  fontSize: "0.9rem",
-                  color: "#fff",
-                  background: "rgba(255,255,255,0.05)",
-                  border: errors.email
-                    ? "1px solid rgba(239,68,68,0.7)"
-                    : "1px solid rgba(255,255,255,0.15)",
-                  borderRadius: "6px",
-                  outline: "none",
-                  transition: "border-color 0.2s",
-                  boxSizing: "border-box",
-                  opacity: isPending ? 0.6 : 1,
-                }}
+                className={cn(
+                  "w-full px-[0.9rem] py-[0.65rem] text-[0.9rem] text-white bg-white/5 border rounded-[6px] outline-none box-border transition-[border-color] duration-200",
+                  isPending && "opacity-60",
+                  errors.email ? "border-red-500/70" : "border-white/15"
+                )}
                 onFocus={(e) => {
                   if (!errors.email) {
                     e.currentTarget.style.borderColor = productColor;
@@ -251,19 +207,12 @@ export function WaitlistModal({
                 }}
                 onBlur={(e) => {
                   if (!errors.email) {
-                    e.currentTarget.style.borderColor =
-                      "rgba(255,255,255,0.15)";
+                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
                   }
                 }}
               />
               {errors.email && (
-                <p
-                  style={{
-                    margin: "0.4rem 0 0",
-                    color: "rgba(239,68,68,0.9)",
-                    fontSize: "0.75rem",
-                  }}
-                >
+                <p className="mt-[0.4rem] m-0 text-red-500/90 text-xs">
                   {errors.email.message}
                 </p>
               )}
@@ -277,38 +226,19 @@ export function WaitlistModal({
             <button
               type="submit"
               disabled={isPending}
+              className={cn(
+                "w-full py-[0.7rem] text-[0.78rem] font-bold tracking-[0.14em] uppercase text-[#050a14] border-none rounded-[6px] flex items-center justify-center gap-2 transition-[background] duration-200",
+                isPending ? "cursor-not-allowed" : "cursor-pointer"
+              )}
               style={{
-                width: "100%",
-                padding: "0.7rem",
-                fontSize: "0.78rem",
-                fontWeight: 700,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "#050a14",
                 background: isPending ? "rgba(212,160,23,0.5)" : "#d4a017",
-                border: "none",
-                borderRadius: "6px",
-                cursor: isPending ? "not-allowed" : "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.5rem",
-                transition: "background 0.2s",
               }}
             >
-              {isPending && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
+              {isPending && <Loader2 size={14} className="animate-spin" />}
               {isPending ? "Cadastrando..." : "Garantir Acesso Antecipado"}
             </button>
 
-            <p
-              style={{
-                marginTop: "0.9rem",
-                textAlign: "center",
-                color: "rgba(255,255,255,0.3)",
-                fontSize: "0.72rem",
-                lineHeight: 1.5,
-              }}
-            >
+            <p className="mt-[0.9rem] text-center text-white/30 text-[0.72rem] leading-[1.5]">
               Sem spam. Apenas uma notificação quando o produto lançar.
             </p>
           </form>

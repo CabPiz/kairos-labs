@@ -33,11 +33,11 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <div className="flex flex-col gap-[0.4rem]">
         <label
           htmlFor="email"
-          style={{ fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)" }}
+          className="text-xs font-semibold tracking-[0.1em] uppercase text-white/50"
         >
           E-mail
         </label>
@@ -48,22 +48,14 @@ export function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
           autoComplete="email"
-          style={{
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.12)",
-            borderRadius: "8px",
-            padding: "0.75rem 1rem",
-            color: "#fff",
-            fontSize: "0.9rem",
-            outline: "none",
-          }}
+          className="bg-white/5 border border-white/[0.12] rounded-[8px] px-4 py-3 text-white text-[0.9rem] outline-none"
         />
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+      <div className="flex flex-col gap-[0.4rem]">
         <label
           htmlFor="password"
-          style={{ fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.5)" }}
+          className="text-xs font-semibold tracking-[0.1em] uppercase text-white/50"
         >
           Senha
         </label>
@@ -74,30 +66,14 @@ export function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           required
           autoComplete="current-password"
-          style={{
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.12)",
-            borderRadius: "8px",
-            padding: "0.75rem 1rem",
-            color: "#fff",
-            fontSize: "0.9rem",
-            outline: "none",
-          }}
+          className="bg-white/5 border border-white/[0.12] rounded-[8px] px-4 py-3 text-white text-[0.9rem] outline-none"
         />
       </div>
 
       {error && (
         <p
           role="alert"
-          style={{
-            margin: 0,
-            padding: "0.65rem 1rem",
-            background: "rgba(239,68,68,0.1)",
-            border: "1px solid rgba(239,68,68,0.3)",
-            borderRadius: "8px",
-            color: "#f87171",
-            fontSize: "0.82rem",
-          }}
+          className="m-0 px-4 py-[0.65rem] bg-red-500/10 border border-red-500/30 rounded-[8px] text-[#f87171] text-[0.82rem]"
         >
           {error}
         </p>
@@ -106,19 +82,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        style={{
-          marginTop: "0.5rem",
-          padding: "0.8rem",
-          background: loading ? "rgba(212,160,23,0.5)" : "#d4a017",
-          border: "none",
-          borderRadius: "8px",
-          color: "#050a14",
-          fontWeight: 700,
-          fontSize: "0.88rem",
-          letterSpacing: "0.06em",
-          textTransform: "uppercase",
-          cursor: loading ? "not-allowed" : "pointer",
-        }}
+        className={`mt-2 py-[0.8rem] border-none rounded-[8px] text-[#050a14] font-bold text-[0.88rem] tracking-[0.06em] uppercase ${loading ? "bg-[rgba(212,160,23,0.5)] cursor-not-allowed" : "bg-[#d4a017] cursor-pointer"}`}
       >
         {loading ? "Entrando…" : "Entrar"}
       </button>
