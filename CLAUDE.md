@@ -81,7 +81,7 @@ PROJECT_NUMBER=3
 OWNER="CabPiz"
 ISSUE_NUM=[NUMERO]
 
-ITEM_ID=$(gh project item-list $PROJECT_NUMBER --owner "$OWNER" --format json | jq -r ".items[] | select(.content.number==$ISSUE_NUM) | .id")
+ITEM_ID=$(gh project item-list $PROJECT_NUMBER --owner "$OWNER" --format json --limit 100 | jq -r ".items[] | select(.content.number==$ISSUE_NUM) | .id")
 
 PROJECT_META=$(gh api graphql -f query='
 query {
@@ -599,7 +599,7 @@ Se todas as respostas forem negativas, o Claude Code registra: *"Autocrítica co
 - Pergunta 1: sim — o passo foi tentado mais de uma vez.
 - Pergunta 2: sim — a sequência correta é buscar com `--limit 100` e filtrar pelo número da issue; o protocolo não documentava isso.
 
-**Proposta de melhoria gerada:** substituir a query de ITEM_ID no bloco da FASE 0 por versão com `--limit 100` e grep explícito pelo número da issue, garantindo que issues recém-adicionadas ao board sejam encontradas na primeira tentativa.
+**Correção aplicada:** a query de ITEM_ID na FASE 0 foi atualizada para `--limit 100`, garantindo que issues recém-adicionadas ao board sejam encontradas na primeira tentativa. Desvio registrado no Diário (Formato C) e corrigido na mesma sessão via autocrítica da FASE 4.7.
 
 > **Princípio:** cada sessão que termina sem autocrítica é uma oportunidade perdida de tornar a próxima mais rápida. O custo de 2 minutos de retrospectiva é zero comparado ao retrabalho evitado em todas as sessões seguintes.
 
@@ -1007,4 +1007,4 @@ O Claude Code verifica se toda função criada ou modificada na sessão que se e
 ---
 
 *Kairos Labs — Cesar Antonio Brito Pizarro*
-*CLAUDE.md v2.6 — FASE 4.7: autocrítica estruturada pós-merge com 6 perguntas (5 internas + observação do usuário) para auto-aprimoramento contínuo do workflow*
+*CLAUDE.md v2.7 — corrige busca de ITEM_ID na FASE 0 com --limit 100, eliminando falha silenciosa em issues recém-adicionadas ao board; atualiza exemplo da FASE 4.7 com status de correção aplicada*
