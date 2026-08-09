@@ -92,4 +92,61 @@ describe("NavBar", () => {
     fireEvent.click(screen.getByRole("button", { name: /fechar menu/i }));
     expect(screen.queryByRole("button", { name: /fechar menu/i })).not.toBeInTheDocument();
   });
+
+  it("fecha o menu mobile ao clicar em um link de seção", () => {
+    render(<NavBar />);
+    fireEvent.click(screen.getByRole("button", { name: /menu de navegação/i }));
+    const sobreLinks = screen.getAllByRole("link", { name: /sobre/i });
+    fireEvent.click(sobreLinks[sobreLinks.length - 1]);
+    expect(screen.queryByRole("button", { name: /fechar menu/i })).not.toBeInTheDocument();
+  });
+
+  it("fecha o menu mobile e abre o modal ao clicar em Contato no menu mobile", () => {
+    render(<NavBar />);
+    fireEvent.click(screen.getByRole("button", { name: /menu de navegação/i }));
+    const contatoBtns = screen.getAllByRole("button", { name: /contato/i });
+    fireEvent.click(contatoBtns[contatoBtns.length - 1]);
+    expect(screen.queryByRole("button", { name: /fechar menu/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it.each(["mouseOver", "focus"] as const)(
+    "altera cor do link Tecnologia no evento %s",
+    (event) => {
+      render(<NavBar />);
+      const link = screen.getByRole("link", { name: /tecnologia/i });
+      fireEvent[event](link);
+      expect(link.style.color).toBe("rgb(255, 255, 255)");
+    }
+  );
+
+  it.each(["mouseOut", "blur"] as const)(
+    "restaura cor do link Tecnologia no evento %s",
+    (event) => {
+      render(<NavBar />);
+      const link = screen.getByRole("link", { name: /tecnologia/i });
+      fireEvent[event](link);
+      expect(link.style.color).toBe("rgba(255, 255, 255, 0.75)");
+    }
+  );
+
+  it.each(["mouseOver", "focus"] as const)(
+    "altera cor do botão Contato no evento %s",
+    (event) => {
+      render(<NavBar />);
+      const [contatoBtn] = screen.getAllByRole("button", { name: /contato/i });
+      fireEvent[event](contatoBtn);
+      expect(contatoBtn.style.color).toBe("rgb(255, 255, 255)");
+    }
+  );
+
+  it.each(["mouseOut", "blur"] as const)(
+    "restaura cor do botão Contato no evento %s",
+    (event) => {
+      render(<NavBar />);
+      const [contatoBtn] = screen.getAllByRole("button", { name: /contato/i });
+      fireEvent[event](contatoBtn);
+      expect(contatoBtn.style.color).toBe("rgba(255, 255, 255, 0.75)");
+    }
+  );
 });
