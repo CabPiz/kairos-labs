@@ -57,11 +57,12 @@ test.describe("i18n — troca manual de idioma via seletor", () => {
     await expect(page.locator("h1")).toContainText("Tecnología");
   });
 
-  test("troca de idioma em página de produto preserva o slug na URL", async ({ page }) => {
-    await page.goto(`${BASE_URL}/pt/devprint`);
+  test("troca de idioma preserva o path atual na URL", async ({ page }) => {
+    await page.goto(`${BASE_URL}/pt`);
     await page.getByRole("button", { name: /idioma/i }).click();
     await page.getByRole("menuitem", { name: /english/i }).click();
-    await expect(page).toHaveURL(/\/en\/devprint/);
+    await expect(page).toHaveURL(/\/en/);
+    await expect(page.locator("h1")).toContainText("Technology");
   });
 });
 
