@@ -20,3 +20,16 @@ export function isValidEmail(val: string): boolean {
   const at = val.indexOf("@");
   return at > 0 && val.indexOf(".", at) > at + 1;
 }
+
+/**
+ * Valida número de telefone/WhatsApp: apenas dígitos, mínimo 10, máximo 15.
+ * Aceita string vazia (campo opcional).
+ *
+ * @param val - String a validar
+ * @returns `true` se válido ou vazio
+ */
+export function isValidPhone(val: string): boolean {
+  if (!val || val.trim() === "") return true;
+  const digits = val.replace(/\D/g, "");
+  return digits.length >= 10 && digits.length <= 15;
+}

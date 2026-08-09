@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { LoginForm } from "./_components/LoginForm";
 
 export default function LoginPage() {
@@ -24,6 +25,22 @@ export default function LoginPage() {
           padding: "2.5rem",
         }}
       >
+        <Link
+          href="/"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.35rem",
+            color: "rgba(255,255,255,0.4)",
+            fontSize: "0.78rem",
+            textDecoration: "none",
+            letterSpacing: "0.05em",
+            marginBottom: "1.75rem",
+          }}
+        >
+          ← Voltar ao site
+        </Link>
+
         <h1
           style={{
             margin: "0 0 0.5rem",

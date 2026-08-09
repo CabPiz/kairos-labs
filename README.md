@@ -56,7 +56,7 @@ kairos-labs/
 │   │   └── login/          # Supabase Auth login page
 │   ├── solucoes/           # Public product pages (/solucoes/[slug])
 │   ├── layout.tsx          # Root layout (fonts, metadata)
-│   └── page.tsx            # Landing page (Hero, Products, Footer)
+│   └── page.tsx            # Landing page (Hero, Products, Sobre, Tecnologia, Contato)
 ├── components/             # Shared React components
 │   └── ui/                 # Reusable primitives (modals, banners, charts)
 ├── lib/                    # Utilities, Supabase clients, Server Actions
@@ -96,6 +96,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 > **Database:** the app requires a Supabase project. Run the migration scripts in order in the Supabase SQL Editor:
 > 1. [`supabase/migrations/001_initial_schema.sql`](./supabase/migrations/001_initial_schema.sql) — tables, RLS policies, and grants
 > 2. [`supabase/migrations/002_dashboard_rpc.sql`](./supabase/migrations/002_dashboard_rpc.sql) — `get_dashboard_kpis()` SECURITY DEFINER function
+> 3. [`supabase/migrations/003_contact_requests_phone.sql`](./supabase/migrations/003_contact_requests_phone.sql) — `phone` and `whatsapp_preferred` columns in `contact_requests`
 
 For the full setup guide, test commands, and contribution standards, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 

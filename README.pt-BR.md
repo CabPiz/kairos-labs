@@ -96,6 +96,7 @@ Abra [http://localhost:3000](http://localhost:3000) no navegador.
 > **Banco de dados:** a aplicação requer um projeto Supabase. Execute os scripts de migration em ordem no SQL Editor do Supabase:
 > 1. [`supabase/migrations/001_initial_schema.sql`](./supabase/migrations/001_initial_schema.sql) — tabelas, políticas RLS e grants
 > 2. [`supabase/migrations/002_dashboard_rpc.sql`](./supabase/migrations/002_dashboard_rpc.sql) — função `get_dashboard_kpis()` com SECURITY DEFINER
+> 3. [`supabase/migrations/003_contact_requests_phone.sql`](./supabase/migrations/003_contact_requests_phone.sql) — colunas `phone` e `whatsapp_preferred` em `contact_requests`
 
 Para o guia completo de setup, comandos de teste e padrões de contribuição, veja [docs/CONTRIBUTING.pt-BR.md](./docs/CONTRIBUTING.pt-BR.md).
 

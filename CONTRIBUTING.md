@@ -50,7 +50,16 @@ This creates the `waitlist` and `feedback` tables, enables RLS on both, and sets
 
 This creates the `get_dashboard_kpis()` SECURITY DEFINER function used by the admin dashboard to read data without relying on `BYPASSRLS` (service_role).
 
-**To verify both migrations ran correctly**, run these queries in the SQL Editor:
+### Migration 003 — Contact requests: phone and WhatsApp
+
+1. Open a new query in the SQL Editor
+2. Copy the full contents of [`supabase/migrations/003_contact_requests_phone.sql`](./supabase/migrations/003_contact_requests_phone.sql) and paste it
+3. Click **Run**
+4. You should see **"Success. No rows returned"**
+
+This adds `phone` (optional text) and `whatsapp_preferred` (boolean, default `false`) to the `contact_requests` table, enabling the contact form to capture the preferred return channel.
+
+**To verify all migrations ran correctly**, run these queries in the SQL Editor:
 
 ```sql
 -- Check columns
@@ -76,7 +85,7 @@ FROM information_schema.routines
 WHERE routine_schema = 'public' AND routine_name = 'get_dashboard_kpis';
 ```
 
-Expected: `waitlist` and `feedback` tables with their columns, `anon` with INSERT on both, `service_role` with ALL on both, `rowsecurity = true` on both tables, and `get_dashboard_kpis` with `security_type = DEFINER`.
+Expected: `waitlist`, `feedback`, and `contact_requests` tables with their columns (including `phone` and `whatsapp_preferred`), correct grants, `rowsecurity = true` on all tables, and `get_dashboard_kpis` with `security_type = DEFINER`.
 
 ---
 

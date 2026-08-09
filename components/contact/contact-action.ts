@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { createServerAdminClient } from "@/lib/supabase-server";
-import { PROJECT_TYPES, isValidEmail } from "./contact-schema";
+import { PROJECT_TYPES, isValidEmail, isValidPhone } from "./contact-schema";
 
 const schema = z.object({
   name: z.string().min(1, "Nome é obrigatório."),
@@ -15,6 +15,11 @@ const schema = z.object({
     .string()
     .min(1, "Descrição é obrigatória.")
     .max(500, "A descrição deve ter no máximo 500 caracteres."),
+  phone: z.string().optional().refine(
+    (val) => isValidPhone(val ?? ""),
+    { message: "Número inválido. Use DDD + número (mínimo 10 dígitos)." }
+  ),
+  whatsapp_preferred: z.boolean().optional(),
 });
 
 export type ContactActionState =
@@ -27,6 +32,8 @@ export interface ContactFormData {
   email: string;
   project_type: string;
   description: string;
+  phone?: string;
+  whatsapp_preferred?: boolean;
 }
 
 /**
@@ -35,7 +42,7 @@ export interface ContactFormData {
  * `useTransition` — FormData chega vazio ao servidor nesse contexto
  * (ver padrão documentado em CLAUDE.md › PADRÕES SONAR › Server Actions).
  *
- * @param data - Campos obrigatórios: `name`, `email`, `project_type`, `description`
+ * @param data - Campos obrigatórios: `name`, `email`, `project_type`, `description`; opcionais: `phone`, `whatsapp_preferred`
  * @returns Estado da operação: idle | success | error
  */
 export async function sendContactAction(
@@ -48,14 +55,21 @@ export async function sendContactAction(
     return { status: "error", message: first.message };
   }
 
-  const { name, email, project_type, description } = parsed.data;
+  const { name, email, project_type, description, phone, whatsapp_preferred } = parsed.data;
 
   const supabase = createServerAdminClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase as any)
     .from("contact_requests")
-    .insert({ name, email, project_type, description });
+    .insert({
+      name,
+      email,
+      project_type,
+      description,
+      phone: phone || null,
+      whatsapp_preferred: whatsapp_preferred ?? false,
+    });
 
   if (error) {
     return { status: "error", message: "Não foi possível enviar a solicitação. Tente novamente." };

@@ -14,23 +14,13 @@ describe("NavBar", () => {
     expect(logoLink).toHaveAttribute("href", "/");
   });
 
-  it("renderiza os links Sobre e Tecnologia como âncoras", () => {
+  it("renderiza os links Sobre, Tecnologia e Contato como âncoras", () => {
     render(<NavBar />);
     expect(screen.getByRole("link", { name: /sobre/i })).toHaveAttribute("href", "#sobre");
     expect(screen.getByRole("link", { name: /tecnologia/i })).toHaveAttribute("href", "#tecnologia");
-  });
-
-  it("renderiza Contato como botão (abre modal, não navega)", () => {
-    render(<NavBar />);
-    const contatoBtns = screen.getAllByRole("button", { name: /contato/i });
-    expect(contatoBtns.length).toBeGreaterThanOrEqual(1);
-  });
-
-  it("abre o ContactModal ao clicar em Contato no desktop", () => {
-    render(<NavBar />);
-    const [contatoBtn] = screen.getAllByRole("button", { name: /contato/i });
-    fireEvent.click(contatoBtn);
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    const contatoLinks = screen.getAllByRole("link", { name: /^contato$/i });
+    expect(contatoLinks.length).toBeGreaterThanOrEqual(1);
+    expect(contatoLinks[0]).toHaveAttribute("href", "#contato");
   });
 
   it("renderiza o botão Acesso com link para /admin/login", () => {
@@ -101,13 +91,12 @@ describe("NavBar", () => {
     expect(screen.queryByRole("button", { name: /fechar menu/i })).not.toBeInTheDocument();
   });
 
-  it("fecha o menu mobile e abre o modal ao clicar em Contato no menu mobile", () => {
+  it("fecha o menu mobile ao clicar no link Contato no menu mobile", () => {
     render(<NavBar />);
     fireEvent.click(screen.getByRole("button", { name: /menu de navegação/i }));
-    const contatoBtns = screen.getAllByRole("button", { name: /contato/i });
-    fireEvent.click(contatoBtns[contatoBtns.length - 1]);
+    const contatoLinks = screen.getAllByRole("link", { name: /^contato$/i });
+    fireEvent.click(contatoLinks[contatoLinks.length - 1]);
     expect(screen.queryByRole("button", { name: /fechar menu/i })).not.toBeInTheDocument();
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 
   it.each(["mouseOver", "focus"] as const)(
@@ -131,22 +120,22 @@ describe("NavBar", () => {
   );
 
   it.each(["mouseOver", "focus"] as const)(
-    "altera cor do botão Contato no evento %s",
+    "altera cor do link Contato no evento %s",
     (event) => {
       render(<NavBar />);
-      const [contatoBtn] = screen.getAllByRole("button", { name: /contato/i });
-      fireEvent[event](contatoBtn);
-      expect(contatoBtn.style.color).toBe("rgb(255, 255, 255)");
+      const [contatoLink] = screen.getAllByRole("link", { name: /^contato$/i });
+      fireEvent[event](contatoLink);
+      expect(contatoLink.style.color).toBe("rgb(255, 255, 255)");
     }
   );
 
   it.each(["mouseOut", "blur"] as const)(
-    "restaura cor do botão Contato no evento %s",
+    "restaura cor do link Contato no evento %s",
     (event) => {
       render(<NavBar />);
-      const [contatoBtn] = screen.getAllByRole("button", { name: /contato/i });
-      fireEvent[event](contatoBtn);
-      expect(contatoBtn.style.color).toBe("rgba(255, 255, 255, 0.75)");
+      const [contatoLink] = screen.getAllByRole("link", { name: /^contato$/i });
+      fireEvent[event](contatoLink);
+      expect(contatoLink.style.color).toBe("rgba(255, 255, 255, 0.75)");
     }
   );
 });

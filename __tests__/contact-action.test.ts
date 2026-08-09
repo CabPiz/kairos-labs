@@ -77,7 +77,16 @@ describe("sendContactAction", () => {
         email: validData.email,
         project_type: validData.project_type,
         description: validData.description,
+        phone: null,
+        whatsapp_preferred: false,
       });
+    });
+
+    it("repassa phone e whatsapp_preferred quando fornecidos", async () => {
+      await sendContactAction({ ...validData, phone: "11999999999", whatsapp_preferred: true });
+      expect(mockInsert).toHaveBeenCalledWith(
+        expect.objectContaining({ phone: "11999999999", whatsapp_preferred: true })
+      );
     });
   });
 

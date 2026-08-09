@@ -27,4 +27,11 @@ describe("LoginPage", () => {
     render(<LoginPage />);
     expect(screen.getByTestId("login-form-mock")).toBeInTheDocument();
   });
+
+  it("exibe link para voltar ao site principal", () => {
+    render(<LoginPage />);
+    const backLink = screen.getByRole("link", { name: /voltar ao site/i });
+    expect(backLink).toBeInTheDocument();
+    expect(backLink).toHaveAttribute("href", "/");
+  });
 });
