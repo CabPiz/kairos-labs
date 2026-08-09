@@ -1,3 +1,5 @@
+import { BackToTop } from "@/components/sections/BackToTop";
+import { ContatoSection } from "@/components/sections/ContatoSection";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { Products } from "@/components/sections/Products";
 import { SobreSection } from "@/components/sections/SobreSection";
@@ -10,6 +12,8 @@ export default function Home() {
       <Products />
       <SobreSection />
       <TecnologiaSection />
+      <ContatoSection />
+      <BackToTop />
     </main>
   );
 }

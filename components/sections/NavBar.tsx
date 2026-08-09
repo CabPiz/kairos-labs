@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ContactModal } from "@/components/contact/ContactModal";
 
 const navLinkStyle = {
   color: "rgba(255,255,255,0.75)",
@@ -21,16 +20,10 @@ const navLinkStyle = {
 };
 
 export function NavBar() {
-  const [contactOpen, setContactOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   function handleNavLink() {
     setMobileOpen(false);
-  }
-
-  function handleContactClick() {
-    setMobileOpen(false);
-    setContactOpen(true);
   }
 
   return (
@@ -108,9 +101,8 @@ export function NavBar() {
             Tecnologia
           </Link>
 
-          <button
-            type="button"
-            onClick={() => setContactOpen(true)}
+          <Link
+            href="#contato"
             style={navLinkStyle}
             onMouseOver={(e) => (e.currentTarget.style.color = "#fff")}
             onFocus={(e) => (e.currentTarget.style.color = "#fff")}
@@ -118,7 +110,7 @@ export function NavBar() {
             onBlur={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.75)")}
           >
             Contato
-          </button>
+          </Link>
 
           <Link href="/admin/login">
             <button
@@ -278,6 +270,7 @@ export function NavBar() {
             {[
               { label: "Sobre", href: "#sobre" },
               { label: "Tecnologia", href: "#tecnologia" },
+              { label: "Contato", href: "#contato" },
             ].map(({ label, href }) => (
               <Link
                 key={label}
@@ -299,28 +292,6 @@ export function NavBar() {
                 {label}
               </Link>
             ))}
-
-            <button
-              type="button"
-              onClick={handleContactClick}
-              style={{
-                color: "rgba(255,255,255,0.75)",
-                fontSize: "1.15rem",
-                fontWeight: 500,
-                letterSpacing: "0.2em",
-                textTransform: "uppercase",
-                padding: "1rem 0",
-                fontFamily: "var(--font-inter), sans-serif",
-                background: "none",
-                border: "none",
-                borderBottom: "1px solid rgba(255,255,255,0.07)",
-                cursor: "pointer",
-                textAlign: "left",
-                width: "100%",
-              }}
-            >
-              Contato
-            </button>
 
             <div style={{ marginTop: "2rem" }}>
               <Link
@@ -348,7 +319,6 @@ export function NavBar() {
         </div>
       )}
 
-      <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
     </>
   );
 }
