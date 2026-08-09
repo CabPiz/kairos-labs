@@ -8,11 +8,7 @@ export function HeroContent() {
 
   return (
     <div
-      className="relative z-30 flex flex-col"
-      style={{
-        padding: "2.5rem 2.5rem 0",
-        maxWidth: "52%",
-      }}
+      className="relative z-30 flex flex-col px-4 pt-8 pb-0 sm:px-10 sm:pt-10 sm:max-w-[52%]"
     >
       {/* Headline — Orbitron para identidade tech/futurista */}
       <h1 style={{ margin: 0, padding: 0, lineHeight: 1.15 }}>

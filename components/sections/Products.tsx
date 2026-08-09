@@ -12,7 +12,7 @@ export function Products() {
   const produtos = getProducts();
 
   return (
-    <section id="products" className="px-10 py-20" style={{ backgroundColor: "#050a14" }}>
+    <section id="products" className="px-4 sm:px-10 py-20" style={{ backgroundColor: "#050a14" }}>
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-12">
           <p className="mb-3 text-[#d4a017] text-[0.75rem] font-bold tracking-[0.22em] uppercase">
@@ -27,7 +27,7 @@ export function Products() {
           </p>
         </div>
 
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-6">
           {produtos.map((produto) => (
             <ProductCard key={produto.slug} produto={produto} />
           ))}

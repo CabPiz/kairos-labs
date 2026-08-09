@@ -46,25 +46,13 @@ const features = [
 export function FeatureCards() {
   return (
     <div
-      className="relative z-30"
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(4, 1fr)",
-        borderTop: "1px solid rgba(59,130,246,0.25)",
-        marginTop: "auto",
-      }}
+      className="relative z-30 grid grid-cols-2 md:grid-cols-4 border-t border-blue-500/25 overflow-hidden"
+      style={{ marginTop: "auto" }}
     >
       {features.map(({ title, description, icon }, i) => (
         <div
           key={title}
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            gap: "1rem",
-            padding: "1.4rem 1.8rem",
-            background: "rgba(5,10,30,0.82)",
-            borderRight: i < 3 ? "1px solid rgba(59,130,246,0.2)" : "none",
-          }}
+          className={`flex items-start gap-4 px-5 py-5 md:px-[1.8rem] md:py-[1.4rem] bg-[rgba(5,10,30,0.82)] border-r border-blue-500/20${i < 2 ? " border-b md:border-b-0" : ""}`}
         >
           {/* Ícone com borda azul */}
           <div
