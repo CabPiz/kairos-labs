@@ -12,7 +12,10 @@ const PROJECT_TYPES = [
 
 const schema = z.object({
   name: z.string().min(1, "Nome é obrigatório."),
-  email: z.string().min(1, "E-mail é obrigatório.").email("Formato de e-mail inválido."),
+  email: z.string().min(1, "E-mail é obrigatório.").refine(
+    (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+    { message: "Formato de e-mail inválido." }
+  ),
   project_type: z.enum(PROJECT_TYPES, { message: "Selecione um tipo de projeto." }),
   description: z
     .string()

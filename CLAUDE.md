@@ -656,6 +656,21 @@ const EMAIL = process.env.E2E_EMAIL!;
 // sem test.skip — as variáveis devem estar em .env.local ou nos secrets do CI
 ```
 
+### Zod: `.email()` como método de `ZodString` é deprecated (`typescript:S1874`)
+
+Em Zod v4, o método `.email()` encadeado em `z.string()` foi marcado como deprecated pelo Sonar (S1874). Usar `.refine()` com regex, que é estável em todas as versões:
+
+```ts
+// ❌ Errado — Sonar S1874: .email() deprecated em Zod v4
+email: z.string().min(1, "E-mail é obrigatório.").email("Formato de e-mail inválido.")
+
+// ✅ Correto — .refine() com regex é estável
+email: z.string().min(1, "E-mail é obrigatório.").refine(
+  (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+  { message: "Formato de e-mail inválido." }
+),
+```
+
 ### Server Actions: usar objeto tipado, não FormData, quando invocadas via `useTransition`
 
 Next.js serializa `FormData` corretamente **apenas** quando a Server Action é invocada via atributo `action` de um `<form>` nativo. Quando chamada programaticamente via `useTransition`, o `FormData` chega vazio (`{}`) ao servidor.
