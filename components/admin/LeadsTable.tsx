@@ -32,24 +32,6 @@ function downloadCsv(content: string, filename: string): void {
   URL.revokeObjectURL(url);
 }
 
-const cellStyle: React.CSSProperties = {
-  padding: "0.75rem 1rem",
-  fontSize: "0.84rem",
-  color: "rgba(255,255,255,0.75)",
-  borderBottom: "1px solid rgba(255,255,255,0.06)",
-};
-
-const headerCellStyle: React.CSSProperties = {
-  padding: "0.6rem 1rem",
-  fontSize: "0.68rem",
-  fontWeight: 700,
-  letterSpacing: "0.16em",
-  textTransform: "uppercase" as const,
-  color: "rgba(255,255,255,0.35)",
-  borderBottom: "1px solid rgba(255,255,255,0.1)",
-  textAlign: "left" as const,
-};
-
 export function LeadsTable({ leads }: Props) {
   const [page, setPage] = useState(0);
 
@@ -64,70 +46,52 @@ export function LeadsTable({ leads }: Props) {
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: "1rem",
-        }}
-      >
-        <span style={{ fontSize: "0.8rem", color: "rgba(255,255,255,0.35)" }}>
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-[0.8rem] text-white/35">
           {leads.length} lead{leads.length !== 1 ? "s" : ""} no total
         </span>
         <button
           type="button"
           onClick={handleExport}
-          style={{
-            fontSize: "0.75rem",
-            fontWeight: 700,
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            color: "#d4a017",
-            background: "rgba(212,160,23,0.1)",
-            border: "1px solid rgba(212,160,23,0.3)",
-            borderRadius: "6px",
-            padding: "0.45rem 1rem",
-            cursor: "pointer",
-          }}
+          className="text-xs font-bold tracking-[0.1em] uppercase text-[#d4a017] bg-[rgba(212,160,23,0.1)] border border-[rgba(212,160,23,0.3)] rounded-[6px] px-4 py-[0.45rem] cursor-pointer"
         >
           Exportar CSV
         </button>
       </div>
 
       {leads.length === 0 && (
-        <p style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.88rem" }}>
+        <p className="text-white/35 text-[0.88rem]">
           Nenhum lead cadastrado ainda.
         </p>
       )}
 
       {leads.length > 0 && (
         <>
-          <div style={{ overflowX: "auto" }}>
-            <table
-              style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                background: "rgba(255,255,255,0.02)",
-                border: "1px solid rgba(255,255,255,0.07)",
-                borderRadius: "10px",
-              }}
-            >
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse bg-white/[0.02] border border-white/[0.07] rounded-[10px]">
               <thead>
                 <tr>
-                  <th style={headerCellStyle}>E-mail</th>
-                  <th style={headerCellStyle}>Produto</th>
-                  <th style={headerCellStyle}>Data de Cadastro</th>
+                  <th className="px-4 py-[0.6rem] text-[0.68rem] font-bold tracking-[0.16em] uppercase text-white/35 border-b border-white/10 text-left">
+                    E-mail
+                  </th>
+                  <th className="px-4 py-[0.6rem] text-[0.68rem] font-bold tracking-[0.16em] uppercase text-white/35 border-b border-white/10 text-left">
+                    Produto
+                  </th>
+                  <th className="px-4 py-[0.6rem] text-[0.68rem] font-bold tracking-[0.16em] uppercase text-white/35 border-b border-white/10 text-left">
+                    Data de Cadastro
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {slice.map((lead) => (
                   <tr key={lead.id}>
-                    <td style={cellStyle}>{lead.email}</td>
-                    <td style={cellStyle}>
+                    <td className="px-4 py-3 text-[0.84rem] text-white/75 border-b border-white/[0.06]">
+                      {lead.email}
+                    </td>
+                    <td className="px-4 py-3 text-[0.84rem] text-white/75 border-b border-white/[0.06]">
                       {productNames[lead.product_id] ?? lead.product_id}
                     </td>
-                    <td style={{ ...cellStyle, color: "rgba(255,255,255,0.4)" }}>
+                    <td className="px-4 py-3 text-[0.84rem] text-white/40 border-b border-white/[0.06]">
                       {new Date(lead.created_at).toLocaleString("pt-BR")}
                     </td>
                   </tr>
@@ -137,49 +101,23 @@ export function LeadsTable({ leads }: Props) {
           </div>
 
           {totalPages > 1 && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "1rem",
-                marginTop: "1rem",
-                justifyContent: "flex-end",
-              }}
-            >
+            <div className="flex items-center gap-4 mt-4 justify-end">
               <button
                 type="button"
                 onClick={() => setPage((p) => p - 1)}
                 disabled={page === 0}
-                style={{
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: page === 0 ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.6)",
-                  background: "transparent",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  borderRadius: "6px",
-                  padding: "0.35rem 0.8rem",
-                  cursor: page === 0 ? "not-allowed" : "pointer",
-                }}
+                className={`text-xs font-semibold bg-transparent border border-white/[0.12] rounded-[6px] py-[0.35rem] px-[0.8rem] ${page === 0 ? "text-white/20 cursor-not-allowed" : "text-white/60 cursor-pointer"}`}
               >
                 Anterior
               </button>
-              <span style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.35)" }}>
+              <span className="text-[0.78rem] text-white/35">
                 {page + 1} / {totalPages}
               </span>
               <button
                 type="button"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={page === totalPages - 1}
-                style={{
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: page === totalPages - 1 ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.6)",
-                  background: "transparent",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  borderRadius: "6px",
-                  padding: "0.35rem 0.8rem",
-                  cursor: page === totalPages - 1 ? "not-allowed" : "pointer",
-                }}
+                className={`text-xs font-semibold bg-transparent border border-white/[0.12] rounded-[6px] py-[0.35rem] px-[0.8rem] ${page === totalPages - 1 ? "text-white/20 cursor-not-allowed" : "text-white/60 cursor-pointer"}`}
               >
                 Próxima
               </button>

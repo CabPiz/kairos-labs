@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CheckCircle, Loader2, MessageSquare } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 import {
   Dialog,
@@ -82,28 +83,6 @@ export function FeedbackModal({
     });
   }
 
-  const labelStyle: React.CSSProperties = {
-    display: "block",
-    marginBottom: "0.4rem",
-    color: "rgba(255,255,255,0.7)",
-    fontSize: "0.75rem",
-    fontWeight: 600,
-    letterSpacing: "0.12em",
-    textTransform: "uppercase",
-  };
-
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "0.65rem 0.9rem",
-    fontSize: "0.9rem",
-    color: "#fff",
-    background: "rgba(255,255,255,0.05)",
-    border: "1px solid rgba(255,255,255,0.15)",
-    borderRadius: "6px",
-    outline: "none",
-    boxSizing: "border-box",
-  };
-
   // ── Painel de sucesso ──────────────────────────────────────
   if (actionState.status === "success") {
     return (
@@ -133,34 +112,20 @@ export function FeedbackModal({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         showCloseButton={true}
-        className="border-0 p-0"
-        style={{
-          background: "#0b1221",
-          border: "1px solid rgba(59,130,246,0.2)",
-          maxWidth: "440px",
-        }}
+        className="border-0 p-0 bg-[#0b1221] border border-[rgba(59,130,246,0.2)] max-w-[440px]"
       >
         <div
-          style={{
-            height: "3px",
-            borderRadius: "8px 8px 0 0",
-            background: `linear-gradient(to right, ${productColor}, transparent)`,
-          }}
+          className="h-[3px] rounded-t-[8px]"
+          style={{ background: `linear-gradient(to right, ${productColor}, transparent)` }}
         />
 
-        <div style={{ padding: "1.8rem 2rem 2rem" }}>
-          <DialogHeader style={{ marginBottom: "1.5rem" }}>
+        <div className="px-8 pt-[1.8rem] pb-8">
+          <DialogHeader className="mb-6">
             <div
+              className="w-11 h-11 rounded-[8px] flex items-center justify-center mb-4"
               style={{
-                width: "44px",
-                height: "44px",
-                borderRadius: "8px",
                 background: `${productColor}18`,
                 border: `1px solid ${productColor}40`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: "1rem",
                 color: productColor,
               }}
             >
@@ -168,25 +133,12 @@ export function FeedbackModal({
             </div>
 
             <DialogTitle
-              style={{
-                color: "#fff",
-                fontSize: "1rem",
-                fontWeight: 700,
-                fontFamily: "var(--font-orbitron), sans-serif",
-                letterSpacing: "0.04em",
-                textTransform: "uppercase",
-              }}
+              className="text-white text-base font-bold tracking-[0.04em] uppercase"
+              style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
             >
               Enviar Sugestão
             </DialogTitle>
-            <DialogDescription
-              style={{
-                color: "rgba(255,255,255,0.5)",
-                fontSize: "0.83rem",
-                lineHeight: 1.6,
-                marginTop: "0.4rem",
-              }}
-            >
+            <DialogDescription className="text-white/50 text-[0.83rem] leading-[1.6] mt-[0.4rem]">
               Compartilhe sua ideia para{" "}
               <span style={{ color: productColor, fontWeight: 600 }}>
                 {productName}
@@ -197,12 +149,13 @@ export function FeedbackModal({
 
           <form onSubmit={handleSubmit(onSubmit)}>
             {/* Nome */}
-            <div style={{ marginBottom: "1rem" }}>
-              <label htmlFor="feedback-nome" style={labelStyle}>
+            <div className="mb-4">
+              <label
+                htmlFor="feedback-nome"
+                className="block mb-[0.4rem] text-white/70 text-xs font-semibold tracking-[0.12em] uppercase"
+              >
                 Nome{" "}
-                <span style={{ color: "rgba(255,255,255,0.3)", fontWeight: 400 }}>
-                  (opcional)
-                </span>
+                <span className="text-white/30 font-normal">(opcional)</span>
               </label>
               <input
                 id="feedback-nome"
@@ -211,17 +164,21 @@ export function FeedbackModal({
                 placeholder="Seu nome"
                 disabled={isPending}
                 {...register("nome")}
-                style={{ ...inputStyle, opacity: isPending ? 0.6 : 1 }}
+                className={cn(
+                  "w-full px-[0.9rem] py-[0.65rem] text-[0.9rem] text-white bg-white/5 border border-white/15 rounded-[6px] outline-none box-border",
+                  isPending && "opacity-60"
+                )}
               />
             </div>
 
             {/* E-mail */}
-            <div style={{ marginBottom: "1rem" }}>
-              <label htmlFor="feedback-email" style={labelStyle}>
+            <div className="mb-4">
+              <label
+                htmlFor="feedback-email"
+                className="block mb-[0.4rem] text-white/70 text-xs font-semibold tracking-[0.12em] uppercase"
+              >
                 E-mail{" "}
-                <span style={{ color: "rgba(255,255,255,0.3)", fontWeight: 400 }}>
-                  (opcional)
-                </span>
+                <span className="text-white/30 font-normal">(opcional)</span>
               </label>
               <input
                 id="feedback-email"
@@ -230,22 +187,25 @@ export function FeedbackModal({
                 placeholder="seu@email.com"
                 disabled={isPending}
                 {...register("email")}
-                style={{
-                  ...inputStyle,
-                  opacity: isPending ? 0.6 : 1,
-                  borderColor: errors.email ? "rgba(239,68,68,0.7)" : "rgba(255,255,255,0.15)",
-                }}
+                className={cn(
+                  "w-full px-[0.9rem] py-[0.65rem] text-[0.9rem] text-white bg-white/5 border rounded-[6px] outline-none box-border",
+                  isPending && "opacity-60",
+                  errors.email ? "border-red-500/70" : "border-white/15"
+                )}
               />
               {errors.email && (
-                <p style={{ margin: "0.4rem 0 0", color: "rgba(239,68,68,0.9)", fontSize: "0.75rem" }}>
+                <p className="mt-[0.4rem] m-0 text-red-500/90 text-xs">
                   {errors.email.message}
                 </p>
               )}
             </div>
 
             {/* Mensagem */}
-            <div style={{ marginBottom: "1rem" }}>
-              <label htmlFor="feedback-mensagem" style={labelStyle}>
+            <div className="mb-4">
+              <label
+                htmlFor="feedback-mensagem"
+                className="block mb-[0.4rem] text-white/70 text-xs font-semibold tracking-[0.12em] uppercase"
+              >
                 Mensagem
               </label>
               <textarea
@@ -254,16 +214,14 @@ export function FeedbackModal({
                 placeholder="Descreva sua sugestão..."
                 disabled={isPending}
                 {...register("mensagem")}
-                style={{
-                  ...inputStyle,
-                  resize: "vertical",
-                  opacity: isPending ? 0.6 : 1,
-                  borderColor: errors.mensagem ? "rgba(239,68,68,0.7)" : "rgba(255,255,255,0.15)",
-                  fontFamily: "inherit",
-                }}
+                className={cn(
+                  "w-full px-[0.9rem] py-[0.65rem] text-[0.9rem] text-white bg-white/5 border rounded-[6px] outline-none box-border resize-y font-[inherit]",
+                  isPending && "opacity-60",
+                  errors.mensagem ? "border-red-500/70" : "border-white/15"
+                )}
               />
               {errors.mensagem && (
-                <p style={{ margin: "0.4rem 0 0", color: "rgba(239,68,68,0.9)", fontSize: "0.75rem" }}>
+                <p className="mt-[0.4rem] m-0 text-red-500/90 text-xs">
                   {errors.mensagem.message}
                 </p>
               )}
@@ -277,26 +235,13 @@ export function FeedbackModal({
             <button
               type="submit"
               disabled={isPending}
-              style={{
-                width: "100%",
-                padding: "0.7rem",
-                fontSize: "0.78rem",
-                fontWeight: 700,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "#050a14",
-                background: isPending ? `${productColor}80` : productColor,
-                border: "none",
-                borderRadius: "6px",
-                cursor: isPending ? "not-allowed" : "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.5rem",
-                transition: "background 0.2s",
-              }}
+              className={cn(
+                "w-full py-[0.7rem] text-[0.78rem] font-bold tracking-[0.14em] uppercase text-[#050a14] border-none rounded-[6px] flex items-center justify-center gap-2 transition-[background] duration-200",
+                isPending ? "cursor-not-allowed" : "cursor-pointer"
+              )}
+              style={{ background: isPending ? `${productColor}80` : productColor }}
             >
-              {isPending && <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />}
+              {isPending && <Loader2 size={14} className="animate-spin" />}
               {isPending ? "Enviando..." : "Enviar Sugestão"}
             </button>
           </form>
