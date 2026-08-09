@@ -131,3 +131,35 @@ if (actionState.status === "success") {
 |---|---|
 | `ModalResultPanel` | Painel de sucesso, aviso ou qualquer estado final de modal |
 | `ModalErrorBanner` | Banner de erro inline dentro de formulários de modal |
+
+---
+
+## [ERR-007] Event handlers em Server Components causam falha de prerender
+
+**Issue de origem:** #98  
+**Sintoma:**
+```
+Error: Event handlers cannot be passed to Client Component props.
+{href: "/", style: ..., onMouseOver: function onMouseOver, ...}
+If you need interactivity, consider converting part of this to a Client Component.
+digest: '2177826938'
+Export encountered an error on /admin/login/page: /admin/login, exiting the build.
+```
+**Causa:** Arquivo em `app/` sem `"use client"` é um Server Component. O Next.js serializa o JSX para transferência ao cliente — funções (`onMouseOver`, `onClick`, `onFocus`, etc.) não são serializáveis e são rejeitadas no prerender estático.  
+**Correção:** Remover os event handlers do elemento afetado, ou adicionar `"use client"` ao arquivo (somente se a interatividade for essencial — tem custo de bundle).  
+**Padrão a seguir:**
+```tsx
+// ✅ Correto em Server Component — sem event handlers
+<Link href="/" style={{ color: "rgba(255,255,255,0.4)" }}>
+  ← Voltar ao site
+</Link>
+
+// ❌ Errado em Server Component — build falha
+<Link
+  href="/"
+  onMouseOver={(e) => (e.currentTarget.style.color = "#fff")}
+>
+  ← Voltar ao site
+</Link>
+```
+**Prevenção:** Antes de adicionar qualquer `on*` handler a um elemento em `app/`, verificar se o arquivo tem `"use client"` no topo. Se não tiver, o componente é Server Component e event handlers são proibidos como props.
