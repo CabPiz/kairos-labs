@@ -1,5 +1,5 @@
 import { chromium } from '@playwright/test';
-import { mkdirSync, existsSync } from 'fs';
+import { mkdirSync, existsSync } from 'node:fs';
 
 const scratchDir = 'C:/Users/Cesar/AppData/Local/Temp/claude/kairos-mobile-screenshots';
 if (!existsSync(scratchDir)) mkdirSync(scratchDir, { recursive: true });

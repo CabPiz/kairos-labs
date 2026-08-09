@@ -67,7 +67,7 @@ export function SobreSection() {
           <span
             className="inline-block w-[6px] h-[6px] rounded-full"
             style={{ background: "#d4a017", boxShadow: "0 0 6px #d4a017" }}
-          />
+          />{" "}
           Marca Registrada · INPI Nº 944610498
         </div>
       </div>

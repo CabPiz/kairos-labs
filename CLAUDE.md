@@ -789,6 +789,30 @@ GRANT INSERT ON public.minha_tabela TO service_role;  -- obrigatório
 // ✅ Remover qualquer import não utilizado no arquivo
 ```
 
+### Espaçamento após elemento self-closing seguido de texto (`typescript:S6772`)
+Sonar S6772 aponta "Ambiguous spacing" quando texto segue diretamente após um elemento self-closing (`<span />`) sem espaço explícito.
+
+```tsx
+// ❌ Errado — Sonar S6772: espaçamento ambíguo após <span />
+<span className="dot" />
+Texto que segue
+
+// ✅ Correto — espaço explícito com {" "}
+<span className="dot" />{" "}
+Texto que segue
+```
+
+### Imports de módulos Node.js com prefixo `node:` (`javascript:S7772`)
+Sonar S7772 exige o prefixo `node:` em imports de módulos nativos do Node.js em arquivos `.mjs`.
+
+```js
+// ❌ Errado — Sonar S7772
+import { mkdirSync } from 'fs';
+
+// ✅ Correto
+import { mkdirSync } from 'node:fs';
+```
+
 ### Array index como key é proibido (`typescript:S6479`)
 ```tsx
 // ❌ Errado — Sonar S6479: index não é estável se a lista mudar
