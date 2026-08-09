@@ -128,7 +128,7 @@ gh project item-edit --id $ITEM_ID --project-id $PROJECT_ID --field-id $STATUS_F
    | 2 | **Padrões Sonar** | Checar toda a solução candidata contra cada regra da seção `🔍 PADRÕES SONAR` deste arquivo: props `readonly`, `button type`, acessibilidade de mouse, espaçamento JSX, testes parametrizados, index como key, `prefetch={false}`, imports mortos. |
    | 3 | **Dependências entre camadas** | Confirmar que `lib/` não importa de `components/` ou `app/`; `components/` não importa de `app/`; Client Components não importam de `supabase-server` ou `server-only`. |
    | 4 | **Segurança Supabase** | Writes usam `createServerAdminClient()`; reads usam SSR client + RPC com `SECURITY DEFINER`. Cast `as any` onde necessário (ERR-002). |
-   | 5 | **Cobertura de testes** | A proposta DEVE listar explicitamente cada teste unitário que será criado ou atualizado para cobrir 100% das linhas novas/modificadas — Sonar reprova PRs com cobertura de código novo abaixo do threshold. Spec E2E obrigatória para todo fluxo com submit ou autenticação. Toda nova spec Playwright (`*.spec.ts`) criada na FASE 2 deve ser adicionada a `sonar.coverage.exclusions` em `sonar-project.properties` (padrão `e2e/**,**/*.spec.ts` já configurado). |
+   | 5 | **Cobertura de testes** | A proposta DEVE listar explicitamente cada teste unitário que será criado ou atualizado para cobrir 100% das linhas novas/modificadas — Sonar reprova PRs com cobertura de código novo abaixo do threshold. Spec E2E obrigatória para todo fluxo com submit ou autenticação. Toda nova spec Playwright (`*.spec.ts`) criada na FASE 2 deve ser adicionada a `sonar.coverage.exclusions` em `sonar-project.properties` (padrão `e2e/**,**/*.spec.ts` já configurado). **Antes de propor os testes, ler `COVERAGE_GAPS.md` e verificar o checklist de prevenção — qualquer padrão da solução candidata que constar nos gaps conhecidos (GAP-001 a GAP-005) exige inclusão do teste preventivo correspondente na proposta.** |
    | 6 | **Consistência de estilo** | Tailwind para valores estáticos; `style={{}}` apenas para valores dinâmicos de runtime. Novos componentes seguem o padrão visual existente. |
    | 7 | **Convenções de código** | Conventional Commits em português, branch no padrão correto, sem comentários desnecessários, sem abstrações prematuras. |
    | 8 | **Performance** | A solução introduz queries extras, N+1, re-renders desnecessários ou aumento relevante de bundle? Se sim, propor alternativa mais eficiente ou documentar o trade-off explicitamente na justificativa. |
@@ -237,6 +237,14 @@ npm test 2>&1 | tee saida.log
 ```
 
 O Claude Code lê o `saida.log` e confirma que **todos os test suites passaram** antes de avançar. Se algum teste existente quebrar, o Claude Code investiga e corrige o arquivo causador antes de prosseguir.
+
+**Verificação de cobertura local (executada pelo Claude Code imediatamente após `npm test`):**
+
+```bash
+node scripts/check-coverage.mjs 2>&1 | tee saida.log
+```
+
+O script lê `coverage/coverage-final.json`, filtra apenas os arquivos modificados na branch e lista quais estão abaixo de 80% — com linhas e funções exatas sem cobertura. **Se qualquer arquivo aparecer na lista, o Claude Code corrige os testes imediatamente antes de avançar para commits.** O usuário nunca vê um gap de coverage que o Sonar detectaria — é resolvido localmente, nesta etapa. Se o gap revelado for um padrão novo (não listado no `COVERAGE_GAPS.md`), o Claude Code registra o padrão no arquivo antes de prosseguir.
 
 > **Hook de pre-commit ativo (desde a issue #34):** Husky + lint-staged estão configurados. Ao executar `git commit`, o hook `.husky/pre-commit` roda automaticamente `npx lint-staged`, que executa `eslint --max-warnings=0` nos arquivos `.ts` e `.tsx` modificados. Se houver erro ou warning de lint, o commit é bloqueado. O Claude Code deve garantir conformidade ESLint antes de entregar os blocos de commit da FASE 3.
 
@@ -910,4 +918,4 @@ Para descobrir o SHA de qualquer Action: olhar o log do CI — o step "Set up jo
 ---
 
 *Kairos Labs — Cesar Antonio Brito Pizarro*
-*CLAUDE.md v2.3 — testes visuais mobile automatizados (Passo 4 da FASE 2.5) com carimbo no comentário de certificação pré-merge*
+*CLAUDE.md v2.4 — verificação de cobertura local pré-commit com `scripts/check-coverage.mjs` + `COVERAGE_GAPS.md` como base de conhecimento acumulativa de gaps*
