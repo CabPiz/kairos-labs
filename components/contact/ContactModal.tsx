@@ -5,6 +5,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CheckCircle, Loader2, Briefcase } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 import {
@@ -17,45 +18,35 @@ import {
 import { ModalResultPanel } from "@/components/ui/ModalResultPanel";
 import { ModalErrorBanner } from "@/components/ui/ModalErrorBanner";
 import { sendContactAction, type ContactActionState, type ContactFormData } from "./contact-action";
-import { PROJECT_TYPES, isValidEmail, isValidPhone } from "./contact-schema";
+import { PROJECT_TYPE_KEYS, isValidEmail, isValidPhone } from "./contact-schema";
 
-// ─────────────────────────────────────────────────────────────
-// Schema
-// ─────────────────────────────────────────────────────────────
-const formSchema = z.object({
-  name: z.string().min(1, "Nome é obrigatório."),
-  email: z.string().min(1, "E-mail é obrigatório.").refine(
-    isValidEmail,
-    { message: "Formato de e-mail inválido." }
-  ),
-  project_type: z.enum(PROJECT_TYPES, { message: "Selecione um tipo de projeto." }),
-  description: z
-    .string()
-    .min(1, "Descrição é obrigatória.")
-    .max(500, "A descrição deve ter no máximo 500 caracteres."),
-  phone: z.string().optional().refine(
-    (val) => isValidPhone(val ?? ""),
-    { message: "Número inválido. Use DDD + número (mínimo 10 dígitos)." }
-  ),
-  whatsapp_preferred: z.boolean().optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-// ─────────────────────────────────────────────────────────────
-// Props
-// ─────────────────────────────────────────────────────────────
 interface ContactModalProps {
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
 }
 
-// ─────────────────────────────────────────────────────────────
-// Componente
-// ─────────────────────────────────────────────────────────────
 export function ContactModal({ open, onOpenChange }: ContactModalProps) {
+  const t = useTranslations("contactModal");
   const [actionState, setActionState] = useState<ContactActionState>({ status: "idle" });
   const [isPending, startTransition] = useTransition();
+
+  const formSchema = z.object({
+    name: z.string().min(1, t("validation.nameRequired")),
+    email: z.string().min(1, t("validation.emailRequired")).refine(isValidEmail, {
+      message: t("validation.emailInvalid"),
+    }),
+    project_type: z.enum(PROJECT_TYPE_KEYS, { message: t("validation.projectTypeRequired") }),
+    description: z
+      .string()
+      .min(1, t("validation.descriptionRequired"))
+      .max(500, t("validation.descriptionMax")),
+    phone: z.string().optional().refine((val) => isValidPhone(val ?? ""), {
+      message: t("validation.phoneInvalid"),
+    }),
+    whatsapp_preferred: z.boolean().optional(),
+  });
+
+  type FormValues = z.infer<typeof formSchema>;
 
   const {
     register,
@@ -65,7 +56,7 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { project_type: "Desenvolvimento Web" },
+    defaultValues: { project_type: "web" as const },
   });
 
   const description = useWatch({ control, name: "description" });
@@ -102,15 +93,10 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
         onOpenChange={handleOpenChange}
         icon={<CheckCircle size={30} color="#10b981" />}
         iconColor="#10b981"
-        title="Mensagem enviada!"
-        message={
-          <>
-            Obrigado pelo interesse. Retornaremos em breve para{" "}
-            conversarmos sobre seu projeto.
-          </>
-        }
+        title={t("success.title")}
+        message={<>{t("success.message")}</>}
         buttonColor="#10b981"
-        buttonLabel="Fechar"
+        buttonLabel={t("success.close")}
       />
     );
   }
@@ -132,11 +118,11 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
                 <Briefcase size={16} className="text-blue-400" />
               </div>
               <DialogTitle className="text-white text-base font-bold tracking-wide uppercase font-[var(--font-orbitron)]">
-                Vamos conversar sobre seu projeto
+                {t("title")}
               </DialogTitle>
             </div>
             <DialogDescription className="text-white/50 text-sm leading-relaxed">
-              Preencha o formulário abaixo e entraremos em contato.
+              {t("description")}
             </DialogDescription>
           </DialogHeader>
 
@@ -148,13 +134,13 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
             {/* Nome */}
             <div className="flex flex-col gap-1">
               <label htmlFor="contact-name" className="text-white/70 text-xs font-semibold tracking-wider uppercase">
-                Nome
+                {t("fields.name.label")}
               </label>
               <input
                 id="contact-name"
                 type="text"
                 autoComplete="name"
-                placeholder="Seu nome"
+                placeholder={t("fields.name.placeholder")}
                 {...register("name")}
                 className={cn(
                   "bg-white/5 border rounded px-3 py-2 text-white text-sm placeholder:text-white/25 outline-none focus:border-blue-500/60 transition-colors",
@@ -169,13 +155,13 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
             {/* E-mail */}
             <div className="flex flex-col gap-1">
               <label htmlFor="contact-email" className="text-white/70 text-xs font-semibold tracking-wider uppercase">
-                E-mail
+                {t("fields.email.label")}
               </label>
               <input
                 id="contact-email"
                 type="email"
                 autoComplete="email"
-                placeholder="seu@email.com"
+                placeholder={t("fields.email.placeholder")}
                 {...register("email")}
                 className={cn(
                   "bg-white/5 border rounded px-3 py-2 text-white text-sm placeholder:text-white/25 outline-none focus:border-blue-500/60 transition-colors",
@@ -190,7 +176,7 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
             {/* Tipo de projeto */}
             <div className="flex flex-col gap-1">
               <label htmlFor="contact-project-type" className="text-white/70 text-xs font-semibold tracking-wider uppercase">
-                Tipo de projeto
+                {t("fields.projectType.label")}
               </label>
               <select
                 id="contact-project-type"
@@ -200,9 +186,9 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
                   errors.project_type ? "border-red-500/50" : "border-white/10"
                 )}
               >
-                {PROJECT_TYPES.map((type) => (
-                  <option key={type} value={type} className="bg-[#0b1221]">
-                    {type}
+                {PROJECT_TYPE_KEYS.map((key) => (
+                  <option key={key} value={key} className="bg-[#0b1221]">
+                    {t(`projectTypes.${key}`)}
                   </option>
                 ))}
               </select>
@@ -214,13 +200,13 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
             {/* Descrição */}
             <div className="flex flex-col gap-1">
               <label htmlFor="contact-description" className="text-white/70 text-xs font-semibold tracking-wider uppercase">
-                Descrição breve do projeto
+                {t("fields.projectDescription.label")}
               </label>
               <textarea
                 id="contact-description"
                 rows={4}
                 maxLength={500}
-                placeholder="Descreva brevemente o que você precisa..."
+                placeholder={t("fields.projectDescription.placeholder")}
                 {...register("description")}
                 className={cn(
                   "bg-white/5 border rounded px-3 py-2 text-white text-sm placeholder:text-white/25 outline-none focus:border-blue-500/60 transition-colors resize-none",
@@ -240,13 +226,16 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
             {/* Telefone / WhatsApp */}
             <div className="flex flex-col gap-1">
               <label htmlFor="contact-phone" className="text-white/70 text-xs font-semibold tracking-wider uppercase">
-                Telefone / WhatsApp{" "}<span className="text-white/30 normal-case font-normal">(opcional)</span>
+                {t("fields.phone.label")}{" "}
+                <span className="text-white/30 normal-case font-normal">
+                  {t("fields.phone.optional")}
+                </span>
               </label>
               <input
                 id="contact-phone"
                 type="tel"
                 autoComplete="tel"
-                placeholder="(11) 99999-9999"
+                placeholder={t("fields.phone.placeholder")}
                 {...register("phone")}
                 className={cn(
                   "bg-white/5 border rounded px-3 py-2 text-white text-sm placeholder:text-white/25 outline-none focus:border-blue-500/60 transition-colors",
@@ -259,19 +248,14 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
             </div>
 
             {/* Preferência WhatsApp */}
-            <label
-              htmlFor="contact-whatsapp"
-              className="flex items-center gap-2 cursor-pointer select-none"
-            >
+            <label htmlFor="contact-whatsapp" className="flex items-center gap-2 cursor-pointer select-none">
               <input
                 id="contact-whatsapp"
                 type="checkbox"
                 {...register("whatsapp_preferred")}
                 className="w-4 h-4 accent-blue-500 cursor-pointer"
               />
-              <span className="text-white/60 text-sm">
-                Prefiro ser contatado pelo WhatsApp
-              </span>
+              <span className="text-white/60 text-sm">{t("fields.whatsapp.label")}</span>
             </label>
 
             <button
@@ -280,7 +264,7 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
               className="mt-2 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-60 disabled:cursor-not-allowed text-white text-xs font-bold tracking-widest uppercase rounded px-6 py-3 transition-colors"
             >
               {isPending && <Loader2 size={14} className="animate-spin" />}
-              {isPending ? "Enviando..." : "Enviar mensagem"}
+              {isPending ? t("submitting") : t("submit")}
             </button>
           </form>
         </div>

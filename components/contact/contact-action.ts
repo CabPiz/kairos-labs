@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { createServerAdminClient } from "@/lib/supabase-server";
-import { PROJECT_TYPES, isValidEmail, isValidPhone } from "./contact-schema";
+import { PROJECT_TYPE_KEYS, isValidEmail, isValidPhone } from "./contact-schema";
 
 const schema = z.object({
   name: z.string().min(1, "Nome é obrigatório."),
@@ -10,7 +10,7 @@ const schema = z.object({
     isValidEmail,
     { message: "Formato de e-mail inválido." }
   ),
-  project_type: z.enum(PROJECT_TYPES, { message: "Selecione um tipo de projeto." }),
+  project_type: z.enum(PROJECT_TYPE_KEYS, { message: "Selecione um tipo de projeto." }),
   description: z
     .string()
     .min(1, "Descrição é obrigatória.")
