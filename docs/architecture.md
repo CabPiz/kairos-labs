@@ -270,6 +270,17 @@ No PR is merged with open Sonar issues. This keeps the codebase at a demonstrabl
 **Alternative discarded:** Renaming the file to `middleware.ts` and exporting `middleware` directly.
 **Reason:** The project started with `proxy.ts` + an explicit re-export in `middleware.ts` (which imports and calls `proxy`). This separation was intentional — it isolates auth logic into a named, testable function (`proxy`) while keeping the Next.js entry point (`middleware.ts`) as a thin delegation layer. Renaming would eliminate the unit-testability boundary.
 
+### i18n: locale prefix for public routes, user preference for admin
+**Alternative discarded:** URL-prefixed admin routes (`/pt/admin`, `/en/admin`) with the same next-intl routing for both public and private surfaces.
+**Reason:** URL-prefixed admin localization adds redirect overhead on every authenticated request and creates a mismatch when the user changes language — the admin URL must be updated too. For a private, logged-in surface, locale preference is an account-level setting that should persist across sessions and devices. The correct model: store `locale` in `user_metadata` (Supabase Auth), read it in `app/admin/layout.tsx`, and serve the appropriate messages via `NextIntlClientProvider` without touching the URL. The public landing page uses URL-prefix because SEO and link-sharing depend on stable, language-specific URLs.
+
+### i18n: `localeConfig` centralized in `i18n/routing.ts`
+**Alternative discarded:** Inferring text direction (LTR/RTL) and other locale metadata from the locale string at the point of use.
+**Reason:** Centralizing `localeConfig` (with `dir`, `label`, `flag`) in `i18n/routing.ts` makes `[locale]/layout.tsx` and `LanguageSwitcher` read from a single source of truth. Adding Arabic (RTL) or a new locale in the future requires one file edit — no component-level changes needed. The `satisfies Record<Locale, ...>` constraint ensures TypeScript catches any missing locale at compile time.
+
+### i18n: fonts limited to Latin subsets in MVP; no per-locale font loading
+**Reason:** The current fonts (Inter, Orbitron, Cinzel Decorative) only cover Latin scripts. Adding CJK (Chinese, Japanese, Korean) or Arabic/Hebrew requires a per-locale font strategy in `[locale]/layout.tsx` — either conditional `next/font/google` imports or a CSS variable swap. This is deferred to the issue that adds the first non-Latin locale. Future implementer: export a `getLocaleFonts(locale)` helper from `i18n/routing.ts` and apply its return value to the `<body>` className.
+
 ### Inline `style` prop for dynamic product colors in modal components
 **Alternative discarded:** CSS custom properties or data attributes to pass product color into Tailwind JIT classes (e.g., `text-[var(--product-color)]`).
 **Reason:** The product accent color is a runtime prop (varies per product instance), not a build-time value. Tailwind JIT classes are generated at build time and cannot be interpolated with runtime values. The inline `style` prop is the correct, idiomatic React pattern for runtime-dynamic CSS values. All static layout and typography are in Tailwind classes; only color-dependent properties (gradient, icon background/border, button background) remain as `style={{}}`.

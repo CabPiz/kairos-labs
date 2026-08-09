@@ -4,8 +4,10 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useTranslations } from "next-intl";
 import { CheckCircle, AlertCircle, Loader2, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { isValidEmail } from "@/components/contact/contact-schema";
 
 import {
   Dialog,
@@ -18,21 +20,6 @@ import { ModalResultPanel } from "@/components/ui/ModalResultPanel";
 import { ModalErrorBanner } from "@/components/ui/ModalErrorBanner";
 import { joinWaitlistAction, type WaitlistActionState } from "./waitlist-action";
 
-// ─────────────────────────────────────────────────────────────
-// Schema de validação client-side
-// ─────────────────────────────────────────────────────────────
-const formSchema = z.object({
-  email: z
-    .string()
-    .min(1, "E-mail é obrigatório.")
-    .email("Formato de e-mail inválido."),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-// ─────────────────────────────────────────────────────────────
-// Props
-// ─────────────────────────────────────────────────────────────
 interface WaitlistModalProps {
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
@@ -41,9 +28,6 @@ interface WaitlistModalProps {
   readonly productColor: string;
 }
 
-// ─────────────────────────────────────────────────────────────
-// Componente
-// ─────────────────────────────────────────────────────────────
 export function WaitlistModal({
   open,
   onOpenChange,
@@ -51,6 +35,17 @@ export function WaitlistModal({
   productName,
   productColor,
 }: WaitlistModalProps) {
+  const t = useTranslations("waitlistModal");
+
+  const formSchema = z.object({
+    email: z
+      .string()
+      .min(1, t("validation.emailRequired"))
+      .refine(isValidEmail, { message: t("validation.emailInvalid") }),
+  });
+
+  type FormValues = z.infer<typeof formSchema>;
+
   const [actionState, setActionState] = useState<WaitlistActionState>({
     status: "idle",
   });
@@ -65,8 +60,6 @@ export function WaitlistModal({
     resolver: zodResolver(formSchema),
   });
 
-  // Ao fechar o modal, resetar o estado para que na próxima abertura
-  // o formulário apareça limpo (sem mensagem de sucesso anterior)
   function handleOpenChange(nextOpen: boolean) {
     if (!nextOpen) {
       reset();
@@ -94,18 +87,13 @@ export function WaitlistModal({
         onOpenChange={handleOpenChange}
         icon={<CheckCircle size={30} color="#10b981" />}
         iconColor="#10b981"
-        title="Você está na lista!"
+        title={t("successTitle")}
         message={
           <>
             <span style={{ color: "#10b981", fontWeight: 600 }}>
               {actionState.email}
             </span>{" "}
-            foi cadastrado na lista de espera de{" "}
-            <span style={{ color: productColor, fontWeight: 600 }}>
-              {productName}
-            </span>
-            {". "}
-            Você será notificado no lançamento.
+            {t("successMessage", { productName })}
           </>
         }
         buttonColor="#10b981"
@@ -121,15 +109,10 @@ export function WaitlistModal({
         onOpenChange={handleOpenChange}
         icon={<AlertCircle size={30} color="#d4a017" />}
         iconColor="#d4a017"
-        title="Já registrado"
+        title={t("duplicateTitle")}
         message={
           <>
-            Este e-mail já está na lista de espera de{" "}
-            <span style={{ color: productColor, fontWeight: 600 }}>
-              {productName}
-            </span>
-            {". "}
-            Você será notificado no lançamento.
+            {t("duplicateMessage", { productName })}
           </>
         }
         buttonColor="#d4a017"
@@ -144,7 +127,6 @@ export function WaitlistModal({
         showCloseButton={true}
         className="border-0 p-0 bg-[#0b1221] border border-[rgba(59,130,246,0.2)] max-w-[420px]"
       >
-        {/* Barra de destaque na cor do produto */}
         <div
           className="h-[3px] rounded-t-[8px]"
           style={{ background: `linear-gradient(to right, ${productColor}, transparent)` }}
@@ -152,7 +134,6 @@ export function WaitlistModal({
 
         <div className="px-8 pt-[1.8rem] pb-8">
           <DialogHeader className="mb-6">
-            {/* Ícone de e-mail */}
             <div
               className="w-11 h-11 rounded-[8px] flex items-center justify-center mb-4"
               style={{
@@ -168,31 +149,26 @@ export function WaitlistModal({
               className="text-white text-base font-bold tracking-[0.04em] uppercase"
               style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
             >
-              Acesso Antecipado
+              {t("title")}
             </DialogTitle>
             <DialogDescription className="text-white/50 text-[0.83rem] leading-[1.6] mt-[0.4rem]">
-              Entre na lista de espera de{" "}
-              <span style={{ color: productColor, fontWeight: 600 }}>
-                {productName}
-              </span>{" "}
-              e seja notificado no lançamento.
+              {t("description", { productName })}
             </DialogDescription>
           </DialogHeader>
 
-          {/* Formulário */}
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-4">
               <label
                 htmlFor="waitlist-email"
                 className="block mb-[0.4rem] text-white/70 text-xs font-semibold tracking-[0.12em] uppercase"
               >
-                E-mail
+                {t("emailLabel")}
               </label>
               <input
                 id="waitlist-email"
                 type="email"
                 autoComplete="email"
-                placeholder="seu@email.com"
+                placeholder={t("emailPlaceholder")}
                 disabled={isPending}
                 {...register("email")}
                 className={cn(
@@ -218,7 +194,6 @@ export function WaitlistModal({
               )}
             </div>
 
-            {/* Erro genérico da action */}
             {actionState.status === "error" && (
               <ModalErrorBanner message={actionState.message} />
             )}
@@ -235,11 +210,11 @@ export function WaitlistModal({
               }}
             >
               {isPending && <Loader2 size={14} className="animate-spin" />}
-              {isPending ? "Cadastrando..." : "Garantir Acesso Antecipado"}
+              {isPending ? t("submitting") : t("submit")}
             </button>
 
             <p className="mt-[0.9rem] text-center text-white/30 text-[0.72rem] leading-[1.5]">
-              Sem spam. Apenas uma notificação quando o produto lançar.
+              {t("noSpam")}
             </p>
           </form>
         </div>

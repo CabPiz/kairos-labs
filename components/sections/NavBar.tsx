@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 
 const navLinkStyle = {
   color: "rgba(255,255,255,0.75)",
@@ -20,6 +22,7 @@ const navLinkStyle = {
 };
 
 export function NavBar() {
+  const t = useTranslations("nav");
   const [mobileOpen, setMobileOpen] = useState(false);
 
   function handleNavLink() {
@@ -87,7 +90,7 @@ export function NavBar() {
             onMouseOut={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.75)")}
             onBlur={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.75)")}
           >
-            Sobre
+            {t("sobre")}
           </Link>
 
           <Link
@@ -98,7 +101,7 @@ export function NavBar() {
             onMouseOut={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.75)")}
             onBlur={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.75)")}
           >
-            Tecnologia
+            {t("tecnologia")}
           </Link>
 
           <Link
@@ -109,8 +112,10 @@ export function NavBar() {
             onMouseOut={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.75)")}
             onBlur={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.75)")}
           >
-            Contato
+            {t("contato")}
           </Link>
+
+          <LanguageSwitcher />
 
           <Link href="/admin/login">
             <button
@@ -146,7 +151,7 @@ export function NavBar() {
                 e.currentTarget.style.color = "#d4a017";
               }}
             >
-              Acesso
+              {t("acesso")}
             </button>
           </Link>
         </div>
@@ -268,9 +273,9 @@ export function NavBar() {
           {/* Itens de navegação */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", padding: "2rem 1.5rem", gap: "0.5rem" }}>
             {[
-              { label: "Sobre", href: "#sobre" },
-              { label: "Tecnologia", href: "#tecnologia" },
-              { label: "Contato", href: "#contato" },
+              { label: t("sobre"), href: "#sobre" },
+              { label: t("tecnologia"), href: "#tecnologia" },
+              { label: t("contato"), href: "#contato" },
             ].map(({ label, href }) => (
               <Link
                 key={label}
@@ -293,7 +298,8 @@ export function NavBar() {
               </Link>
             ))}
 
-            <div style={{ marginTop: "2rem" }}>
+            <div style={{ marginTop: "2rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <LanguageSwitcher />
               <Link
                 href="/admin/login"
                 onClick={handleNavLink}
@@ -312,7 +318,7 @@ export function NavBar() {
                   fontFamily: "var(--font-inter), sans-serif",
                 }}
               >
-                Acesso
+                {t("acesso")}
               </Link>
             </div>
           </div>

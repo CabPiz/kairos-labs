@@ -1,0 +1,448 @@
+{
+  "nav": {
+    "sobre": "Sobre",
+    "tecnologia": "Tecnologia",
+    "contato": "Contato",
+    "acesso": "Acesso"
+  },
+  "hero": {
+    "line1": "Tecnologia",
+    "line2": "e Estratégia",
+    "line3": "em Perfeito",
+    "highlight": "Sincronismo.",
+    "subtitle": "Construímos soluções digitais avançadas com segurança, performance e visão de futuro.",
+    "cta1": "Explorar Soluções",
+    "cta2": "Falar com Especialista"
+  },
+  "featureCards": {
+    "performance": {
+      "title": "Performance",
+      "description": "Arquitetura escalável\ne de alta performance"
+    },
+    "seguranca": {
+      "title": "Segurança",
+      "description": "RLS, criptografia e\nboas práticas nativas"
+    },
+    "escalabilidade": {
+      "title": "Escalabilidade",
+      "description": "Infraestrutura pronta\npara o futuro"
+    },
+    "inovacao": {
+      "title": "Inovação",
+      "description": "IA, automação e dados\nem nosso DNA"
+    }
+  },
+  "products": {
+    "eyebrow": "Ecossistema Kairos Labs",
+    "title": "Nosso Portfólio",
+    "subtitle": "Cada produto nasce de um problema real. Declare seu interesse e ajude a definir o que construímos primeiro.",
+    "saibaMais": "Saiba mais",
+    "devprint": {
+      "tagline": "Seu currículo cresce com você.",
+      "descricao": "Transforma seu histórico real de desenvolvimento — commits, PRs e aprendizados manuais — em um currículo vivo, narrativo e verificável. Cada projeto é uma prova.",
+      "status": "Em breve",
+      "cta": "Garantir Acesso Antecipado",
+      "descricaoLonga": "Plataforma web que transforma o histórico real de desenvolvimento de um programador — commits, pull requests, diffs e registros manuais de aprendizado — em um currículo vivo, narrativo e auto-atualizável, validado por evidências reais de trabalho.",
+      "problema": "Currículos estáticos não refletem o crescimento real, especialmente em projetos privados e de longa duração. Recrutadores leem afirmações não verificáveis, sem evidências reais do que o dev aprendeu e construiu.",
+      "solucao": "O DevPrint lê seu repositório, integra registros manuais de aprendizado e atualiza seu currículo automaticamente, sprint a sprint. Em vez de autodeclaração, o recrutador vê experiências rastreáveis — o que foi aprendido, em qual projeto e com qual evidência.",
+      "funcionalidades": [
+        {
+          "titulo": "Currículo Vivo Auto-Atualizável",
+          "descricao": "A seção de experiências é atualizada automaticamente com base nos projetos analisados. Cada experiência vem com referência rastreável ao código ou ao Diário de Aprendizado."
+        },
+        {
+          "titulo": "Diário de Aprendizado",
+          "descricao": "Registre aprendizados que não geram commits: gestão de Kanban, criação de PRD, decisões de arquitetura, configuração de ferramentas. Eles aparecem na linha do tempo com o mesmo peso que os commits."
+        },
+        {
+          "titulo": "Análise de Evolução por Projeto",
+          "descricao": "Para cada repositório conectado, o sistema detecta o que foi praticado, o que foi aprendido de novo e gera uma linha do tempo por sprint com destaques narrativos em linguagem natural."
+        },
+        {
+          "titulo": "Perfil Público Verificável",
+          "descricao": "URL pública em devprint.io/username. O dev controla o que é visível. Repositórios privados nunca aparecem — apenas as experiências derivadas, se autorizado."
+        }
+      ],
+      "publicoAlvo": [
+        "Dev sem experiência de mercado que quer provar capacidade com projetos reais",
+        "Dev em transição de stack que precisa comprovar o que aprendeu",
+        "Dev júnior/pleno acelerando para posições sênior",
+        "Dev sênior com anos de projetos privados não visíveis no GitHub"
+      ]
+    },
+    "ascend": {
+      "tagline": "Acelere sua evolução técnica.",
+      "descricao": "Plataforma de crescimento profissional para devs que querem sair do júnior ao sênior com clareza — trilhas personalizadas, metas e evidências de progresso.",
+      "status": "Em breve",
+      "cta": "Garantir Acesso Antecipado",
+      "descricaoLonga": "Plataforma de preparação adaptativa de alto desempenho para concursos públicos e seleções de TI de alta remuneração e modalidade 100% remota. O Ascend cruza seu perfil com os editais das vagas-alvo e gera um plano personalizado de evolução.",
+      "problema": "Candidatos estudam sem saber exatamente o que falta. O gap entre o currículo atual e o exigido pela vaga-alvo raramente é mapeado com precisão — o resultado é desperdício de tempo e energia nos estudos.",
+      "solucao": "O Ascend lê seu currículo, identifica a vaga de alto rendimento desejada e cruza automaticamente seus dados com o edital para gerar um plano de melhoria de skills, indicações de pós-graduação e alertas sobre as pegadinhas da banca.",
+      "funcionalidades": [
+        {
+          "titulo": "Onboarding Inteligente",
+          "descricao": "Wizard em 3 passos: upload do perfil profissional, escolha da vaga-alvo e geração do plano estratégico de evolução com base no cruzamento entre perfil e edital."
+        },
+        {
+          "titulo": "Análise de Gap por IA",
+          "descricao": "A IA identifica exatamente quais habilidades faltam para a vaga escolhida, priorizando o que tem maior peso na seleção da banca (ex: Cebraspe)."
+        },
+        {
+          "titulo": "Trilhas Personalizadas",
+          "descricao": "Planos de estudo adaptativos com metas, prazos baseados no calendário do edital e evidências de progresso registradas ao longo da preparação."
+        },
+        {
+          "titulo": "Alertas de Edital e Banca",
+          "descricao": "Contagem regressiva para prazos de inscrição e alertas sobre padrões recorrentes da banca escolhida — o que costuma cair, como as questões são formuladas e onde os candidatos erram mais."
+        }
+      ],
+      "publicoAlvo": [
+        "Profissionais de TI mirando concursos de alta remuneração e regime remoto",
+        "Candidatos que querem saber exatamente o que estudar, sem desperdício",
+        "Devs em transição para o setor público"
+      ]
+    },
+    "elucya-talk": {
+      "tagline": "Comunicação inteligente por IA.",
+      "descricao": "Solução de AIaaS para comunicação empresarial — automação de atendimento, análise de sentimento e respostas contextuais com modelos de linguagem de ponta.",
+      "status": "Em breve",
+      "cta": "Garantir Acesso Antecipado",
+      "descricaoLonga": "Plataforma web baseada em IA que analisa conversas interpessoais — via áudio ou texto — identificando padrões de comunicação tóxica, agressividade, manipulação e violência verbal, com feedback empático e recomendações práticas de Comunicação Não-Violenta.",
+      "problema": "Em relacionamentos pessoais, profissionais e familiares, conflitos verbais escalam por padrões não percebidos. As partes envolvidas têm dificuldade de avaliar a dinâmica de forma isenta, e agressões passivas ou manipulações raramente são catalogadas.",
+      "solucao": "O Elucya Talk atua como um mediador isento alimentado por IA: processa o áudio ou texto, diariza os participantes, classifica cada fala segundo padrões comportamentais, calcula um Índice de Conflito de 0 a 100 e oferece feedback educativo individualizado com dicas práticas de CNV.",
+      "funcionalidades": [
+        {
+          "titulo": "Transcrição com Diarização",
+          "descricao": "Conversão automática de áudio em texto com separação por locutor (Whisper / AssemblyAI). Cada fala é associada ao participante correto e exibida em uma timeline cronológica."
+        },
+        {
+          "titulo": "Classificação de Padrões Verbais",
+          "descricao": "Identificação de: tom agressivo, ameaça, agressão passiva, linguagem de culpa, generalizações ('você sempre'), esquiva, ironia velada, interrupções e escuta ativa."
+        },
+        {
+          "titulo": "Gauge de Conflito (0 a 100)",
+          "descricao": "Índice visual calculado por IA que representa o nível geral de conflito da conversa, com destaque dos picos e trechos de maior tensão."
+        },
+        {
+          "titulo": "Feedback Empático por Participante",
+          "descricao": "Cards individuais com diagnóstico de tom predominante, pontos positivos detectados e recomendações práticas baseadas nos princípios da Comunicação Não-Violenta."
+        }
+      ],
+      "publicoAlvo": [
+        "Pessoas que buscam autoconhecimento em suas dinâmicas de comunicação",
+        "Terapeutas de casal e mediadores familiares que precisam de análise objetiva",
+        "Gestores de RH avaliando clima e denúncias de assédio em ambientes corporativos"
+      ]
+    },
+    "agora-global": {
+      "tagline": "Governança democrática para a era digital.",
+      "descricao": "Infraestrutura open-source de governança pública digital — participação cidadã, transparência orçamentária em tempo real e democracia direta para Estados soberanos.",
+      "status": "Em breve",
+      "cta": "Contribuir com o Projeto",
+      "descricaoLonga": "Sistema open-source de governança pública digital que transforma a participação cidadã e a transparência orçamentária em pilares reais do Estado. Cada nação hospeda sua própria instância soberana, interoperável com uma rede global de democracias digitais.",
+      "problema": "O principal obstáculo para o desenvolvimento humano integral não é tecnológico ou econômico — é o conflito de interesses políticos que gera corrupção estrutural, inércia legislativa e a anestesia da população diante dos rumos do Estado.",
+      "solucao": "A Ágora Global cria um fórum digital seguro para proposição e votação de leis por cidadãos, auditoria orçamentária em tempo real por IA e infraestrutura descentralizada para governança transparente — onde o cidadão é ator, não apenas eleitor.",
+      "funcionalidades": [
+        {
+          "titulo": "Ágora Cidadã (Democracia Direta)",
+          "descricao": "Fórum digital com identidade soberana (Zero-Knowledge Proofs), proposição de leis por abaixo-assinado digital qualificado e votação em tempo real. Assembleias temáticas moderadas por IA sintetizam argumentos contrários e favoráveis de forma imparcial."
+        },
+        {
+          "titulo": "Auditoria Orçamentária por IA",
+          "descricao": "Algoritmos de machine learning cruzam dados de licitações, notas fiscais e entregas físicas, detectando sobrepreço, desvios e ineficiências em tempo real com emissão automática de alertas para órgãos de controle."
+        },
+        {
+          "titulo": "Instâncias Soberanas ('Forks' Nacionais)",
+          "descricao": "Cada país hospeda e gerencia sua própria instância com total controle sobre legislação, diretrizes e privacidade dos cidadãos, mantendo interoperabilidade opcional com a rede global."
+        },
+        {
+          "titulo": "Rastreamento de Gastos Públicos",
+          "descricao": "Painel com visualização em grafos e mapas de calor de cada unidade monetária pública, com 100% dos gastos rastreáveis em tempo real até o beneficiário ou fornecedor final."
+        }
+      ],
+      "publicoAlvo": [
+        "Cidadãos que querem participação real nas decisões públicas",
+        "Gestores públicos e auditores que precisam de ferramentas analíticas robustas",
+        "Desenvolvedores open source comprometidos com governança ética e constitucional"
+      ]
+    },
+    "talvrix": {
+      "tagline": "O falcão que enxerga a oportunidade certa antes de qualquer outro.",
+      "descricao": "Plataforma SaaS que usa IA para fazer matching inteligente entre seu currículo e vagas de emprego em múltiplos sites, ordenando os resultados por salário e compatibilidade de perfil — em segundos.",
+      "status": "Em breve",
+      "cta": "Garantir Acesso Antecipado",
+      "descricaoLonga": "Talvrix automatiza a busca de emprego do início ao fim: extrai e estrutura as skills do seu currículo via IA, faz scraping das vagas nos sites configurados e gera um score de compatibilidade por vaga, ordenando os resultados por salário e aderência ao seu perfil — em menos de 60 segundos.",
+      "problema": "Encontrar vagas relevantes é manual, fragmentado e ineficiente: o candidato acessa múltiplos sites separadamente, as buscas por palavra-chave ignoram o perfil real do currículo, não há ordenação por salário agregada entre sites e o candidato não sabe se é competitivo para a vaga antes de se candidatar.",
+      "solucao": "Talvrix automatiza todo o processo: o usuário faz upload do currículo em PDF, a IA extrai e estrutura skills, experiência e nível de senioridade, um scraper coleta vagas nos sites configurados, a IA faz o match e gera score de compatibilidade por vaga, e os resultados são exibidos ordenados por salário + score.",
+      "funcionalidades": [
+        {
+          "titulo": "Upload e Análise de Currículo por IA",
+          "descricao": "Faça upload do seu currículo em PDF. A IA extrai automaticamente skills, experiências, nível de senioridade e perfil profissional — sem formulários manuais."
+        },
+        {
+          "titulo": "Scraping Inteligente de Vagas",
+          "descricao": "Configure os sites de vagas desejados (LinkedIn, Indeed, Gupy, etc.) e o Talvrix coleta automaticamente as oportunidades relevantes em tempo real."
+        },
+        {
+          "titulo": "Matching por IA com Score de Compatibilidade",
+          "descricao": "Cada vaga recebe um score de compatibilidade calculado pela IA com base no seu perfil. Saiba antes de se candidatar se você é competitivo para a vaga."
+        },
+        {
+          "titulo": "Ranking por Salário e Compatibilidade",
+          "descricao": "Os resultados são ordenados por salário e score de aderência ao seu perfil. As melhores oportunidades aparecem primeiro — sem ruído, sem esforço manual."
+        }
+      ],
+      "publicoAlvo": [
+        "Devs em busca de recolocação que querem encontrar vagas tech bem pagas sem perder tempo",
+        "Profissionais sênior que buscam vagas compatíveis com experiência, sem filtrar manualmente",
+        "Recém-formados que querem entender onde se encaixam no mercado",
+        "Qualquer profissional que queira automatizar a busca em múltiplos sites simultaneamente"
+      ]
+    },
+    "kairos-labs": {
+      "tagline": "O ecossistema que conecta tudo.",
+      "descricao": "Portal institucional e central de validação de demanda. A marca registrada que une todas as soluções — e o ponto de partida para o futuro do ecossistema.",
+      "status": "Ativo",
+      "cta": "Garantir Acesso Antecipado",
+      "descricaoLonga": "Portal institucional, vitrine de inovação e central de validação de demanda por dados para o ecossistema de soluções em tecnologia da Kairos Labs. Marca registrada no INPI (Processo nº 944610498, Classe 42), operando como o ponto de encontro entre o fundador, os produtos e o mercado.",
+      "problema": "Ecossistemas de múltiplos produtos precisam de um ponto de presença que comprove existência comercial, mostre o portfólio em construção e colete dados reais de demanda para priorizar o que deve ser desenvolvido primeiro.",
+      "solucao": "A Kairos Labs funciona como a marca-mãe: garante presença pública registrada, apresenta cada produto do ecossistema com clareza, captura listas de espera segmentadas por produto e entrega ao fundador um dashboard analítico privado para decisões baseadas em dados.",
+      "funcionalidades": [
+        {
+          "titulo": "Vitrine de Produtos",
+          "descricao": "Cards interativos para cada produto do ecossistema com status, descrição, tagline e botão de acesso antecipado — permitindo que o mercado declare interesse antes do lançamento."
+        },
+        {
+          "titulo": "Captura Segmentada de Leads (Waitlist)",
+          "descricao": "Cada produto possui sua própria lista de espera. O e-mail do interessado é atrelado ao product_id correspondente, gerando dados precisos de demanda por solução."
+        },
+        {
+          "titulo": "Founder Dashboard (/admin)",
+          "descricao": "Painel privado e protegido por Supabase Auth com KPIs em tempo real: total de inscritos, ranking de demanda por produto, crescimento semanal e tabela de leads com exportação CSV."
+        },
+        {
+          "titulo": "Comprovação de Marca Pública",
+          "descricao": "Presença institucional com exibição do logotipo, badge do INPI (Processo nº 944610498) e histórico de engenharia público no GitHub — demonstrando maturidade técnica para recrutadores e tech leads."
+        }
+      ],
+      "publicoAlvo": [
+        "Recrutadores técnicos e tech leads avaliando padrão de código e arquitetura",
+        "Potenciais clientes e testadores beta de cada produto do ecossistema",
+        "Fundador (Cesar Pizarro) para decisões de roadmap baseadas em demanda real"
+      ]
+    }
+  },
+  "sobre": {
+    "eyebrow": "Quem somos",
+    "title": "Sobre a Kairos Labs",
+    "description": "Somos um laboratório de tecnologia especializado em desenvolvimento de software sob medida — com foco em SaaS, automação e inteligência de dados para empresas que precisam de soluções sólidas.",
+    "marca": "Marca Registrada · INPI Nº 944610498",
+    "pillars": {
+      "missao": {
+        "title": "Missão",
+        "description": "Construir produtos digitais que resolvem problemas reais com tecnologia de ponta, segurança nativa e experiência excepcional."
+      },
+      "abordagem": {
+        "title": "Abordagem",
+        "description": "Cada solução nasce de uma análise profunda do problema. Priorizamos arquitetura limpa, performance e manutenibilidade a longo prazo."
+      },
+      "qualidade": {
+        "title": "Qualidade",
+        "description": "Cobertura de testes, análise estática, CI/CD e revisão contínua de código fazem parte do nosso processo desde o primeiro commit."
+      }
+    }
+  },
+  "tecnologia": {
+    "eyebrow": "Stack técnica",
+    "title": "Tecnologia",
+    "description": "Escolhemos cada ferramenta com critério. Nossa stack garante segurança, observabilidade e velocidade de entrega sem abrir mão da manutenibilidade.",
+    "stack": {
+      "nextjs": {
+        "category": "Framework",
+        "description": "App Router, Server Components e Server Actions — renderização híbrida com performance máxima."
+      },
+      "typescript": {
+        "category": "Linguagem",
+        "description": "Tipagem estrita end-to-end. Menos bugs em produção, refatoração segura, DX superior."
+      },
+      "supabase": {
+        "category": "Backend & Banco",
+        "description": "PostgreSQL gerenciado com RLS nativo, Auth, Storage e funções SECURITY DEFINER."
+      },
+      "tailwind": {
+        "category": "Estilo",
+        "description": "Utility-first com design system próprio — consistência visual sem overhead de CSS global."
+      },
+      "playwright": {
+        "category": "Testes E2E",
+        "description": "Suite completa de testes end-to-end em ambiente de produção (Vercel Preview)."
+      },
+      "sonarcloud": {
+        "category": "Qualidade",
+        "description": "Quality Gate obrigatório: zero issues por PR, cobertura de testes e análise de segurança."
+      }
+    }
+  },
+  "contato": {
+    "eyebrow": "Fale conosco",
+    "title": "Contato",
+    "description": "Escolha o canal que preferir ou preencha o formulário para conversarmos sobre seu projeto.",
+    "formCta": "Preencher formulário de contato",
+    "formDescription": "Prefere detalhar seu projeto por formulário? Preencha abaixo e entraremos em contato pelo canal de sua preferência.",
+    "social": {
+      "github": {
+        "description": "Acompanhe nossos projetos, contribuições open-source e o histórico técnico do ecossistema Kairos Labs.",
+        "cta": "Ver perfil"
+      },
+      "linkedin": {
+        "description": "Siga para novidades, atualizações de produto e conteúdo sobre desenvolvimento de software e arquitetura.",
+        "cta": "Seguir"
+      },
+      "email": {
+        "description": "Prefere e-mail direto? Escreva para contact.kairoslabs@gmail.com — respondemos em até 48 horas.",
+        "cta": "Enviar e-mail"
+      }
+    }
+  },
+  "footer": {
+    "copyright": "Kairos Labs © 2026 — INPI Processo Nº 944610498"
+  },
+  "contactModal": {
+    "title": "Vamos conversar sobre seu projeto",
+    "description": "Preencha o formulário abaixo e entraremos em contato.",
+    "fields": {
+      "name": {
+        "label": "Nome",
+        "placeholder": "Seu nome"
+      },
+      "email": {
+        "label": "E-mail",
+        "placeholder": "seu@email.com"
+      },
+      "projectType": {
+        "label": "Tipo de projeto"
+      },
+      "projectDescription": {
+        "label": "Descrição breve do projeto",
+        "placeholder": "Descreva brevemente o que você precisa..."
+      },
+      "phone": {
+        "label": "Telefone / WhatsApp",
+        "optional": "(opcional)",
+        "placeholder": "(11) 99999-9999"
+      },
+      "whatsapp": {
+        "label": "Prefiro ser contatado pelo WhatsApp"
+      }
+    },
+    "projectTypes": {
+      "web": "Desenvolvimento Web",
+      "ai": "IA & Automação",
+      "consulting": "Consultoria Técnica",
+      "other": "Outro"
+    },
+    "submit": "Enviar mensagem",
+    "submitting": "Enviando...",
+    "success": {
+      "title": "Mensagem enviada!",
+      "message": "Obrigado pelo interesse. Retornaremos em breve para conversarmos sobre seu projeto.",
+      "close": "Fechar"
+    },
+    "validation": {
+      "nameRequired": "Nome é obrigatório.",
+      "emailRequired": "E-mail é obrigatório.",
+      "emailInvalid": "Formato de e-mail inválido.",
+      "projectTypeRequired": "Selecione um tipo de projeto.",
+      "descriptionRequired": "Descrição é obrigatória.",
+      "descriptionMax": "A descrição deve ter no máximo 500 caracteres.",
+      "phoneInvalid": "Número inválido. Use DDD + número (mínimo 10 dígitos)."
+    }
+  },
+  "waitlistModal": {
+    "title": "Acesso Antecipado",
+    "description": "Entre na lista de espera de {productName} e seja notificado no lançamento.",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "seu@email.com",
+    "submit": "Garantir Acesso Antecipado",
+    "submitting": "Cadastrando...",
+    "noSpam": "Sem spam. Apenas uma notificação quando o produto lançar.",
+    "successTitle": "Você está na lista!",
+    "successMessage": "foi cadastrado na lista de espera de {productName}. Você será notificado no lançamento.",
+    "duplicateTitle": "Já registrado",
+    "duplicateMessage": "Este e-mail já está na lista de espera de {productName}. Você será notificado no lançamento.",
+    "validation": {
+      "emailRequired": "E-mail é obrigatório.",
+      "emailInvalid": "Formato de e-mail inválido."
+    }
+  },
+  "feedbackModal": {
+    "title": "Enviar Sugestão",
+    "description": "Compartilhe sua ideia para {productName}. Nome e e-mail são opcionais.",
+    "nameLabel": "Nome",
+    "optional": "(opcional)",
+    "namePlaceholder": "Seu nome",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "seu@email.com",
+    "messageLabel": "Mensagem",
+    "messagePlaceholder": "Descreva sua sugestão...",
+    "submit": "Enviar Sugestão",
+    "submitting": "Enviando...",
+    "successTitle": "Sugestão enviada!",
+    "successMessage": "Obrigado pelo feedback sobre {productName}. Sua sugestão foi recebida e será analisada pelo fundador.",
+    "validation": {
+      "emailInvalid": "Formato de e-mail inválido.",
+      "messageMin": "A mensagem deve ter pelo menos 10 caracteres."
+    }
+  },
+  "productDetail": {
+    "back": "Portfólio",
+    "problem": "O Problema",
+    "solution": "A Solução",
+    "features": "Funcionalidades Principais",
+    "audience": "Para Quem É",
+    "stack": "Stack Técnica",
+    "earlyAccess": {
+      "eyebrow": "Acesso Antecipado",
+      "title": "Entrar na Lista de Espera",
+      "description": "Cadastre-se para ser notificado no lançamento e ajudar a priorizar o desenvolvimento."
+    },
+    "allProducts": "Ver Todos os Produtos"
+  },
+  "languageSwitcher": {
+    "label": "Idioma"
+  },
+  "admin": {
+    "title": "Founder Dashboard",
+    "signOut": "Sair",
+    "kpis": "KPIs",
+    "kpi": {
+      "totalWaitlist": "Total na Waitlist",
+      "totalWaitlistSub": "inscritos no geral",
+      "last7days": "Últimos 7 dias",
+      "last7daysSub": "novos inscritos",
+      "topDemand": "Maior Demanda",
+      "topDemandSub": "produto mais solicitado"
+    },
+    "demandSection": "Demanda por Produto",
+    "leadsSection": "Leads da Waitlist",
+    "leadsTotal": "{count} leads no total",
+    "exportCsv": "Exportar CSV",
+    "noLeads": "Nenhum lead cadastrado ainda.",
+    "colEmail": "E-mail",
+    "colProduct": "Produto",
+    "colDate": "Data de Cadastro",
+    "prev": "Anterior",
+    "next": "Próxima",
+    "feedbackSection": "Sugestões Recebidas ({count})",
+    "noFeedback": "Nenhuma sugestão recebida ainda.",
+    "login": {
+      "backToSite": "← Voltar ao site",
+      "accessRestricted": "Acesso restrito ao fundador",
+      "emailLabel": "E-mail",
+      "passwordLabel": "Senha",
+      "submit": "Entrar",
+      "loading": "Entrando…",
+      "invalidCredentials": "Credenciais inválidas. Verifique e-mail e senha."
+    }
+  }
+}

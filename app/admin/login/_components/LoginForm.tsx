@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase";
 
 export function LoginForm() {
+  const t = useTranslations("admin.login");
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +25,7 @@ export function LoginForm() {
     });
 
     if (authError) {
-      setError("Credenciais inválidas. Verifique e-mail e senha.");
+      setError(t("invalidCredentials"));
       setLoading(false);
       return;
     }
@@ -39,7 +41,7 @@ export function LoginForm() {
           htmlFor="email"
           className="text-xs font-semibold tracking-[0.1em] uppercase text-white/50"
         >
-          E-mail
+          {t("emailLabel")}
         </label>
         <input
           id="email"
@@ -57,7 +59,7 @@ export function LoginForm() {
           htmlFor="password"
           className="text-xs font-semibold tracking-[0.1em] uppercase text-white/50"
         >
-          Senha
+          {t("passwordLabel")}
         </label>
         <input
           id="password"
@@ -84,7 +86,7 @@ export function LoginForm() {
         disabled={loading}
         className={`mt-2 py-[0.8rem] border-none rounded-[8px] text-[#050a14] font-bold text-[0.88rem] tracking-[0.06em] uppercase ${loading ? "bg-[rgba(212,160,23,0.5)] cursor-not-allowed" : "bg-[#d4a017] cursor-pointer"}`}
       >
-        {loading ? "Entrando…" : "Entrar"}
+        {loading ? t("loading") : t("submit")}
       </button>
     </form>
   );

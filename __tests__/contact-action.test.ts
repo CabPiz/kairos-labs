@@ -11,7 +11,8 @@ import { sendContactAction } from "@/components/contact/contact-action";
 const validData = {
   name: "César Pizarro",
   email: "cesar@exemplo.com",
-  project_type: "Desenvolvimento Web",
+  // project_type armazenado como chave locale-agnóstica desde a issue #88
+  project_type: "web",
   description: "Preciso de um sistema de gestão completo para minha empresa.",
 };
 
@@ -60,10 +61,10 @@ describe("sendContactAction", () => {
 
   describe("sucesso", () => {
     it.each([
-      "Desenvolvimento Web",
-      "IA & Automação",
-      "Consultoria Técnica",
-      "Outro",
+      "web",
+      "ai",
+      "consulting",
+      "other",
     ])("insere no Supabase com tipo de projeto '%s'", async (project_type) => {
       const result = await sendContactAction({ ...validData, project_type });
       expect(result.status).toBe("success");

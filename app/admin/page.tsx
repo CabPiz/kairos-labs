@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import Link from "next/link";
+import { getLocale, getTranslations } from "next-intl/server";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import type { Database } from "@/lib/types";
 import { productNames } from "@/lib/product-names";
@@ -19,7 +20,11 @@ interface DashboardKpis {
 }
 
 export default async function AdminPage() {
-  const supabase = await createServerSupabaseClient();
+  const [supabase, t, locale] = await Promise.all([
+    createServerSupabaseClient(),
+    getTranslations("admin"),
+    getLocale(),
+  ]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data } = await (supabase as any).rpc("get_dashboard_kpis");
@@ -41,36 +46,36 @@ export default async function AdminPage() {
           className="m-0 text-[1.2rem] font-black tracking-[0.06em] uppercase text-[#d4a017]"
           style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
         >
-          Founder Dashboard
+          {t("title")}
         </h1>
         <Link
           href="/admin/logout"
           prefetch={false}
           className="text-xs font-semibold tracking-[0.08em] uppercase text-white/40 no-underline border border-white/[0.12] rounded-[6px] px-[0.9rem] py-[0.4rem]"
         >
-          Sair
+          {t("signOut")}
         </Link>
       </div>
 
       <section className="mb-12">
         <h2 className="m-0 mb-5 text-[0.72rem] font-bold tracking-[0.22em] uppercase text-white/35">
-          KPIs
+          {t("kpis")}
         </h2>
         <div className="flex gap-5 flex-wrap">
           <KPICard
-            label="Total na Waitlist"
+            label={t("kpi.totalWaitlist")}
             value={allLeads.length}
-            sublabel="inscritos no geral"
+            sublabel={t("kpi.totalWaitlistSub")}
           />
           <KPICard
-            label="Últimos 7 dias"
+            label={t("kpi.last7days")}
             value={recentCount}
-            sublabel="novos inscritos"
+            sublabel={t("kpi.last7daysSub")}
           />
           <KPICard
-            label="Maior Demanda"
+            label={t("kpi.topDemand")}
             value={topProduct}
-            sublabel="produto mais solicitado"
+            sublabel={t("kpi.topDemandSub")}
             highlight
           />
         </div>
@@ -78,26 +83,26 @@ export default async function AdminPage() {
 
       <section className="mb-12">
         <h2 className="m-0 mb-5 text-[0.72rem] font-bold tracking-[0.22em] uppercase text-white/35">
-          Demanda por Produto
+          {t("demandSection")}
         </h2>
         <DemandChart leads={allLeads} />
       </section>
 
       <section className="mb-12">
         <h2 className="m-0 mb-5 text-[0.72rem] font-bold tracking-[0.22em] uppercase text-white/35">
-          Leads da Waitlist
+          {t("leadsSection")}
         </h2>
         <LeadsTable leads={allLeads} />
       </section>
 
       <section>
         <h2 className="m-0 mb-5 text-[0.72rem] font-bold tracking-[0.22em] uppercase text-white/35">
-          Sugestões Recebidas ({sugestoes.length})
+          {t("feedbackSection", { count: sugestoes.length })}
         </h2>
 
         {sugestoes.length === 0 && (
           <p className="text-white/35 text-[0.88rem]">
-            Nenhuma sugestão recebida ainda.
+            {t("noFeedback")}
           </p>
         )}
 
@@ -113,7 +118,7 @@ export default async function AdminPage() {
                     {productNames[s.product_id] ?? s.product_id}
                   </span>
                   <span className="text-white/30 text-[0.78rem]">
-                    {new Date(s.created_at).toLocaleString("pt-BR")}
+                    {new Date(s.created_at).toLocaleString(locale)}
                   </span>
                   {s.nome && (
                     <span className="text-white/55 text-[0.78rem]">

@@ -1,0 +1,448 @@
+{
+  "nav": {
+    "sobre": "About",
+    "tecnologia": "Technology",
+    "contato": "Contact",
+    "acesso": "Access"
+  },
+  "hero": {
+    "line1": "Technology",
+    "line2": "and Strategy",
+    "line3": "in Perfect",
+    "highlight": "Synchrony.",
+    "subtitle": "We build advanced digital solutions with security, performance, and a vision for the future.",
+    "cta1": "Explore Solutions",
+    "cta2": "Talk to a Specialist"
+  },
+  "featureCards": {
+    "performance": {
+      "title": "Performance",
+      "description": "Scalable architecture\nfor high performance"
+    },
+    "seguranca": {
+      "title": "Security",
+      "description": "RLS, encryption and\nnative best practices"
+    },
+    "escalabilidade": {
+      "title": "Scalability",
+      "description": "Infrastructure ready\nfor the future"
+    },
+    "inovacao": {
+      "title": "Innovation",
+      "description": "AI, automation and data\nin our DNA"
+    }
+  },
+  "products": {
+    "eyebrow": "Kairos Labs Ecosystem",
+    "title": "Our Portfolio",
+    "subtitle": "Each product is born from a real problem. Declare your interest and help define what we build first.",
+    "saibaMais": "Learn more",
+    "devprint": {
+      "tagline": "Your resume grows with you.",
+      "descricao": "Transforms your real development history — commits, PRs and manual learning logs — into a living, narrative and verifiable portfolio. Every project is proof.",
+      "status": "Coming soon",
+      "cta": "Get Early Access",
+      "descricaoLonga": "Web platform that transforms a developer's real history — commits, pull requests, diffs and manual learning logs — into a living, self-updating, verifiable portfolio backed by real work evidence.",
+      "problema": "Static resumes don't reflect real growth, especially for private long-term projects. Recruiters read unverifiable claims with no real evidence of what the dev learned and built.",
+      "solucao": "DevPrint reads your repository, integrates manual learning logs, and updates your portfolio automatically sprint by sprint. Instead of self-declaration, the recruiter sees traceable experiences — what was learned, in which project, and with what evidence.",
+      "funcionalidades": [
+        {
+          "titulo": "Self-Updating Living Portfolio",
+          "descricao": "The experience section updates automatically based on analyzed projects. Each entry comes with a traceable reference to code or the Learning Journal."
+        },
+        {
+          "titulo": "Learning Journal",
+          "descricao": "Log learnings that don't generate commits: Kanban management, PRD creation, architecture decisions, tool configuration. They appear in the timeline with the same weight as commits."
+        },
+        {
+          "titulo": "Project Evolution Analysis",
+          "descricao": "For each connected repository, the system detects what was practiced, what was newly learned, and generates a sprint timeline with narrative highlights in natural language."
+        },
+        {
+          "titulo": "Verifiable Public Profile",
+          "descricao": "Public URL at devprint.io/username. The dev controls what's visible. Private repositories never appear — only derived experiences, if authorized."
+        }
+      ],
+      "publicoAlvo": [
+        "Dev without market experience who wants to prove ability with real projects",
+        "Dev transitioning stacks who needs to demonstrate what they've learned",
+        "Junior/mid dev accelerating toward senior positions",
+        "Senior dev with years of private projects not visible on GitHub"
+      ]
+    },
+    "ascend": {
+      "tagline": "Accelerate your technical growth.",
+      "descricao": "Professional growth platform for devs who want to go from junior to senior with clarity — personalized tracks, goals and progress evidence.",
+      "status": "Coming soon",
+      "cta": "Get Early Access",
+      "descricaoLonga": "High-performance adaptive preparation platform for high-paying, 100% remote IT public exams and selections. Ascend matches your profile with the target vacancy requirements and generates a personalized evolution plan.",
+      "problema": "Candidates study without knowing exactly what's missing. The gap between the current resume and the target position is rarely mapped precisely — the result is wasted time and energy in studying.",
+      "solucao": "Ascend reads your resume, identifies the desired high-income position and automatically cross-references your data with the exam requirements to generate a skills improvement plan, postgraduate program suggestions, and alerts about common exam pitfalls.",
+      "funcionalidades": [
+        {
+          "titulo": "Smart Onboarding",
+          "descricao": "3-step wizard: upload your professional profile, choose the target position, and generate the strategic evolution plan based on the cross-reference between profile and exam requirements."
+        },
+        {
+          "titulo": "AI Gap Analysis",
+          "descricao": "The AI identifies exactly which skills are missing for the chosen position, prioritizing what carries the most weight in the selection process (e.g., Cebraspe)."
+        },
+        {
+          "titulo": "Personalized Tracks",
+          "descricao": "Adaptive study plans with goals, deadlines based on the exam calendar, and progress evidence recorded throughout preparation."
+        },
+        {
+          "titulo": "Exam and Board Alerts",
+          "descricao": "Countdown to registration deadlines and alerts about recurring patterns from the chosen examining board — what's commonly tested, how questions are formulated, and where candidates most often fail."
+        }
+      ],
+      "publicoAlvo": [
+        "IT professionals targeting high-paying, 100% remote public sector exams",
+        "Candidates who want to know exactly what to study, without wasting time",
+        "Devs transitioning to the public sector"
+      ]
+    },
+    "elucya-talk": {
+      "tagline": "Intelligent communication through AI.",
+      "descricao": "AIaaS solution for business communication — support automation, sentiment analysis and contextual responses with cutting-edge language models.",
+      "status": "Coming soon",
+      "cta": "Get Early Access",
+      "descricaoLonga": "AI-based web platform that analyzes interpersonal conversations — via audio or text — identifying patterns of toxic communication, aggression, manipulation and verbal violence, with empathetic feedback and practical Non-Violent Communication recommendations.",
+      "problema": "In personal, professional and family relationships, verbal conflicts escalate through unnoticed patterns. The parties involved struggle to objectively assess the dynamics, and passive aggressions or manipulations are rarely cataloged.",
+      "solucao": "Elucya Talk acts as an impartial AI-powered mediator: it processes audio or text, identifies participants, classifies each utterance according to behavioral patterns, calculates a Conflict Index from 0 to 100, and offers personalized educational feedback with practical NVC tips.",
+      "funcionalidades": [
+        {
+          "titulo": "Transcription with Diarization",
+          "descricao": "Automatic audio-to-text conversion with speaker separation (Whisper / AssemblyAI). Each utterance is assigned to the correct participant and displayed in a chronological timeline."
+        },
+        {
+          "titulo": "Verbal Pattern Classification",
+          "descricao": "Identification of: aggressive tone, threats, passive aggression, blame language, generalizations ('you always'), evasion, veiled irony, interruptions and active listening."
+        },
+        {
+          "titulo": "Conflict Gauge (0 to 100)",
+          "descricao": "AI-calculated visual index representing the overall conflict level of the conversation, with highlighted peaks and most tense moments."
+        },
+        {
+          "titulo": "Empathetic Feedback per Participant",
+          "descricao": "Individual cards with diagnosis of predominant tone, detected positive points, and practical recommendations based on Non-Violent Communication principles."
+        }
+      ],
+      "publicoAlvo": [
+        "People seeking self-awareness in their communication dynamics",
+        "Couples therapists and family mediators who need objective analysis",
+        "HR managers evaluating workplace climate and harassment reports"
+      ]
+    },
+    "agora-global": {
+      "tagline": "Democratic governance for the digital age.",
+      "descricao": "Open-source digital public governance infrastructure — citizen participation, real-time budget transparency and direct democracy for sovereign states.",
+      "status": "Coming soon",
+      "cta": "Contribute to the Project",
+      "descricaoLonga": "Open-source digital public governance system that transforms citizen participation and budget transparency into real pillars of the State. Each nation hosts its own sovereign instance, interoperable with a global network of digital democracies.",
+      "problema": "The main obstacle to integral human development is not technological or economic — it is the political conflict of interest that generates structural corruption, legislative inertia, and population apathy towards the direction of the State.",
+      "solucao": "Ágora Global creates a secure digital forum for citizens to propose and vote on laws, conduct real-time AI-powered budget auditing, and establish decentralized infrastructure for transparent governance — where citizens are actors, not just voters.",
+      "funcionalidades": [
+        {
+          "titulo": "Citizen Agora (Direct Democracy)",
+          "descricao": "Digital forum with sovereign identity (Zero-Knowledge Proofs), law proposals via qualified digital petitions, and real-time voting. Thematic assemblies moderated by AI synthesize opposing and supporting arguments impartially."
+        },
+        {
+          "titulo": "AI Budget Auditing",
+          "descricao": "Machine learning algorithms cross-reference bid, invoice, and physical delivery data, detecting overpricing, diversions, and inefficiencies in real time with automatic alerts to oversight bodies."
+        },
+        {
+          "titulo": "Sovereign Instances (National Forks)",
+          "descricao": "Each country hosts and manages its own instance with full control over legislation, guidelines, and citizen privacy, maintaining optional interoperability with the global network."
+        },
+        {
+          "titulo": "Public Spending Tracking",
+          "descricao": "Dashboard with graph and heat map visualization of every unit of public money, with 100% of spending traceable in real time to the final beneficiary or supplier."
+        }
+      ],
+      "publicoAlvo": [
+        "Citizens who want real participation in public decisions",
+        "Public managers and auditors who need robust analytical tools",
+        "Open source developers committed to ethical and constitutional governance"
+      ]
+    },
+    "talvrix": {
+      "tagline": "The falcon that spots the right opportunity before anyone else.",
+      "descricao": "SaaS platform that uses AI for intelligent matching between your resume and job listings across multiple sites, ranking results by salary and profile compatibility — in seconds.",
+      "status": "Coming soon",
+      "cta": "Get Early Access",
+      "descricaoLonga": "Talvrix automates job searching from start to finish: it extracts and structures your resume's skills via AI, scrapes jobs from configured sites, and generates a compatibility score per vacancy, ranking results by salary and profile match — in under 60 seconds.",
+      "problema": "Finding relevant vacancies is manual, fragmented and inefficient: the candidate accesses multiple sites separately, keyword searches ignore the real resume profile, there's no aggregated salary ranking across sites, and the candidate doesn't know if they're competitive before applying.",
+      "solucao": "Talvrix automates the entire process: the user uploads a PDF resume, AI extracts and structures skills, experience and seniority level, a scraper collects vacancies from configured sites, AI performs the match and generates a compatibility score per vacancy, and results are displayed ranked by salary and score.",
+      "funcionalidades": [
+        {
+          "titulo": "AI-Powered Resume Upload and Analysis",
+          "descricao": "Upload your resume in PDF format. The AI automatically extracts skills, experience, seniority level, and professional profile — no manual forms."
+        },
+        {
+          "titulo": "Smart Job Scraping",
+          "descricao": "Configure the desired job sites (LinkedIn, Indeed, Gupy, etc.) and Talvrix automatically collects relevant opportunities in real time."
+        },
+        {
+          "titulo": "AI Matching with Compatibility Score",
+          "descricao": "Each vacancy receives a compatibility score calculated by AI based on your profile. Know before applying whether you're competitive for the role."
+        },
+        {
+          "titulo": "Salary and Compatibility Ranking",
+          "descricao": "Results are ranked by salary and profile match score. The best opportunities appear first — no noise, no manual effort."
+        }
+      ],
+      "publicoAlvo": [
+        "Devs seeking relocation who want to find well-paying tech jobs without wasting time",
+        "Senior professionals looking for positions matching their experience, without manual filtering",
+        "Recent graduates who want to understand where they fit in the market",
+        "Any professional who wants to automate searching across multiple sites simultaneously"
+      ]
+    },
+    "kairos-labs": {
+      "tagline": "The ecosystem that connects everything.",
+      "descricao": "Institutional portal and demand validation hub. The registered brand that unites all solutions — and the starting point for the future of the ecosystem.",
+      "status": "Active",
+      "cta": "Get Early Access",
+      "descricaoLonga": "Institutional portal, innovation showcase and demand data validation hub for the Kairos Labs technology solutions ecosystem. Registered trademark at INPI (Process No. 944610498, Class 42), operating as the meeting point between the founder, the products, and the market.",
+      "problema": "Multi-product ecosystems need a point of presence that proves commercial existence, showcases the portfolio under construction, and collects real demand data to prioritize what should be developed first.",
+      "solucao": "Kairos Labs functions as the parent brand: ensures registered public presence, clearly presents each ecosystem product, captures segmented waitlists by product, and delivers the founder a private analytics dashboard for data-driven decisions.",
+      "funcionalidades": [
+        {
+          "titulo": "Product Showcase",
+          "descricao": "Interactive cards for each ecosystem product with status, description, tagline, and early access button — allowing the market to declare interest before launch."
+        },
+        {
+          "titulo": "Segmented Lead Capture (Waitlist)",
+          "descricao": "Each product has its own waitlist. The interested party's email is linked to the corresponding product_id, generating precise demand data per solution."
+        },
+        {
+          "titulo": "Founder Dashboard (/admin)",
+          "descricao": "Private panel protected by Supabase Auth with real-time KPIs: total subscribers, demand ranking by product, weekly growth, and lead table with CSV export."
+        },
+        {
+          "titulo": "Public Brand Verification",
+          "descricao": "Institutional presence with logo display, INPI badge (Process No. 944610498) and public engineering history on GitHub — demonstrating technical maturity to recruiters and tech leads."
+        }
+      ],
+      "publicoAlvo": [
+        "Technical recruiters and tech leads evaluating code quality and architecture",
+        "Potential clients and beta testers for each ecosystem product",
+        "Founder (Cesar Pizarro) for roadmap decisions based on real demand"
+      ]
+    }
+  },
+  "sobre": {
+    "eyebrow": "Who we are",
+    "title": "About Kairos Labs",
+    "description": "We are a technology lab specializing in custom software development — focused on SaaS, automation and data intelligence for companies that need solid solutions.",
+    "marca": "Registered Trademark · INPI No. 944610498",
+    "pillars": {
+      "missao": {
+        "title": "Mission",
+        "description": "Build digital products that solve real problems with cutting-edge technology, native security and exceptional experience."
+      },
+      "abordagem": {
+        "title": "Approach",
+        "description": "Each solution is born from a deep analysis of the problem. We prioritize clean architecture, performance and long-term maintainability."
+      },
+      "qualidade": {
+        "title": "Quality",
+        "description": "Test coverage, static analysis, CI/CD and continuous code review are part of our process from the very first commit."
+      }
+    }
+  },
+  "tecnologia": {
+    "eyebrow": "Tech stack",
+    "title": "Technology",
+    "description": "We choose every tool deliberately. Our stack ensures security, observability and delivery speed without compromising maintainability.",
+    "stack": {
+      "nextjs": {
+        "category": "Framework",
+        "description": "App Router, Server Components and Server Actions — hybrid rendering with maximum performance."
+      },
+      "typescript": {
+        "category": "Language",
+        "description": "Strict end-to-end typing. Fewer bugs in production, safe refactoring, superior DX."
+      },
+      "supabase": {
+        "category": "Backend & Database",
+        "description": "Managed PostgreSQL with native RLS, Auth, Storage and SECURITY DEFINER functions."
+      },
+      "tailwind": {
+        "category": "Styling",
+        "description": "Utility-first with a custom design system — visual consistency without global CSS overhead."
+      },
+      "playwright": {
+        "category": "E2E Testing",
+        "description": "Complete end-to-end test suite in production environment (Vercel Preview)."
+      },
+      "sonarcloud": {
+        "category": "Quality",
+        "description": "Mandatory Quality Gate: zero issues per PR, test coverage and security analysis."
+      }
+    }
+  },
+  "contato": {
+    "eyebrow": "Get in touch",
+    "title": "Contact",
+    "description": "Choose your preferred channel or fill out the form to discuss your project with us.",
+    "formCta": "Fill out contact form",
+    "formDescription": "Prefer to detail your project via form? Fill it out below and we'll reach out through your preferred channel.",
+    "social": {
+      "github": {
+        "description": "Follow our projects, open-source contributions and the technical history of the Kairos Labs ecosystem.",
+        "cta": "View profile"
+      },
+      "linkedin": {
+        "description": "Follow for news, product updates and content about software development and architecture.",
+        "cta": "Follow"
+      },
+      "email": {
+        "description": "Prefer direct email? Write to contact.kairoslabs@gmail.com — we respond within 48 hours.",
+        "cta": "Send email"
+      }
+    }
+  },
+  "footer": {
+    "copyright": "Kairos Labs © 2026 — INPI Process No. 944610498"
+  },
+  "contactModal": {
+    "title": "Let's talk about your project",
+    "description": "Fill out the form below and we'll get in touch.",
+    "fields": {
+      "name": {
+        "label": "Name",
+        "placeholder": "Your name"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "you@email.com"
+      },
+      "projectType": {
+        "label": "Project type"
+      },
+      "projectDescription": {
+        "label": "Brief project description",
+        "placeholder": "Briefly describe what you need..."
+      },
+      "phone": {
+        "label": "Phone / WhatsApp",
+        "optional": "(optional)",
+        "placeholder": "+1 (555) 000-0000"
+      },
+      "whatsapp": {
+        "label": "I prefer to be contacted via WhatsApp"
+      }
+    },
+    "projectTypes": {
+      "web": "Web Development",
+      "ai": "AI & Automation",
+      "consulting": "Technical Consulting",
+      "other": "Other"
+    },
+    "submit": "Send message",
+    "submitting": "Sending...",
+    "success": {
+      "title": "Message sent!",
+      "message": "Thank you for your interest. We'll be in touch shortly to discuss your project.",
+      "close": "Close"
+    },
+    "validation": {
+      "nameRequired": "Name is required.",
+      "emailRequired": "Email is required.",
+      "emailInvalid": "Invalid email format.",
+      "projectTypeRequired": "Please select a project type.",
+      "descriptionRequired": "Description is required.",
+      "descriptionMax": "Description must be at most 500 characters.",
+      "phoneInvalid": "Invalid number. Please include area code (minimum 10 digits)."
+    }
+  },
+  "waitlistModal": {
+    "title": "Early Access",
+    "description": "Join the {productName} waitlist and be notified at launch.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "submit": "Get Early Access",
+    "submitting": "Joining...",
+    "noSpam": "No spam. Just one notification when the product launches.",
+    "successTitle": "You're on the list!",
+    "successMessage": "has been added to the {productName} waitlist. You'll be notified at launch.",
+    "duplicateTitle": "Already registered",
+    "duplicateMessage": "This email is already on the {productName} waitlist. You'll be notified at launch.",
+    "validation": {
+      "emailRequired": "Email is required.",
+      "emailInvalid": "Invalid email format."
+    }
+  },
+  "feedbackModal": {
+    "title": "Send Suggestion",
+    "description": "Share your idea for {productName}. Name and email are optional.",
+    "nameLabel": "Name",
+    "optional": "(optional)",
+    "namePlaceholder": "Your name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Describe your suggestion...",
+    "submit": "Send Suggestion",
+    "submitting": "Sending...",
+    "successTitle": "Suggestion sent!",
+    "successMessage": "Thank you for the feedback on {productName}. Your suggestion has been received and will be reviewed by the founder.",
+    "validation": {
+      "emailInvalid": "Invalid email format.",
+      "messageMin": "Message must be at least 10 characters."
+    }
+  },
+  "productDetail": {
+    "back": "Portfolio",
+    "problem": "The Problem",
+    "solution": "The Solution",
+    "features": "Key Features",
+    "audience": "Who It's For",
+    "stack": "Tech Stack",
+    "earlyAccess": {
+      "eyebrow": "Early Access",
+      "title": "Join the Waitlist",
+      "description": "Sign up to be notified at launch and help prioritize development."
+    },
+    "allProducts": "View All Products"
+  },
+  "languageSwitcher": {
+    "label": "Language"
+  },
+  "admin": {
+    "title": "Founder Dashboard",
+    "signOut": "Sign Out",
+    "kpis": "KPIs",
+    "kpi": {
+      "totalWaitlist": "Total on Waitlist",
+      "totalWaitlistSub": "total registrations",
+      "last7days": "Last 7 Days",
+      "last7daysSub": "new registrations",
+      "topDemand": "Top Demand",
+      "topDemandSub": "most requested product"
+    },
+    "demandSection": "Demand by Product",
+    "leadsSection": "Waitlist Leads",
+    "leadsTotal": "{count} leads total",
+    "exportCsv": "Export CSV",
+    "noLeads": "No leads registered yet.",
+    "colEmail": "E-mail",
+    "colProduct": "Product",
+    "colDate": "Registration Date",
+    "prev": "Previous",
+    "next": "Next",
+    "feedbackSection": "Feedback Received ({count})",
+    "noFeedback": "No feedback received yet.",
+    "login": {
+      "backToSite": "← Back to site",
+      "accessRestricted": "Restricted founder access",
+      "emailLabel": "E-mail",
+      "passwordLabel": "Password",
+      "submit": "Sign In",
+      "loading": "Signing in…",
+      "invalidCredentials": "Invalid credentials. Check your email and password."
+    }
+  }
+}

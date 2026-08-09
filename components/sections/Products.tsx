@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
 import { getProducts } from "@/lib/products";
 import type { Product } from "@/lib/products/types";
 import { WaitlistCTAButton } from "@/components/waitlist/WaitlistCTAButton";
@@ -9,6 +10,8 @@ const statusStyles: Record<string, string> = {
 };
 
 export function Products() {
+  const t = useTranslations("products");
+  const locale = useLocale();
   const produtos = getProducts();
 
   return (
@@ -16,29 +19,38 @@ export function Products() {
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-12">
           <p className="mb-3 text-[#d4a017] text-[0.75rem] font-bold tracking-[0.22em] uppercase">
-            Ecossistema Kairos Labs
+            {t("eyebrow")}
           </p>
           <h2 className="mb-4 font-[var(--font-orbitron),sans-serif] font-extrabold tracking-[0.04em] uppercase leading-[1.15] text-[clamp(1.6rem,2.5vw,2.2rem)] text-white">
-            Nosso Portfólio
+            {t("title")}
           </h2>
           <p className="text-white/55 text-base leading-[1.7] max-w-[520px]">
-            Cada produto nasce de um problema real. Declare seu interesse e ajude
-            a definir o que construímos primeiro.
+            {t("subtitle")}
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-6">
           {produtos.map((produto) => (
-            <ProductCard key={produto.slug} produto={produto} />
+            <ProductCard key={produto.slug} produto={produto} locale={locale} t={t} />
           ))}
         </div>
-
       </div>
     </section>
   );
 }
 
-function ProductCard({ produto }: { readonly produto: Product }) {
+interface ProductCardProps {
+  readonly produto: Product;
+  readonly locale: string;
+  readonly t: ReturnType<typeof useTranslations>;
+}
+
+function ProductCard({ produto, locale, t }: ProductCardProps) {
+  const tagline = t(`${produto.slug}.tagline`);
+  const descricao = t(`${produto.slug}.descricao`);
+  const status = t(`${produto.slug}.status`);
+  const cta = t(`${produto.slug}.cta`);
+
   return (
     <div
       data-testid="product-card"
@@ -59,7 +71,7 @@ function ProductCard({ produto }: { readonly produto: Product }) {
         <span
           className={`text-[0.7rem] font-semibold tracking-[0.14em] uppercase rounded-[4px] px-[0.65rem] py-[0.28rem] ${statusStyles[produto.statusTipo]}`}
         >
-          {produto.status}
+          {status}
         </span>
       </div>
 
@@ -69,14 +81,12 @@ function ProductCard({ produto }: { readonly produto: Product }) {
           {produto.nome}
         </h3>
         <p className="font-medium italic text-[0.8rem]" style={{ color: produto.cor }}>
-          {produto.tagline}
+          {tagline}
         </p>
       </div>
 
       {/* Descrição */}
-      <p className="text-white/55 text-[0.85rem] leading-[1.7] flex-grow">
-        {produto.descricao}
-      </p>
+      <p className="text-white/55 text-[0.85rem] leading-[1.7] flex-grow">{descricao}</p>
 
       {/* Ações */}
       <div className="flex flex-col gap-2 mt-1">
@@ -84,13 +94,13 @@ function ProductCard({ produto }: { readonly produto: Product }) {
           productId={produto.slug}
           productName={produto.nome}
           productColor={produto.cor}
-          ctaLabel={produto.cta}
+          ctaLabel={cta}
         />
         <Link
-          href={`/${produto.slug}`}
+          href={`/${locale}/${produto.slug}`}
           className="flex items-center justify-center px-4 py-[0.55rem] text-[0.72rem] font-semibold tracking-[0.14em] uppercase text-white/60 border border-white/15 rounded-md no-underline transition-colors hover:text-white hover:border-white/40"
         >
-          Saiba mais
+          {t("saibaMais")}
         </Link>
       </div>
     </div>

@@ -4,8 +4,10 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useTranslations } from "next-intl";
 import { CheckCircle, Loader2, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { isValidEmail } from "@/components/contact/contact-schema";
 
 import {
   Dialog,
@@ -18,20 +20,6 @@ import { ModalResultPanel } from "@/components/ui/ModalResultPanel";
 import { ModalErrorBanner } from "@/components/ui/ModalErrorBanner";
 import { sendFeedbackAction, type FeedbackActionState } from "./feedback-action";
 
-// ─────────────────────────────────────────────────────────────
-// Schema
-// ─────────────────────────────────────────────────────────────
-const formSchema = z.object({
-  nome: z.string().optional(),
-  email: z.union([z.literal(""), z.string().email("Formato de e-mail inválido.")]),
-  mensagem: z.string().min(10, "A mensagem deve ter pelo menos 10 caracteres."),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-// ─────────────────────────────────────────────────────────────
-// Props
-// ─────────────────────────────────────────────────────────────
 interface FeedbackModalProps {
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
@@ -40,9 +28,6 @@ interface FeedbackModalProps {
   readonly productColor: string;
 }
 
-// ─────────────────────────────────────────────────────────────
-// Componente
-// ─────────────────────────────────────────────────────────────
 export function FeedbackModal({
   open,
   onOpenChange,
@@ -50,6 +35,19 @@ export function FeedbackModal({
   productName,
   productColor,
 }: FeedbackModalProps) {
+  const t = useTranslations("feedbackModal");
+
+  const formSchema = z.object({
+    nome: z.string().optional(),
+    email: z.union([
+      z.literal(""),
+      z.string().refine(isValidEmail, { message: t("validation.emailInvalid") }),
+    ]),
+    mensagem: z.string().min(10, t("validation.messageMin")),
+  });
+
+  type FormValues = z.infer<typeof formSchema>;
+
   const [actionState, setActionState] = useState<FeedbackActionState>({ status: "idle" });
   const [isPending, startTransition] = useTransition();
 
@@ -91,15 +89,10 @@ export function FeedbackModal({
         onOpenChange={handleOpenChange}
         icon={<CheckCircle size={30} color="#10b981" />}
         iconColor="#10b981"
-        title="Sugestão enviada!"
+        title={t("successTitle")}
         message={
           <>
-            Obrigado pelo feedback sobre{" "}
-            <span style={{ color: productColor, fontWeight: 600 }}>
-              {productName}
-            </span>
-            {". "}
-            Sua sugestão foi recebida e será analisada pelo fundador.
+            {t("successMessage", { productName })}
           </>
         }
         buttonColor="#10b981"
@@ -136,14 +129,10 @@ export function FeedbackModal({
               className="text-white text-base font-bold tracking-[0.04em] uppercase"
               style={{ fontFamily: "var(--font-orbitron), sans-serif" }}
             >
-              Enviar Sugestão
+              {t("title")}
             </DialogTitle>
             <DialogDescription className="text-white/50 text-[0.83rem] leading-[1.6] mt-[0.4rem]">
-              Compartilhe sua ideia para{" "}
-              <span style={{ color: productColor, fontWeight: 600 }}>
-                {productName}
-              </span>{". "}
-              Nome e e-mail são opcionais.
+              {t("description", { productName })}
             </DialogDescription>
           </DialogHeader>
 
@@ -154,14 +143,14 @@ export function FeedbackModal({
                 htmlFor="feedback-nome"
                 className="block mb-[0.4rem] text-white/70 text-xs font-semibold tracking-[0.12em] uppercase"
               >
-                Nome{" "}
-                <span className="text-white/30 font-normal">(opcional)</span>
+                {t("nameLabel")}{" "}
+                <span className="text-white/30 font-normal">{t("optional")}</span>
               </label>
               <input
                 id="feedback-nome"
                 type="text"
                 autoComplete="name"
-                placeholder="Seu nome"
+                placeholder={t("namePlaceholder")}
                 disabled={isPending}
                 {...register("nome")}
                 className={cn(
@@ -177,14 +166,14 @@ export function FeedbackModal({
                 htmlFor="feedback-email"
                 className="block mb-[0.4rem] text-white/70 text-xs font-semibold tracking-[0.12em] uppercase"
               >
-                E-mail{" "}
-                <span className="text-white/30 font-normal">(opcional)</span>
+                {t("emailLabel")}{" "}
+                <span className="text-white/30 font-normal">{t("optional")}</span>
               </label>
               <input
                 id="feedback-email"
                 type="email"
                 autoComplete="email"
-                placeholder="seu@email.com"
+                placeholder={t("emailPlaceholder")}
                 disabled={isPending}
                 {...register("email")}
                 className={cn(
@@ -206,12 +195,12 @@ export function FeedbackModal({
                 htmlFor="feedback-mensagem"
                 className="block mb-[0.4rem] text-white/70 text-xs font-semibold tracking-[0.12em] uppercase"
               >
-                Mensagem
+                {t("messageLabel")}
               </label>
               <textarea
                 id="feedback-mensagem"
                 rows={4}
-                placeholder="Descreva sua sugestão..."
+                placeholder={t("messagePlaceholder")}
                 disabled={isPending}
                 {...register("mensagem")}
                 className={cn(
@@ -227,7 +216,6 @@ export function FeedbackModal({
               )}
             </div>
 
-            {/* Erro genérico */}
             {actionState.status === "error" && (
               <ModalErrorBanner message={actionState.message} />
             )}
@@ -242,7 +230,7 @@ export function FeedbackModal({
               style={{ background: isPending ? `${productColor}80` : productColor }}
             >
               {isPending && <Loader2 size={14} className="animate-spin" />}
-              {isPending ? "Enviando..." : "Enviar Sugestão"}
+              {isPending ? t("submitting") : t("submit")}
             </button>
           </form>
         </div>

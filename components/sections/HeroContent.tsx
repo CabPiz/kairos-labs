@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { ContactModal } from "@/components/contact/ContactModal";
 
 export function HeroContent() {
+  const t = useTranslations("hero");
   const [contactOpen, setContactOpen] = useState(false);
 
   return (
-    <div
-      className="relative z-30 flex flex-col px-4 pt-8 pb-0 sm:px-10 sm:pt-10 sm:max-w-[52%]"
-    >
-      {/* Headline — Orbitron para identidade tech/futurista */}
+    <div className="relative z-30 flex flex-col px-4 pt-8 pb-0 sm:px-10 sm:pt-10 sm:max-w-[52%]">
+      {/* Headline */}
       <h1 style={{ margin: 0, padding: 0, lineHeight: 1.15 }}>
-        {["Tecnologia", "e Estratégia", "em Perfeito"].map((line) => (
+        {[t("line1"), t("line2"), t("line3")].map((line) => (
           <span
             key={line}
             style={{
@@ -39,11 +39,11 @@ export function HeroContent() {
             color: "#d4a017",
           }}
         >
-          Sincronismo.
+          {t("highlight")}
         </span>
       </h1>
 
-      {/* Subtítulo — Inter para legibilidade */}
+      {/* Subtítulo */}
       <p
         style={{
           marginTop: "1.5rem",
@@ -55,8 +55,7 @@ export function HeroContent() {
           fontFamily: "var(--font-inter), sans-serif",
         }}
       >
-        Construimos soluções digitais avançadas<br />
-        com segurança, performance e visão de futuro.
+        {t("subtitle")}
       </p>
 
       {/* CTAs */}
@@ -77,7 +76,7 @@ export function HeroContent() {
             fontFamily: "var(--font-inter), sans-serif",
           }}
         >
-          Explorar Soluções
+          {t("cta1")}
         </a>
 
         <button
@@ -97,7 +96,7 @@ export function HeroContent() {
             fontFamily: "var(--font-inter), sans-serif",
           }}
         >
-          Falar com Especialista
+          {t("cta2")}
         </button>
       </div>
 

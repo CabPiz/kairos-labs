@@ -1,11 +1,16 @@
-export const PROJECT_TYPES = [
-  "Desenvolvimento Web",
-  "IA & Automação",
-  "Consultoria Técnica",
-  "Outro",
-] as const;
+/**
+ * Chaves de tipo de projeto armazenadas no banco de dados.
+ * Valores locale-agnostic: a label exibida ao usuário vem de `messages/[locale].json`
+ * via `contactModal.projectTypes.[key]`.
+ */
+export const PROJECT_TYPE_KEYS = ["web", "ai", "consulting", "other"] as const;
+export type ProjectTypeKey = (typeof PROJECT_TYPE_KEYS)[number];
 
-export type ProjectType = (typeof PROJECT_TYPES)[number];
+/**
+ * Mantido para compatibilidade com testes existentes.
+ * @deprecated Usar PROJECT_TYPE_KEYS.
+ */
+export const PROJECT_TYPES = PROJECT_TYPE_KEYS;
 
 /**
  * Valida o formato de e-mail sem regex.

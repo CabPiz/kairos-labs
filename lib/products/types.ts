@@ -1,25 +1,12 @@
-export interface Funcionalidade {
-  titulo: string;
-  descricao: string;
-}
-
 export interface Product {
   slug: string;
+  /** Nome da marca — não traduzido (é o nome do produto). */
   nome: string;
-  tagline: string;
-  /** Descrição curta — usada nos cards de vitrine. */
-  descricao: string;
-  /** Descrição longa extraída do PRD — usada na página de detalhe. */
-  descricaoLonga: string;
-  problema: string;
-  solucao: string;
-  funcionalidades: Funcionalidade[];
-  stack?: string[];
-  publicoAlvo?: string[];
-  /** Cor temática do produto em hex. Usada como accent em ícones, badges e CTAs. */
+  /** Cor temática em hex. Usada como accent em ícones, badges e CTAs. */
   cor: string;
   icone: React.ReactNode;
-  status: string;
+  /** Chave de CSS para badge de status ("ativo" | "breve"). */
   statusTipo: "ativo" | "breve";
-  cta: string;
+  /** Nomes de tecnologias — não traduzidos (são nomes de produto). */
+  stack?: string[];
 }

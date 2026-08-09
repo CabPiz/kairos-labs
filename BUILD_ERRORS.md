@@ -5,6 +5,26 @@ Cada entrada documenta um erro já resolvido, sua causa raiz e o padrão correto
 
 ---
 
+## CI Workflow Failures
+
+### [CI-001] Playwright E2E: todos os locators PT falham em CI por locale errado
+
+**Issue de origem:** #88  
+**Sintoma:** Testes E2E que passam localmente falham em CI com "element(s) not found" para elementos escritos em português (e.g., `/explorar soluções/i`, `"Entrar"`).  
+**Causa:** Em CI, Playwright usa `Accept-Language: en-US` por padrão. O middleware next-intl detecta `en` e redireciona para `/en/`, servindo conteúdo em inglês. Todos os locators em português falham.  
+**Correção:** Adicionar `locale: "pt-BR"` na seção `use` do `playwright.config.ts`. Isso força o header `Accept-Language: pt-BR` em todos os projetos, garantindo que o middleware redirecione para `/pt/` tanto em local quanto em CI.  
+**Padrão a seguir:**
+```ts
+// playwright.config.ts
+use: {
+  baseURL: "http://localhost:3000",
+  locale: "pt-BR", // obrigatório quando o site tem i18n com autodetecção por Accept-Language
+},
+```
+**Nota:** Testes de múltiplos locales (e.g., i18n.spec.ts) devem usar `test.use({ locale: "en-US" })` inline para sobrescrever o padrão.
+
+---
+
 ## [ERR-001] ZodError: Property 'errors' does not exist
 
 **Issue de origem:** #12  
@@ -131,3 +151,35 @@ if (actionState.status === "success") {
 |---|---|
 | `ModalResultPanel` | Painel de sucesso, aviso ou qualquer estado final de modal |
 | `ModalErrorBanner` | Banner de erro inline dentro de formulários de modal |
+
+---
+
+## [ERR-007] Event handlers em Server Components causam falha de prerender
+
+**Issue de origem:** #98  
+**Sintoma:**
+```
+Error: Event handlers cannot be passed to Client Component props.
+{href: "/", style: ..., onMouseOver: function onMouseOver, ...}
+If you need interactivity, consider converting part of this to a Client Component.
+digest: '2177826938'
+Export encountered an error on /admin/login/page: /admin/login, exiting the build.
+```
+**Causa:** Arquivo em `app/` sem `"use client"` é um Server Component. O Next.js serializa o JSX para transferência ao cliente — funções (`onMouseOver`, `onClick`, `onFocus`, etc.) não são serializáveis e são rejeitadas no prerender estático.  
+**Correção:** Remover os event handlers do elemento afetado, ou adicionar `"use client"` ao arquivo (somente se a interatividade for essencial — tem custo de bundle).  
+**Padrão a seguir:**
+```tsx
+// ✅ Correto em Server Component — sem event handlers
+<Link href="/" style={{ color: "rgba(255,255,255,0.4)" }}>
+  ← Voltar ao site
+</Link>
+
+// ❌ Errado em Server Component — build falha
+<Link
+  href="/"
+  onMouseOver={(e) => (e.currentTarget.style.color = "#fff")}
+>
+  ← Voltar ao site
+</Link>
+```
+**Prevenção:** Antes de adicionar qualquer `on*` handler a um elemento em `app/`, verificar se o arquivo tem `"use client"` no topo. Se não tiver, o componente é Server Component e event handlers são proibidos como props.

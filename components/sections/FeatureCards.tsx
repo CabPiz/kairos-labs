@@ -1,60 +1,49 @@
 "use client";
 
-const features = [
-  {
-    title: "Performance",
-    description: "Arquitetura escalável\ne de alta performance",
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4a90e2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
-      </svg>
-    ),
-  },
-  {
-    title: "Segurança",
-    description: "RLS, criptografia e\nboas práticas nativas",
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4a90e2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-      </svg>
-    ),
-  },
-  {
-    title: "Escalabilidade",
-    description: "Infraestrutura pronta\npara o futuro",
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4a90e2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-        <polyline points="17 6 23 6 23 12"/>
-      </svg>
-    ),
-  },
-  {
-    title: "Inovação",
-    description: "IA, automação e dados\nem nosso DNA",
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4a90e2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="12" y1="8" x2="12" y2="12"/>
-        <line x1="12" y1="16" x2="12.01" y2="16"/>
-      </svg>
-    ),
-  },
-];
+import { useTranslations } from "next-intl";
+
+const featureKeys = ["performance", "seguranca", "escalabilidade", "inovacao"] as const;
+
+const icons = {
+  performance: (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4a90e2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+    </svg>
+  ),
+  seguranca: (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4a90e2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </svg>
+  ),
+  escalabilidade: (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4a90e2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+      <polyline points="17 6 23 6 23 12"/>
+    </svg>
+  ),
+  inovacao: (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4a90e2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+  ),
+};
 
 export function FeatureCards() {
+  const t = useTranslations("featureCards");
+
   return (
     <div
       className="relative z-30 grid grid-cols-2 md:grid-cols-4 border-t border-blue-500/25 overflow-hidden"
       style={{ marginTop: "auto" }}
     >
-      {features.map(({ title, description, icon }, i) => (
+      {featureKeys.map((key, i) => (
         <div
-          key={title}
+          key={key}
           className={`flex items-start gap-4 px-5 py-5 md:px-[1.8rem] md:py-[1.4rem] bg-[rgba(5,10,30,0.82)] border-r border-blue-500/20${i < 2 ? " border-b md:border-b-0" : ""}`}
         >
-          {/* Ícone com borda azul */}
           <div
             style={{
               flexShrink: 0,
@@ -68,7 +57,7 @@ export function FeatureCards() {
               justifyContent: "center",
             }}
           >
-            {icon}
+            {icons[key]}
           </div>
 
           <div>
@@ -82,7 +71,7 @@ export function FeatureCards() {
                 textTransform: "uppercase",
               }}
             >
-              {title}
+              {t(`${key}.title`)}
             </p>
             <p
               style={{
@@ -93,7 +82,7 @@ export function FeatureCards() {
                 whiteSpace: "pre-line",
               }}
             >
-              {description}
+              {t(`${key}.description`)}
             </p>
           </div>
         </div>

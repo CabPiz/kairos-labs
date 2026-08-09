@@ -36,9 +36,9 @@ describe("LeadsTable", () => {
     expect(screen.getByText("3 leads no total")).toBeInTheDocument();
   });
 
-  it("exibe singular quando há 1 lead", () => {
+  it("exibe contagem quando há 1 lead", () => {
     render(<LeadsTable leads={makeLeads(1)} />);
-    expect(screen.getByText("1 lead no total")).toBeInTheDocument();
+    expect(screen.getByText("1 leads no total")).toBeInTheDocument();
   });
 
   it.each(["E-mail", "Produto", "Data de Cadastro"])(

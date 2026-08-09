@@ -1,4 +1,8 @@
+import { useTranslations } from "next-intl";
+
 export function Footer() {
+  const t = useTranslations("footer");
+
   return (
     <footer
       style={{
@@ -18,7 +22,7 @@ export function Footer() {
           letterSpacing: "0.03em",
         }}
       >
-        Kairos Labs © 2026 — INPI Processo Nº 944610498
+        {t("copyright")}
       </p>
     </footer>
   );
