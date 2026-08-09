@@ -269,6 +269,37 @@ npm run test:e2e 2>&1 | tee saida.log
 
 O Claude Code lê o `saida.log` para confirmar resultado. **O usuário nunca roda este comando — é responsabilidade exclusiva do Claude Code.** Se o fluxo implementado ainda não tiver spec E2E, o Claude Code cria ou atualiza o arquivo correspondente em `e2e/` como parte da FASE 2 — **nunca** delegar a criação de specs para depois. Issues que **exigem** spec E2E nova ou atualizada: qualquer fluxo que envolva submit de formulário, autenticação, redirecionamento protegido ou confirmação visual de ação do usuário.
 
+**Passo 4 — Testes Visuais Mobile (obrigatório para issues com componentes de UI)**
+
+Para qualquer issue que crie ou modifique componentes visíveis na interface (seções, header, nav, modal, cards, layout responsivo), o Claude Code **executa diretamente** o script de screenshots mobile antes de iniciar a FASE 3:
+
+```bash
+node --experimental-vm-modules scripts/take-mobile-screenshots.mjs 2>&1 | tee saida.log
+```
+
+O script captura screenshots automatizados nos seguintes viewports padrão:
+
+| Dispositivo | Largura | Altura | Tipo |
+|---|---|---|---|
+| iPhone SE | 375px | 667px | mobile |
+| iPhone 14 Pro Max | 430px | 932px | mobile |
+| Pixel 8 | 412px | 915px | mobile |
+| iPad Mini | 768px | 1024px | tablet |
+| Surface Pro 7 | 912px | 1368px | tablet |
+
+Os screenshots são salvos em `C:/Users/Cesar/AppData/Local/Temp/claude/kairos-mobile-screenshots/` e o Claude Code analisa cada imagem **antes** de abrir PR. Checklist visual obrigatório:
+
+- [ ] Logo sem quebra de linha em nenhum viewport
+- [ ] Menu mobile full-screen sem conteúdo sangrando por baixo
+- [ ] Nav links visíveis e funcionais no desktop (≥640px)
+- [ ] Hamburger visível e funcional no mobile (<640px)
+- [ ] Seções adicionadas com layout correto em cada breakpoint (1 coluna mobile → grid desktop)
+- [ ] Textos não cortados nos containers
+
+Se qualquer item falhar: corrigir o arquivo, rodar `npm run build` e re-executar o script antes de prosseguir.
+
+> **Resultado dos testes visuais mobile deve ser incluído no comentário de certificação de qualidade pré-merge** (FASE 4), com a lista de viewports validados — isso mantém o carimbo de qualidade rastreável na issue.
+
 ---
 
 ### FASE 3 — Commits Atômicos (Claude Code executa diretamente)
@@ -364,6 +395,11 @@ Todo o código desta issue passou pela seguinte esteira de qualidade antes de se
 ### 🎭 Testes E2E
 - **[N] cenários Playwright** — 100% passando em ambiente de produção (Vercel Preview)
 - Fluxos validados: [lista dos fluxos cobertos]
+
+### 📱 Testes Visuais Mobile (quando aplicável a issues de UI)
+- Screenshots automatizados via `scripts/take-mobile-screenshots.mjs`
+- Viewports validados: iPhone SE (375px) · iPhone 14 Pro Max (430px) · Pixel 8 (412px) · iPad Mini (768px) · Surface Pro 7 (912px)
+- Checklist: logo sem quebra · menu mobile full-screen · nav funcional desktop · hamburger funcional mobile · layout responsivo · textos não cortados
 
 ### 🔁 CI Pipeline (GitHub Actions)
 - ✅ Build TypeScript — sem erros de tipo
@@ -850,4 +886,4 @@ Para descobrir o SHA de qualquer Action: olhar o log do CI — o step "Set up jo
 ---
 
 *Kairos Labs — Cesar Antonio Brito Pizarro*
-*CLAUDE.md v2.2 — cobertura 100% de código novo obrigatória na proposta; *.spec.ts excluído do Sonar coverage; setup local e desvio de implementação documentados*
+*CLAUDE.md v2.3 — testes visuais mobile automatizados (Passo 4 da FASE 2.5) com carimbo no comentário de certificação pré-merge*
