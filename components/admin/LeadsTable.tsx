@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import type { Database } from "@/lib/types";
 import { productNames } from "@/lib/product-names";
 
@@ -12,10 +13,10 @@ interface Props {
 
 const PAGE_SIZE = 10;
 
-function buildCsv(leads: WaitlistRow[]): string {
+function buildCsv(leads: WaitlistRow[], locale: string): string {
   const header = "email,produto,data_cadastro";
   const rows = leads.map((l) => {
-    const date = new Date(l.created_at).toLocaleString("pt-BR");
+    const date = new Date(l.created_at).toLocaleString(locale);
     const product = productNames[l.product_id] ?? l.product_id;
     return `${l.email},${product},${date}`;
   });
@@ -33,6 +34,8 @@ function downloadCsv(content: string, filename: string): void {
 }
 
 export function LeadsTable({ leads }: Props) {
+  const t = useTranslations("admin");
+  const locale = useLocale();
   const [page, setPage] = useState(0);
 
   const totalPages = Math.ceil(leads.length / PAGE_SIZE);
@@ -40,7 +43,7 @@ export function LeadsTable({ leads }: Props) {
   const slice = leads.slice(start, start + PAGE_SIZE);
 
   function handleExport() {
-    const csv = buildCsv(leads);
+    const csv = buildCsv(leads, locale);
     downloadCsv(csv, "leads-waitlist.csv");
   }
 
@@ -48,20 +51,20 @@ export function LeadsTable({ leads }: Props) {
     <div>
       <div className="flex items-center justify-between mb-4">
         <span className="text-[0.8rem] text-white/35">
-          {leads.length} lead{leads.length !== 1 ? "s" : ""} no total
+          {t("leadsTotal", { count: leads.length })}
         </span>
         <button
           type="button"
           onClick={handleExport}
           className="text-xs font-bold tracking-[0.1em] uppercase text-[#d4a017] bg-[rgba(212,160,23,0.1)] border border-[rgba(212,160,23,0.3)] rounded-[6px] px-4 py-[0.45rem] cursor-pointer"
         >
-          Exportar CSV
+          {t("exportCsv")}
         </button>
       </div>
 
       {leads.length === 0 && (
         <p className="text-white/35 text-[0.88rem]">
-          Nenhum lead cadastrado ainda.
+          {t("noLeads")}
         </p>
       )}
 
@@ -72,13 +75,13 @@ export function LeadsTable({ leads }: Props) {
               <thead>
                 <tr>
                   <th className="px-4 py-[0.6rem] text-[0.68rem] font-bold tracking-[0.16em] uppercase text-white/35 border-b border-white/10 text-left">
-                    E-mail
+                    {t("colEmail")}
                   </th>
                   <th className="px-4 py-[0.6rem] text-[0.68rem] font-bold tracking-[0.16em] uppercase text-white/35 border-b border-white/10 text-left">
-                    Produto
+                    {t("colProduct")}
                   </th>
                   <th className="px-4 py-[0.6rem] text-[0.68rem] font-bold tracking-[0.16em] uppercase text-white/35 border-b border-white/10 text-left">
-                    Data de Cadastro
+                    {t("colDate")}
                   </th>
                 </tr>
               </thead>
@@ -92,7 +95,7 @@ export function LeadsTable({ leads }: Props) {
                       {productNames[lead.product_id] ?? lead.product_id}
                     </td>
                     <td className="px-4 py-3 text-[0.84rem] text-white/40 border-b border-white/[0.06]">
-                      {new Date(lead.created_at).toLocaleString("pt-BR")}
+                      {new Date(lead.created_at).toLocaleString(locale)}
                     </td>
                   </tr>
                 ))}
@@ -108,7 +111,7 @@ export function LeadsTable({ leads }: Props) {
                 disabled={page === 0}
                 className={`text-xs font-semibold bg-transparent border border-white/[0.12] rounded-[6px] py-[0.35rem] px-[0.8rem] ${page === 0 ? "text-white/20 cursor-not-allowed" : "text-white/60 cursor-pointer"}`}
               >
-                Anterior
+                {t("prev")}
               </button>
               <span className="text-[0.78rem] text-white/35">
                 {page + 1} / {totalPages}
@@ -119,7 +122,7 @@ export function LeadsTable({ leads }: Props) {
                 disabled={page === totalPages - 1}
                 className={`text-xs font-semibold bg-transparent border border-white/[0.12] rounded-[6px] py-[0.35rem] px-[0.8rem] ${page === totalPages - 1 ? "text-white/20 cursor-not-allowed" : "text-white/60 cursor-pointer"}`}
               >
-                Próxima
+                {t("next")}
               </button>
             </div>
           )}

@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { LoginForm } from "./_components/LoginForm";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const t = await getTranslations("admin.login");
+
   return (
     <main
       style={{
@@ -38,7 +41,7 @@ export default function LoginPage() {
             marginBottom: "1.75rem",
           }}
         >
-          ← Voltar ao site
+          {t("backToSite")}
         </Link>
 
         <h1
@@ -61,7 +64,7 @@ export default function LoginPage() {
             fontSize: "0.82rem",
           }}
         >
-          Acesso restrito ao fundador
+          {t("accessRestricted")}
         </p>
 
         <LoginForm />
