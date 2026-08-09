@@ -28,6 +28,7 @@ Repositório: `CabPiz/kairos-labs` | Owner: `CabPiz` | Project Board: nº 3
 - Executar `gh issue edit` (labels, assignees)
 - Executar `gh project item-edit` (movimento de card no Board)
 - Executar queries `gh api graphql`
+- Postar comentários em issues: `gh issue comment [NUMERO] --body "[texto]"`
 
 ### 📋 PADRÃO DE SAÍDA DE COMANDOS — tee para saida.log
 
@@ -115,16 +116,101 @@ gh project item-edit --id $ITEM_ID --project-id $PROJECT_ID --field-id $STATUS_F
    - Ler os requisitos da issue, identificar dependências, fronteiras com outras issues e ambiguidades.
    - Apresentar resumo do entendimento e fazer perguntas de clarificação necessárias.
 
-2. **Proposta Técnica Detalhada**
+2. **Auditoria Interna de Boas Práticas (executada pelo Claude Code antes de propor qualquer solução)**
+
+   > **PROIBIDO apresentar a proposta técnica ao usuário antes de concluir esta auditoria.** A solução só é exibida após passar por todos os critérios abaixo.
+
+   O Claude Code avalia internamente a solução candidata contra os seguintes eixos, **nesta ordem**:
+
+   | # | Eixo | Critério mínimo |
+   |---|---|---|
+   | 1 | **Reutilização de componentes** | Verificar se já existe componente, hook, action ou utilitário que atende parcial ou totalmente o requisito. Reusar antes de criar. (lição ERR-004) |
+   | 2 | **Padrões Sonar** | Checar toda a solução candidata contra cada regra da seção `🔍 PADRÕES SONAR` deste arquivo: props `readonly`, `button type`, acessibilidade de mouse, espaçamento JSX, testes parametrizados, index como key, `prefetch={false}`, imports mortos. |
+   | 3 | **Dependências entre camadas** | Confirmar que `lib/` não importa de `components/` ou `app/`; `components/` não importa de `app/`; Client Components não importam de `supabase-server` ou `server-only`. |
+   | 4 | **Segurança Supabase** | Writes usam `createServerAdminClient()`; reads usam SSR client + RPC com `SECURITY DEFINER`. Cast `as any` onde necessário (ERR-002). |
+   | 5 | **Cobertura de testes** | A solução inclui testes unitários para todo componente e action novos, e spec E2E para todo fluxo com submit ou autenticação. |
+   | 6 | **Consistência de estilo** | Tailwind para valores estáticos; `style={{}}` apenas para valores dinâmicos de runtime. Novos componentes seguem o padrão visual existente. |
+   | 7 | **Convenções de código** | Conventional Commits em português, branch no padrão correto, sem comentários desnecessários, sem abstrações prematuras. |
+   | 8 | **Performance** | A solução introduz queries extras, N+1, re-renders desnecessários ou aumento relevante de bundle? Se sim, propor alternativa mais eficiente ou documentar o trade-off explicitamente na justificativa. |
+
+   Se qualquer eixo reprovar, o Claude Code ajusta a solução candidata internamente até aprovação em todos os eixos. **O usuário nunca vê uma proposta que não passou pela auditoria.**
+
+3. **Proposta Técnica Detalhada** (exibida somente após auditoria interna aprovada)
    - Propor solução completa: arquivos a criar/modificar, arquitetura, decisões de design e justificativas.
    - Apresentar alternativas quando houver trade-offs relevantes.
+   - Incluir obrigatoriamente ao final a seção **"✅ Justificativa de Boas Práticas"** — ver formato abaixo.
    - Encerrar sempre com: *"A proposta técnica está alinhada com o esperado para prosseguirmos com a implementação?"* — e **PARAR**.
+
+4. **Registro na Issue (executado após aprovação explícita do usuário, antes de iniciar a FASE 2)**
+
+   O Claude Code posta a **"✅ Justificativa de Boas Práticas"** como comentário na issue para rastreabilidade:
+
+   ```bash
+   gh issue comment [NUMERO] --body "$(cat <<'EOF'
+   ## ✅ Auditoria de Boas Práticas — Proposta Aprovada
+
+   [conteúdo da seção Justificativa de Boas Práticas]
+
+   *Auditoria executada pelo Claude Code antes da implementação — CLAUDE.md v1.8*
+   EOF
+   )"
+   ```
+
+   Este comentário é a evidência de que a solução passou pela auditoria antes de qualquer linha de código ser escrita.
+
+#### Formato da seção "✅ Justificativa de Boas Práticas"
+
+Incluir ao final de toda proposta técnica, com uma linha por eixo auditado:
+
+```markdown
+## ✅ Justificativa de Boas Práticas
+
+| Eixo | Decisão adotada | Por quê atende a melhor prática |
+|---|---|---|
+| Reutilização | [componente/padrão reusado ou motivo de criação nova] | [justificativa] |
+| Sonar | [conformidades garantidas] | [quais regras foram verificadas] |
+| Camadas | [ausência de violações de dependência] | [estrutura respeitada] |
+| Segurança Supabase | [client usado para cada operação] | [alinhamento com padrão do projeto] |
+| Testes | [unitários + E2E previstos] | [cobertura dos fluxos críticos] |
+| Estilo | [Tailwind vs inline styles] | [critério de uso de cada abordagem] |
+| Convenções | [commits, branch, comentários] | [conformidade com o padrão estabelecido] |
+| Performance | [impacto em queries, re-renders, bundle] | [ausência de N+1, re-renders ou trade-off documentado] |
+```
 
 > **ATENÇÃO:** Respostas do usuário que fornecem dados solicitados (links, e-mails, nomes) **não constituem aprovação**. A aprovação explícita é obrigatória — palavras como "sim", "pode ir", "aprovado", "prossiga". Enquanto não houver aprovação explícita, o Claude Code permanece em FASE 1.
 
 ---
 
 ### FASE 2 — Código-Fonte (Claude Code edita os arquivos diretamente)
+
+#### Regra de Desvio da Solução Proposta
+
+Durante a implementação, pode surgir a necessidade de ajustar a solução proposta na FASE 1 — por bug encontrado na prática, incompatibilidade de tipos, comportamento inesperado de biblioteca, restrição do CI ou refinamento de abordagem.
+
+**Sempre que a implementação real divergir da solução aprovada na FASE 1**, o Claude Code deve:
+
+1. Identificar exatamente o que mudou e por quê (causa raiz, não sintoma).
+2. Aplicar a correção nos arquivos.
+3. Postar um comentário na issue documentando o desvio:
+
+```bash
+gh issue comment [NUMERO] --body "$(cat <<'EOF'
+## 🔄 Desvio de Implementação — [título curto do ajuste]
+
+**O que foi proposto:** [descrição da abordagem original aprovada]
+
+**O que foi implementado:** [descrição da abordagem real]
+
+**Motivo do desvio:** [causa raiz — bug, incompatibilidade de tipos, CI, refinamento técnico]
+
+**Impacto:** [nenhum impacto funcional / comportamento ajustado / trade-off aceito]
+
+*Registrado pelo Claude Code durante a FASE 2 — CLAUDE.md v1.9*
+EOF
+)"
+```
+
+> **Motivo:** a issue é o registro histórico da decisão técnica. Se a solução real diverge da proposta, o histórico fica inconsistente e um dev futuro que leia a issue terá uma visão incorreta do que foi feito e por quê. O comentário de desvio fecha esse gap de rastreabilidade.
 
 - O Claude Code edita os arquivos diretamente no disco.
 - **Antes de editar qualquer arquivo**, o Claude Code aplica proativamente todas as regras da seção `🔍 PADRÕES SONAR` deste arquivo. O código gerado já deve estar em conformidade — nunca delegar a verificação Sonar para o usuário.
@@ -263,6 +349,43 @@ Após `gh pr checks --watch` retornar com todos os checks verdes, o Claude Code 
   2. **Corrige os arquivos afetados** diretamente no disco.
 - Após correção: usuário roda `npm run build` + push. Aguardar novo ciclo do Sonar.
 
+Após Quality Gate verde, o Claude Code posta um **comentário de certificação de qualidade** na issue antes de executar o merge:
+
+```bash
+gh issue comment [NUMERO] --body "$(cat <<'EOF'
+## 🏆 Certificação de Qualidade — Pronto para Merge
+
+Todo o código desta issue passou pela seguinte esteira de qualidade antes de ser aceito:
+
+### 🔬 Testes Unitários
+- **[N] testes em [N] suites** — 100% passando (Jest + React Testing Library)
+- Cobertura: [lista dos componentes/actions testados]
+
+### 🎭 Testes E2E
+- **[N] cenários Playwright** — 100% passando em ambiente de produção (Vercel Preview)
+- Fluxos validados: [lista dos fluxos cobertos]
+
+### 🔁 CI Pipeline (GitHub Actions)
+- ✅ Build TypeScript — sem erros de tipo
+- ✅ ESLint `--max-warnings=0` — zero warnings
+- ✅ Husky pre-commit — lint-staged aprovado em todos os commits
+
+### ☁️ Deploy
+- ✅ Vercel Preview — build e deploy bem-sucedidos
+
+### 🔍 Análise Estática — SonarCloud Quality Gate
+- ✅ Zero issues abertas na PR
+- Regras verificadas: [lista das regras Sonar aplicáveis — S1874, S8786, S6479, S5976, etc.]
+
+### 📋 Auditoria de Boas Práticas (CLAUDE.md v[X])
+- ✅ 8 eixos auditados antes da implementação (reutilização, Sonar, camadas, segurança, testes, estilo, convenções, performance)
+- Proposta técnica registrada: [link para o comentário de auditoria]
+
+*Certificação gerada pelo Claude Code — CLAUDE.md v[X]*
+EOF
+)"
+```
+
 Após Quality Gate verde, o Claude Code executa o merge **autonomamente**:
 
 ```bash
@@ -340,6 +463,61 @@ Toda decisão arquitetural que um dev novo não conseguiria deduzir lendo o cód
 **Alternativa descartada:** [O que foi considerado e por que foi rejeitado].
 **Motivo:** [Constraint real — performance, segurança, custo, prazo].
 ```
+
+---
+
+### FASE 4.6 — Melhoria Contínua do Workflow (responsabilidade permanente do Claude Code)
+
+Esta não é uma fase com gatilho fixo — é uma **responsabilidade ativa em toda sessão**.
+
+O objetivo é que o workflow de desenvolvimento do Kairos Labs seja exemplar: que qualquer desenvolvedor ou recrutador que leia o código, os PRs, os commits e o histórico de issues veja um padrão de qualidade consistente, com rastreabilidade de decisões e ausência de atalhos não documentados.
+
+#### Quando agir
+
+O Claude Code **deve** sinalizar e propor melhoria do workflow sempre que perceber qualquer um dos seguintes sinais durante o desenvolvimento de uma issue:
+
+- Um padrão novo de problema que se repetiria em issues futuras (candidato a entrada em `🔍 PADRÕES SONAR` ou `BUILD_ERRORS.md`)
+- Um eixo de auditoria da FASE 1 que não cobriria o problema encontrado (candidato a novo eixo ou refinamento de eixo existente)
+- Uma etapa do protocolo que, se executada de forma diferente, teria evitado retrabalho
+- Uma decisão de design que deveria ser registrada em `docs/architecture.md` mas não tem local definido no fluxo atual
+- Qualquer acumulação silenciosa de dívida técnica que nenhuma fase atual capturaria antes de virar problema
+
+#### Como agir
+
+O Claude Code **não espera** o usuário perceber. A sinalização é proativa, feita no mesmo turno em que o problema é identificado:
+
+1. **Nomear o problema:** descrever exatamente o que foi observado e por que representa risco de dívida futura.
+2. **Propor a melhoria:** sugerir a alteração concreta no `CLAUDE.md` (novo eixo de auditoria, nova regra Sonar, novo passo no protocolo, etc.).
+3. **Aguardar aprovação** antes de editar o `CLAUDE.md` — a melhoria do workflow é sempre uma decisão do usuário.
+4. **Após aprovação:** editar o `CLAUDE.md` diretamente e registrar a mudança no Diário de Aprendizado com Formato C.
+
+> **Princípio:** o `CLAUDE.md` é um documento vivo. Cada sessão é uma oportunidade de torná-lo mais preciso. Um projeto exemplar não é aquele que nunca erra — é aquele que aprende sistematicamente com cada erro e encurta o caminho para os próximos.
+
+---
+
+### Regra de Setup Local — Documentação Obrigatória de Mudanças de Ambiente
+
+**Toda alteração que modifique o ambiente local de desenvolvimento do projeto deve ser documentada antes de avançar para a FASE 3.**
+
+Exemplos de mudanças que ativam esta regra:
+
+| Tipo de mudança | Onde documentar |
+|---|---|
+| Novo arquivo `.sql` (criação de tabela, função, policy RLS, trigger) | `docs/setup.md` → seção `Banco de Dados` + incluir o SQL completo ou referência ao arquivo em `supabase/migrations/` |
+| Nova variável de ambiente obrigatória | `docs/setup.md` → seção `Variáveis de Ambiente` + `.env.example` (sem o valor) |
+| Nova dependência com setup manual (CLI, serviço externo, credencial) | `docs/setup.md` → seção pertinente |
+| Novo script npm ou comando de setup | `docs/setup.md` + `package.json` com descrição no campo `scripts` |
+| Mudança em configuração de CI (secrets, permissões) | `docs/setup.md` → seção `CI/CD` + comentário no workflow YAML |
+
+#### Fluxo obrigatório
+
+```
+FASE 2 (código) → detectar mudança de ambiente → documentar ANTES do commit → FASE 3
+```
+
+O Claude Code **não pode entregar os commits da FASE 3 sem ter documentado toda mudança de ambiente introduzida na sessão**. Se `docs/setup.md` não existir, criá-lo antes de prosseguir.
+
+> **Motivo:** um dev que clonar o repositório ou retornar ao projeto após semanas deve conseguir reproduzir o ambiente local sem recorrer ao histórico de chat ou de issues. A rastreabilidade de setup é parte da qualidade do projeto — não um detalhe operacional.
 
 ---
 
@@ -515,6 +693,61 @@ const EMAIL = process.env.E2E_EMAIL!;
 // sem test.skip — as variáveis devem estar em .env.local ou nos secrets do CI
 ```
 
+### Zod: `.email()` como método de `ZodString` é deprecated (`typescript:S1874`)
+
+Em Zod v4, o método `.email()` encadeado em `z.string()` foi marcado como deprecated pelo Sonar (S1874). Usar `.refine()` com regex, que é estável em todas as versões:
+
+```ts
+// ❌ Errado — Sonar S1874: .email() deprecated em Zod v4
+email: z.string().min(1, "E-mail é obrigatório.").email("Formato de e-mail inválido.")
+
+// ✅ Correto — verificação de string pura, sem regex (evita S8786 e S1874)
+email: z.string().min(1, "E-mail é obrigatório.").refine(
+  (val) => { const at = val.indexOf("@"); return at > 0 && val.indexOf(".", at) > at + 1; },
+  { message: "Formato de e-mail inválido." }
+),
+// Motivo: regex com [^\s@]+ gera risco de backtracking superlinear (Sonar S8786)
+```
+
+### Server Actions: usar objeto tipado, não FormData, quando invocadas via `useTransition`
+
+Next.js serializa `FormData` corretamente **apenas** quando a Server Action é invocada via atributo `action` de um `<form>` nativo. Quando chamada programaticamente via `useTransition`, o `FormData` chega vazio (`{}`) ao servidor.
+
+```ts
+// ❌ Errado — FormData chega vazio ao servidor quando chamada via useTransition
+export async function minhaAction(formData: FormData) { ... }
+
+// No componente:
+const formData = new FormData();
+formData.set("campo", valor);
+startTransition(async () => {
+  await minhaAction(formData); // formData = {} no servidor
+});
+
+// ✅ Correto — objeto tipado serializa corretamente em qualquer contexto
+export interface MeuFormData { campo: string; }
+export async function minhaAction(data: MeuFormData) { ... }
+
+// No componente:
+startTransition(async () => {
+  await minhaAction({ campo: valor }); // dados chegam corretamente
+});
+```
+
+### Novas tabelas Supabase: GRANT obrigatório para service_role
+
+`service_role` bypassa RLS mas ainda precisa de privilégio de objeto (GRANT). Toda DDL de tabela nova que for escrita via Server Action **deve** incluir o grant explícito, ou o insert falhará com `code: 42501 — permission denied`.
+
+```sql
+-- ✅ DDL completa para tabela escrita por Server Action
+CREATE TABLE minha_tabela (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  -- campos...
+);
+ALTER TABLE minha_tabela ENABLE ROW LEVEL SECURITY;
+GRANT INSERT ON public.minha_tabela TO service_role;  -- obrigatório
+```
+
 ### Sem imports mortos
 ```tsx
 // ✅ Remover qualquer import não utilizado no arquivo
@@ -617,4 +850,4 @@ Para descobrir o SHA de qualquer Action: olhar o log do CI — o step "Set up jo
 ---
 
 *Kairos Labs — Cesar Antonio Brito Pizarro*
-*CLAUDE.md v1.7 — CI monitorado e merge executados autonomamente; única pausa obrigatória é validação do usuário na FASE 2*
+*CLAUDE.md v2.1 — comentário de certificação de qualidade obrigatório na issue antes do merge; padrão de email sem regex (S8786); 8º eixo de performance; FASE 4.6; setup local e desvio de implementação documentados*

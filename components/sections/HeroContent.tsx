@@ -1,6 +1,11 @@
 "use client";
 
+import { useState } from "react";
+import { ContactModal } from "@/components/contact/ContactModal";
+
 export function HeroContent() {
+  const [contactOpen, setContactOpen] = useState(false);
+
   return (
     <div
       className="relative z-30 flex flex-col"
@@ -80,6 +85,8 @@ export function HeroContent() {
         </a>
 
         <button
+          type="button"
+          onClick={() => setContactOpen(true)}
           style={{
             background: "rgba(255,255,255,0.08)",
             color: "rgba(255,255,255,0.85)",
@@ -97,6 +104,8 @@ export function HeroContent() {
           Falar com Especialista
         </button>
       </div>
+
+      <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
     </div>
   );
 }
