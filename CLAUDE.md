@@ -388,7 +388,27 @@ Após `gh pr checks --watch` retornar com todos os checks verdes, o Claude Code 
   2. **Corrige os arquivos afetados** diretamente no disco.
 - Após correção: usuário roda `npm run build` + push. Aguardar novo ciclo do Sonar.
 
-Após Quality Gate verde, o Claude Code posta um **comentário de certificação de qualidade** na issue antes de executar o merge:
+### Regra de Documentação para Qualquer Falha de CI
+
+**Antes de executar o merge**, o Claude Code verifica: houve algum check de CI que falhou e exigiu correção nesta sessão?
+
+Se sim — independente do tipo — a falha deve ser documentada no local adequado:
+
+| Tipo de falha | Onde documentar |
+|---|---|
+| Nova regra Sonar detectada | `🔍 PADRÕES SONAR` no CLAUDE.md *(protocolo já existente acima)* |
+| Erro de build TypeScript / ESLint bloqueado no CI | `BUILD_ERRORS.md` — nova entrada com sintoma, causa raiz e fix |
+| Gap de cobertura detectado pelo CI | `COVERAGE_GAPS.md` — novo padrão de gap |
+| Step de GitHub Actions falhou (npm ci, Action externa, timeout, permissão) | `BUILD_ERRORS.md` — seção `## CI Workflow Failures` |
+| Secret ausente no repositório | `docs/setup.md` → seção `CI/CD` + `BUILD_ERRORS.md` |
+| Playwright passou localmente mas falhou em CI (diferença de ambiente) | `BUILD_ERRORS.md` — seção `## CI Workflow Failures` |
+| Vercel build falhou por variável de ambiente ausente | `docs/setup.md` → seção `Variáveis de Ambiente` + `BUILD_ERRORS.md` |
+
+**PROIBIDO executar o bloco de merge enquanto qualquer falha de CI da sessão não estiver documentada.**
+
+> **Motivo:** uma falha que já aconteceu no CI uma vez tem alta probabilidade de se repetir no mesmo projeto ou em projetos futuros que usem este CLAUDE.md como base. A documentação transforma o erro em aprendizado institucional permanente — não um remendo pontual, mas um padrão unificado que cobre 100% dos tipos de falha.
+
+Após Quality Gate verde e documentação de falhas concluída, o Claude Code posta um **comentário de certificação de qualidade** na issue antes de executar o merge:
 
 ```bash
 gh issue comment [NUMERO] --body "$(cat <<'EOF'
@@ -941,4 +961,4 @@ O Claude Code verifica se toda função criada ou modificada na sessão que se e
 ---
 
 *Kairos Labs — Cesar Antonio Brito Pizarro*
-*CLAUDE.md v2.4 — verificação de cobertura local pré-commit com `scripts/check-coverage.mjs` + `COVERAGE_GAPS.md` como base de conhecimento acumulativa de gaps*
+*CLAUDE.md v2.5 — protocolo unificado de documentação para qualquer falha de CI (Sonar, build, Actions, Playwright, Vercel) com tabela de roteamento por tipo e bloqueio de merge obrigatório*
