@@ -261,3 +261,15 @@ Static layout and typography use Tailwind utilities. Runtime-dynamic values (pro
 
 ### SonarCloud Quality Gate as merge blocker
 No PR is merged with open Sonar issues. This keeps the codebase at a demonstrable professional standard, which is a core goal of the platform (the repo itself is a portfolio artifact).
+
+### GET route handler for logout instead of Server Action
+**Alternative discarded:** Server Action invoked from a `<form>` element in the admin header.
+**Reason:** The GET handler is simpler, requires no form wrapper around the logout link, and the prefetch side-effect (the original bug in issue #72) is permanently mitigated by `prefetch={false}` on the `<Link>` component. A GET-with-side-effect is semantically imperfect but safe given this mitigation — the additional refactoring cost and UI complexity of a Server Action form outweigh the marginal semantic gain.
+
+### `proxy.ts` filename instead of the Next.js standard `middleware.ts`
+**Alternative discarded:** Renaming the file to `middleware.ts` and exporting `middleware` directly.
+**Reason:** The project started with `proxy.ts` + an explicit re-export in `middleware.ts` (which imports and calls `proxy`). This separation was intentional — it isolates auth logic into a named, testable function (`proxy`) while keeping the Next.js entry point (`middleware.ts`) as a thin delegation layer. Renaming would eliminate the unit-testability boundary.
+
+### Inline `style` prop for dynamic product colors in modal components
+**Alternative discarded:** CSS custom properties or data attributes to pass product color into Tailwind JIT classes (e.g., `text-[var(--product-color)]`).
+**Reason:** The product accent color is a runtime prop (varies per product instance), not a build-time value. Tailwind JIT classes are generated at build time and cannot be interpolated with runtime values. The inline `style` prop is the correct, idiomatic React pattern for runtime-dynamic CSS values. All static layout and typography are in Tailwind classes; only color-dependent properties (gradient, icon background/border, button background) remain as `style={{}}`.
