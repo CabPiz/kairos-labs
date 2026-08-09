@@ -216,7 +216,7 @@ EOF
 - **Antes de editar qualquer arquivo**, o Claude Code aplica proativamente todas as regras da seção `🔍 PADRÕES SONAR` deste arquivo. O código gerado já deve estar em conformidade — nunca delegar a verificação Sonar para o usuário.
 - O Claude Code é responsável pela conformidade Sonar. O usuário nunca revisa o checklist manualmente.
 - **Para issues que envolvem qualquer artefato que o usuário precise validar** (UI/UX, documentos `.md`, conteúdo gerado): apresentar o que foi criado/modificado e encerrar com *"Você validou o resultado? Pode prosseguir?"* — e **PARAR até receber validação explícita**.
-- Essa é a **única pausa obrigatória de validação no fluxo**. Todas as demais etapas (build, testes, CI, merge, diário) são executadas autonomamente pelo Claude Code.
+- Essa é uma das **pausas obrigatória de validação no fluxo**. Todas as demais etapas (build, testes, CI, merge, diário) são executadas autonomamente pelo Claude Code.
 
 ---
 
@@ -556,6 +556,52 @@ O Claude Code **não espera** o usuário perceber. A sinalização é proativa, 
 4. **Após aprovação:** editar o `CLAUDE.md` diretamente e registrar a mudança no Diário de Aprendizado com Formato C.
 
 > **Princípio:** o `CLAUDE.md` é um documento vivo. Cada sessão é uma oportunidade de torná-lo mais preciso. Um projeto exemplar não é aquele que nunca erra — é aquele que aprende sistematicamente com cada erro e encurta o caminho para os próximos.
+
+---
+
+### FASE 4.7 — Autocrítica de Execução (executada após cada merge, antes do Diário)
+
+Esta fase é uma **retrospectiva estruturada por sessão**. Complementa a FASE 4.6 (proativa, durante o desenvolvimento) com uma análise pós-merge do que de fato aconteceu versus o que o protocolo descreve.
+
+#### Gatilho
+
+Executada **imediatamente após o merge** da issue, antes de gerar o Diário de Aprendizado. Não tem exceções — se houve merge, há autocrítica.
+
+#### As 6 perguntas de autocrítica
+
+O Claude Code responde internamente às perguntas 1–5 e faz a pergunta 6 ao usuário:
+
+| # | Pergunta | Quem responde |
+|---|---|---|
+| 1 | **Desvios de execução:** houve algum passo do protocolo que precisou ser tentado mais de uma vez antes de funcionar? (ex: movimentação de card, comandos CLI, queries GraphQL) | Claude Code |
+| 2 | **Tentativas desnecessárias:** houve sequências de comandos que falharam antes do correto? O protocolo documenta isso de forma a evitar as tentativas falhas? | Claude Code |
+| 3 | **Ambiguidades não cobertas:** o texto do CLAUDE.md cobria o que foi feito de forma precisa — ou o Claude Code teve que inferir ou improvisar? | Claude Code |
+| 4 | **Velocidade e performance:** algum passo poderia ter sido eliminado ou paralelizado sem perda de qualidade? | Claude Code |
+| 5 | **Novos padrões detectados:** surgiu algum padrão novo (erro, limitação de API, comportamento de ferramenta) ainda não documentado? | Claude Code |
+| 6 | **Observação do usuário:** *"Você observou algo no fluxo desta sessão que poderia ser melhorado? (Sim — descreva / Não)"* | Usuário |
+
+#### Fluxo para cada resposta positiva
+
+Qualquer pergunta com resposta "sim" ativa o seguinte fluxo:
+
+1. **Nomear o desvio com precisão:** o que aconteceu vs o que o protocolo descreve.
+2. **Propor a alteração concreta** no CLAUDE.md (texto exato a adicionar, modificar ou remover).
+3. **Aguardar aprovação explícita** do usuário antes de editar.
+4. **Após aprovação:** editar o CLAUDE.md diretamente e registrar no Diário (Formato C).
+
+Se todas as respostas forem negativas, o Claude Code registra: *"Autocrítica concluída — nenhum desvio identificado nesta sessão."* e prossegue para o Diário.
+
+#### Exemplo de desvio de alta frequência
+
+**Problema:** movimentação de card (Backlog → In Progress) acumula tentativas falhas antes de chegar à sequência GraphQL correta — o ITEM_ID retorna vazio na primeira tentativa porque a issue foi adicionada ao board recentemente e não aparece na listagem padrão.
+
+**Diagnóstico pelo filtro da autocrítica:**
+- Pergunta 1: sim — o passo foi tentado mais de uma vez.
+- Pergunta 2: sim — a sequência correta é buscar com `--limit 100` e filtrar pelo número da issue; o protocolo não documentava isso.
+
+**Proposta de melhoria gerada:** substituir a query de ITEM_ID no bloco da FASE 0 por versão com `--limit 100` e grep explícito pelo número da issue, garantindo que issues recém-adicionadas ao board sejam encontradas na primeira tentativa.
+
+> **Princípio:** cada sessão que termina sem autocrítica é uma oportunidade perdida de tornar a próxima mais rápida. O custo de 2 minutos de retrospectiva é zero comparado ao retrabalho evitado em todas as sessões seguintes.
 
 ---
 
@@ -961,4 +1007,4 @@ O Claude Code verifica se toda função criada ou modificada na sessão que se e
 ---
 
 *Kairos Labs — Cesar Antonio Brito Pizarro*
-*CLAUDE.md v2.5 — protocolo unificado de documentação para qualquer falha de CI (Sonar, build, Actions, Playwright, Vercel) com tabela de roteamento por tipo e bloqueio de merge obrigatório*
+*CLAUDE.md v2.6 — FASE 4.7: autocrítica estruturada pós-merge com 6 perguntas (5 internas + observação do usuário) para auto-aprimoramento contínuo do workflow*
