@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Mail } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { ContactModal } from "@/components/contact/ContactModal";
 
 const GithubIcon = () => (
@@ -16,39 +17,23 @@ const LinkedinIcon = () => (
   </svg>
 );
 
-interface SocialCard {
-  readonly label: string;
-  readonly description: string;
-  readonly href: string;
-  readonly icon: React.ReactNode;
-  readonly cta: string;
-}
+const SOCIAL_HREFS = {
+  github: "https://github.com/CabPiz",
+  linkedin: "https://www.linkedin.com/company/kairos-labs-tech",
+  email: "https://mail.google.com/mail/?view=cm&to=contact.kairoslabs@gmail.com",
+} as const;
 
-const SOCIAL_CARDS: readonly SocialCard[] = [
-  {
-    label: "GitHub",
-    description: "Acompanhe nossos projetos, contribuições open-source e o histórico técnico do ecossistema Kairos Labs.",
-    href: "https://github.com/CabPiz",
-    icon: <GithubIcon />,
-    cta: "Ver perfil",
-  },
-  {
-    label: "LinkedIn",
-    description: "Siga para novidades, atualizações de produto e conteúdo sobre desenvolvimento de software e arquitetura.",
-    href: "https://www.linkedin.com/company/kairos-labs-tech",
-    icon: <LinkedinIcon />,
-    cta: "Seguir",
-  },
-  {
-    label: "E-mail",
-    description: "Prefere e-mail direto? Escreva para contact.kairoslabs@gmail.com — respondemos em até 48 horas.",
-    href: "https://mail.google.com/mail/?view=cm&to=contact.kairoslabs@gmail.com",
-    icon: <Mail size={22} aria-hidden="true" />,
-    cta: "Enviar e-mail",
-  },
-];
+const SOCIAL_ICONS = {
+  github: <GithubIcon />,
+  linkedin: <LinkedinIcon />,
+  email: <Mail size={22} aria-hidden="true" />,
+} as const;
+
+type SocialKey = keyof typeof SOCIAL_HREFS;
+const socialKeys: readonly SocialKey[] = ["github", "linkedin", "email"];
 
 export function ContatoSection() {
+  const t = useTranslations("contato");
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
@@ -73,7 +58,7 @@ export function ContatoSection() {
             fontFamily: "var(--font-inter), sans-serif",
           }}
         >
-          Fale conosco
+          {t("eyebrow")}
         </p>
         <h2
           style={{
@@ -85,7 +70,7 @@ export function ContatoSection() {
             lineHeight: 1.15,
           }}
         >
-          Contato
+          {t("title")}
         </h2>
         <p
           style={{
@@ -96,7 +81,7 @@ export function ContatoSection() {
             maxWidth: "560px",
           }}
         >
-          Escolha o canal que preferir ou preencha o formulário para conversarmos sobre seu projeto.
+          {t("description")}
         </p>
 
         {/* Cards de redes sociais */}
@@ -108,10 +93,10 @@ export function ContatoSection() {
             marginBottom: "3rem",
           }}
         >
-          {SOCIAL_CARDS.map(({ label, description, href, icon, cta }) => (
+          {socialKeys.map((key) => (
             <a
-              key={label}
-              href={href}
+              key={key}
+              href={SOCIAL_HREFS[key]}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -143,7 +128,7 @@ export function ContatoSection() {
                 e.currentTarget.style.background = "rgba(255,255,255,0.03)";
               }}
             >
-              <div style={{ color: "rgba(74,144,226,0.9)" }}>{icon}</div>
+              <div style={{ color: "rgba(74,144,226,0.9)" }}>{SOCIAL_ICONS[key]}</div>
               <div>
                 <p
                   style={{
@@ -152,9 +137,10 @@ export function ContatoSection() {
                     fontSize: "0.95rem",
                     color: "#fff",
                     letterSpacing: "0.02em",
+                    textTransform: "capitalize",
                   }}
                 >
-                  {label}
+                  {key === "email" ? "E-mail" : key.charAt(0).toUpperCase() + key.slice(1)}
                 </p>
                 <p
                   style={{
@@ -164,7 +150,7 @@ export function ContatoSection() {
                     lineHeight: 1.6,
                   }}
                 >
-                  {description}
+                  {t(`social.${key}.description`)}
                 </p>
                 <span
                   style={{
@@ -174,7 +160,7 @@ export function ContatoSection() {
                     letterSpacing: "0.06em",
                   }}
                 >
-                  {cta} →
+                  {t(`social.${key}.cta`)} →
                 </span>
               </div>
             </a>
@@ -200,7 +186,7 @@ export function ContatoSection() {
               lineHeight: 1.6,
             }}
           >
-            Prefere detalhar seu projeto por formulário? Preencha abaixo e entraremos em contato pelo canal de sua preferência.
+            {t("formDescription")}
           </p>
           <button
             type="button"
@@ -236,7 +222,7 @@ export function ContatoSection() {
               e.currentTarget.style.borderColor = "rgba(59,130,246,0.5)";
             }}
           >
-            Preencher formulário de contato
+            {t("formCta")}
           </button>
         </div>
       </div>
