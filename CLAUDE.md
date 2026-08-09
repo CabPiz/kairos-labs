@@ -953,6 +953,34 @@ Para descobrir o SHA de qualquer Action: olhar o log do CI — o step "Set up jo
 
 ---
 
+### Dropdowns de seleção de idioma: usar `role="menu"` em vez de `role="listbox"` (`typescript:S6819`)
+Sonar S6819 proíbe `role="listbox"` em elementos não-nativos (como `<ul>`). Usar `role="menu"` + `role="menuitem"` e `aria-haspopup="menu"` no botão disparador.
+
+```tsx
+// ❌ Errado — Sonar S6819: listbox em elemento não-nativo
+<ul role="listbox">
+  <li role="option" aria-selected={isActive}>...</li>
+</ul>
+<button aria-haspopup="listbox">...</button>
+
+// ✅ Correto — semântica de menu para dropdowns customizados
+<ul role="menu">
+  <li role="menuitem" aria-current={isActive ? "true" : undefined}>...</li>
+</ul>
+<button aria-haspopup="menu">...</button>
+```
+
+### Regex em config Next.js: `String.raw` não pode ser usado em `config.matcher` (`typescript:S7780`)
+Sonar S7780 aponta quando `\\` em uma string poderia ser `\` com `String.raw`. Porém, em `config.matcher` do middleware Next.js, `String.raw` quebra a análise estática e causa "Invalid segment configuration". Usar `// NOSONAR` para suprimir a issue nesse contexto específico.
+
+```ts
+// ❌ Errado — String.raw quebra análise estática do Next.js em config.matcher
+matcher: [String.raw`/((?!api|_next|.*\..*).*)`],
+
+// ✅ Correto — manter string literal com NOSONAR para suprimir S7780 no único contexto onde String.raw é inviável
+matcher: ["/((?!api|_next|.*\\..*).*)"], // NOSONAR — Next.js exige string literal aqui
+```
+
 ## 📝 DOCUMENTAÇÃO INLINE
 
 Documentação inline é obrigatória para: funções de `lib/`, Server Actions, hooks customizados e qualquer lógica não trivial. Usar JSDoc com `@param`, `@returns` e `@throws` quando aplicável. Não documentar o óbvio — documentar o **porquê**.

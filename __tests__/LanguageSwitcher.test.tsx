@@ -30,9 +30,9 @@ describe("LanguageSwitcher", () => {
 
   it("abre o dropdown ao clicar no botão", () => {
     render(<LanguageSwitcher />);
-    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /idioma/i }));
-    expect(screen.getByRole("listbox")).toBeInTheDocument();
+    expect(screen.getByRole("menu")).toBeInTheDocument();
   });
 
   it.each([
@@ -42,27 +42,27 @@ describe("LanguageSwitcher", () => {
   ])("exibe a opção %s no dropdown", (label) => {
     render(<LanguageSwitcher />);
     fireEvent.click(screen.getByRole("button", { name: /idioma/i }));
-    expect(screen.getByRole("option", { name: new RegExp(label, "i") })).toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: new RegExp(label, "i") })).toBeInTheDocument();
   });
 
   it("navega para /en ao selecionar English", () => {
     render(<LanguageSwitcher />);
     fireEvent.click(screen.getByRole("button", { name: /idioma/i }));
-    fireEvent.click(screen.getByRole("option", { name: /english/i }));
+    fireEvent.click(screen.getByRole("menuitem", { name: /english/i }));
     expect(mockPush).toHaveBeenCalledWith("/en");
   });
 
   it("navega para /es ao selecionar Español", () => {
     render(<LanguageSwitcher />);
     fireEvent.click(screen.getByRole("button", { name: /idioma/i }));
-    fireEvent.click(screen.getByRole("option", { name: /español/i }));
+    fireEvent.click(screen.getByRole("menuitem", { name: /español/i }));
     expect(mockPush).toHaveBeenCalledWith("/es");
   });
 
   it("fecha o dropdown ao selecionar um idioma", () => {
     render(<LanguageSwitcher />);
     fireEvent.click(screen.getByRole("button", { name: /idioma/i }));
-    fireEvent.click(screen.getByRole("option", { name: /english/i }));
-    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("menuitem", { name: /english/i }));
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
   });
 });

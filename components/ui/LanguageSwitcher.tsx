@@ -42,7 +42,7 @@ export function LanguageSwitcher() {
       <button
         type="button"
         aria-label={t("label")}
-        aria-haspopup="listbox"
+        aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}
         style={{
@@ -97,7 +97,7 @@ export function LanguageSwitcher() {
 
       {open && (
         <ul
-          role="listbox"
+          role="menu"
           aria-label={t("label")}
           style={{
             position: "absolute",
@@ -120,8 +120,8 @@ export function LanguageSwitcher() {
             return (
               <li
                 key={loc}
-                role="option"
-                aria-selected={isActive}
+                role="menuitem"
+                aria-current={isActive ? "true" : undefined}
                 tabIndex={0}
                 onClick={() => switchLocale(loc)}
                 onKeyDown={(e) => {

@@ -81,5 +81,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|.*\\..*).*)"],
+  matcher: ["/((?!api|_next|.*\\..*).*)"], // NOSONAR — Next.js exige string literal aqui; String.raw quebraria a análise estática
 };
