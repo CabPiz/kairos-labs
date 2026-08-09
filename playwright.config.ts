@@ -13,6 +13,7 @@ export default defineConfig({
     baseURL: "http://localhost:3000",
     screenshot: "on",
     video: "off",
+    locale: "pt-BR", // garante que Accept-Language=pt-BR em todos os ambientes (local e CI)
   },
   projects: [
     {
