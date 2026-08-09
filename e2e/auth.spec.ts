@@ -34,7 +34,7 @@ test.describe("Autenticação /admin", () => {
     await page.locator("input[type='password']").fill(ADMIN_PASSWORD);
     await page.getByRole("button", { name: "Entrar" }).click();
     await expect(page).toHaveURL(/\/admin(?!\/login)/);
-    await expect(page.getByText("Founder Dashboard")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Founder Dashboard" })).toBeVisible();
   });
 
   test("usuário autenticado acessando /admin/login é redirecionado para /admin", async ({ page }) => {

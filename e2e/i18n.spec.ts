@@ -44,7 +44,7 @@ test.describe("i18n — troca manual de idioma via seletor", () => {
   test("clicar em EN no seletor muda a URL para /en e o conteúdo para inglês", async ({ page }) => {
     await page.goto(`${BASE_URL}/pt`);
     await page.getByRole("button", { name: /idioma/i }).click();
-    await page.getByRole("option", { name: /english/i }).click();
+    await page.getByRole("menuitem", { name: /english/i }).click();
     await expect(page).toHaveURL(/\/en/);
     await expect(page.locator("h1")).toContainText("Technology");
   });
@@ -52,7 +52,7 @@ test.describe("i18n — troca manual de idioma via seletor", () => {
   test("clicar em ES no seletor muda a URL para /es e o conteúdo para espanhol", async ({ page }) => {
     await page.goto(`${BASE_URL}/pt`);
     await page.getByRole("button", { name: /idioma/i }).click();
-    await page.getByRole("option", { name: /español/i }).click();
+    await page.getByRole("menuitem", { name: /español/i }).click();
     await expect(page).toHaveURL(/\/es/);
     await expect(page.locator("h1")).toContainText("Tecnología");
   });
@@ -60,7 +60,7 @@ test.describe("i18n — troca manual de idioma via seletor", () => {
   test("troca de idioma em página de produto preserva o slug na URL", async ({ page }) => {
     await page.goto(`${BASE_URL}/pt/devprint`);
     await page.getByRole("button", { name: /idioma/i }).click();
-    await page.getByRole("option", { name: /english/i }).click();
+    await page.getByRole("menuitem", { name: /english/i }).click();
     await expect(page).toHaveURL(/\/en\/devprint/);
   });
 });
