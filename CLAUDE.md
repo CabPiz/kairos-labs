@@ -349,6 +349,43 @@ Após `gh pr checks --watch` retornar com todos os checks verdes, o Claude Code 
   2. **Corrige os arquivos afetados** diretamente no disco.
 - Após correção: usuário roda `npm run build` + push. Aguardar novo ciclo do Sonar.
 
+Após Quality Gate verde, o Claude Code posta um **comentário de certificação de qualidade** na issue antes de executar o merge:
+
+```bash
+gh issue comment [NUMERO] --body "$(cat <<'EOF'
+## 🏆 Certificação de Qualidade — Pronto para Merge
+
+Todo o código desta issue passou pela seguinte esteira de qualidade antes de ser aceito:
+
+### 🔬 Testes Unitários
+- **[N] testes em [N] suites** — 100% passando (Jest + React Testing Library)
+- Cobertura: [lista dos componentes/actions testados]
+
+### 🎭 Testes E2E
+- **[N] cenários Playwright** — 100% passando em ambiente de produção (Vercel Preview)
+- Fluxos validados: [lista dos fluxos cobertos]
+
+### 🔁 CI Pipeline (GitHub Actions)
+- ✅ Build TypeScript — sem erros de tipo
+- ✅ ESLint `--max-warnings=0` — zero warnings
+- ✅ Husky pre-commit — lint-staged aprovado em todos os commits
+
+### ☁️ Deploy
+- ✅ Vercel Preview — build e deploy bem-sucedidos
+
+### 🔍 Análise Estática — SonarCloud Quality Gate
+- ✅ Zero issues abertas na PR
+- Regras verificadas: [lista das regras Sonar aplicáveis — S1874, S8786, S6479, S5976, etc.]
+
+### 📋 Auditoria de Boas Práticas (CLAUDE.md v[X])
+- ✅ 8 eixos auditados antes da implementação (reutilização, Sonar, camadas, segurança, testes, estilo, convenções, performance)
+- Proposta técnica registrada: [link para o comentário de auditoria]
+
+*Certificação gerada pelo Claude Code — CLAUDE.md v[X]*
+EOF
+)"
+```
+
 Após Quality Gate verde, o Claude Code executa o merge **autonomamente**:
 
 ```bash
@@ -664,11 +701,12 @@ Em Zod v4, o método `.email()` encadeado em `z.string()` foi marcado como depre
 // ❌ Errado — Sonar S1874: .email() deprecated em Zod v4
 email: z.string().min(1, "E-mail é obrigatório.").email("Formato de e-mail inválido.")
 
-// ✅ Correto — .refine() com regex é estável
+// ✅ Correto — verificação de string pura, sem regex (evita S8786 e S1874)
 email: z.string().min(1, "E-mail é obrigatório.").refine(
-  (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+  (val) => { const at = val.indexOf("@"); return at > 0 && val.indexOf(".", at) > at + 1; },
   { message: "Formato de e-mail inválido." }
 ),
+// Motivo: regex com [^\s@]+ gera risco de backtracking superlinear (Sonar S8786)
 ```
 
 ### Server Actions: usar objeto tipado, não FormData, quando invocadas via `useTransition`
@@ -812,4 +850,4 @@ Para descobrir o SHA de qualquer Action: olhar o log do CI — o step "Set up jo
 ---
 
 *Kairos Labs — Cesar Antonio Brito Pizarro*
-*CLAUDE.md v2.0 — 8º eixo de performance na auditoria; melhoria contínua do workflow (FASE 4.6); documentação de setup local obrigatória; registro de desvio de implementação como comentário na issue*
+*CLAUDE.md v2.1 — comentário de certificação de qualidade obrigatório na issue antes do merge; padrão de email sem regex (S8786); 8º eixo de performance; FASE 4.6; setup local e desvio de implementação documentados*

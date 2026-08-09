@@ -34,7 +34,7 @@ const PROJECT_TYPES = [
 const formSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório."),
   email: z.string().min(1, "E-mail é obrigatório.").refine(
-    (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+    (val) => { const at = val.indexOf("@"); return at > 0 && val.indexOf(".", at) > at + 1; },
     { message: "Formato de e-mail inválido." }
   ),
   project_type: z.enum(PROJECT_TYPES, { message: "Selecione um tipo de projeto." }),
