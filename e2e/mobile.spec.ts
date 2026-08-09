@@ -47,9 +47,10 @@ for (const viewport of MOBILE_VIEWPORTS) {
     test("modal de contato abre e exibe formulário em mobile", async ({ page }) => {
       await page.goto("/");
       await page.getByRole("button", { name: /falar com especialista/i }).click();
-      await expect(page.getByRole("dialog")).toBeVisible();
-      await expect(page.getByLabel(/nome/i)).toBeVisible();
-      await expect(page.getByLabel(/e-mail/i)).toBeVisible();
+      const dialog = page.getByRole("dialog");
+      await expect(dialog).toBeVisible();
+      await expect(dialog.getByLabel(/nome/i)).toBeVisible();
+      await expect(dialog.getByRole("textbox", { name: /e-mail/i })).toBeVisible();
     });
   });
 }
