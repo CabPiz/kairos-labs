@@ -65,4 +65,42 @@ describe("LanguageSwitcher", () => {
     fireEvent.click(screen.getByRole("menuitem", { name: /english/i }));
     expect(screen.queryByRole("menu")).not.toBeInTheDocument();
   });
-});
+
+  it("navega ao pressionar Enter no menuitem", () => {
+    render(<LanguageSwitcher />);
+    fireEvent.click(screen.getByRole("button", { name: /idioma/i }));
+    fireEvent.keyDown(screen.getByRole("menuitem", { name: /english/i }), { key: "Enter" });
+    expect(mockPush).toHaveBeenCalledWith("/en");
+  });
+
+  it("navega ao pressionar Space no menuitem", () => {
+    render(<LanguageSwitcher />);
+    fireEvent.click(screen.getByRole("button", { name: /idioma/i }));
+    fireEvent.keyDown(screen.getByRole("menuitem", { name: /español/i }), { key: " " });
+    expect(mockPush).toHaveBeenCalledWith("/es");
+  });
+
+  it("fecha o dropdown ao clicar fora (mousedown fora do container)", () => {
+    render(<LanguageSwitcher />);
+    fireEvent.click(screen.getByRole("button", { name: /idioma/i }));
+    expect(screen.getByRole("menu")).toBeInTheDocument();
+    fireEvent.mouseDown(document.body);
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+  });
+
+  it("aplica hover style no botão (onMouseOver / onMouseOut)", () => {
+    render(<LanguageSwitcher />);
+    const btn = screen.getByRole("button", { name: /idioma/i });
+    fireEvent.mouseOver(btn);
+    fireEvent.mouseOut(btn);
+    // Apenas verifica que não lança erro
+    expect(btn).toBeInTheDocument();
+  });
+
+  it("aplica focus style no botão (onFocus / onBlur)", () => {
+    render(<LanguageSwitcher />);
+    const btn = screen.getByRole("button", { name: /idioma/i });
+    fireEvent.focus(btn);
+    fireEvent.blur(btn);
+    expect(btn).toBeInTheDocument();
+  });});

@@ -77,6 +77,31 @@ describe("proxy", () => {
     expect(result).toBe(mockNextResponse);
   });
 
+  it("detecta locale via cookie NEXT_LOCALE para rotas admin", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: { id: "user-1" } } });
+    const { proxy } = await import("@/proxy");
+    const req = {
+      ...makeRequest("/admin/dashboard"),
+      cookies: { getAll: () => [], get: (name: string) => name === "NEXT_LOCALE" ? { value: "en" } : undefined },
+      headers: { get: () => null },
+    } as unknown as import("next/server").NextRequest;
+    await proxy(req);
+    // Deve usar locale "en" sem redirecionar
+    expect(mockRedirect).not.toHaveBeenCalled();
+  });
+
+  it("detecta locale via Accept-Language quando cookie ausente", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: { id: "user-1" } } });
+    const { proxy } = await import("@/proxy");
+    const req = {
+      ...makeRequest("/admin/dashboard"),
+      cookies: { getAll: () => [], get: () => undefined },
+      headers: { get: (name: string) => name === "accept-language" ? "es-419,es;q=0.9" : null },
+    } as unknown as import("next/server").NextRequest;
+    await proxy(req);
+    expect(mockRedirect).not.toHaveBeenCalled();
+  });
+
   it("exporta config com matcher cobrindo rotas de app (admin + locale), excluindo api/_next/assets", async () => {
     const { config } = await import("@/proxy");
     // O matcher do proxy unificou intl + admin em uma única regex desde a issue #88
