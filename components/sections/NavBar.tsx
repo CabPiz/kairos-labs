@@ -6,8 +6,7 @@ import Link from "next/link";
 export function NavBar() {
   return (
     <nav
-      className="relative z-30 flex items-center justify-between"
-      style={{ padding: "1.4rem 2.5rem" }}
+      className="relative z-30 flex items-center justify-between px-4 py-4 sm:px-10 sm:py-[1.4rem]"
     >
       {/* Logo */}
       <Link href="/" className="flex items-center gap-3" style={{ textDecoration: "none" }}>
@@ -50,8 +49,8 @@ export function NavBar() {
         </div>
       </Link>
 
-      {/* Nav links — "Soluções" removido; já existe o botão "Explorar Soluções" no hero */}
-      <div className="flex items-center gap-10">
+      {/* Nav links — ocultos em mobile; CTAs do hero cobrem os casos de uso em touch */}
+      <div className="hidden sm:flex items-center gap-10">
         {["Sobre", "Tecnologia", "Contato"].map((item) => (
           <Link
             key={item}
@@ -67,7 +66,9 @@ export function NavBar() {
               fontFamily: "var(--font-inter), sans-serif",
             }}
             onMouseOver={(e) => (e.currentTarget.style.color = "#fff")}
+            onFocus={(e) => (e.currentTarget.style.color = "#fff")}
             onMouseOut={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.75)")}
+            onBlur={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.75)")}
           >
             {item}
           </Link>
@@ -76,6 +77,7 @@ export function NavBar() {
         {/* Botão Acesso */}
         <Link href="/admin/login">
           <button
+            type="button"
             style={{
               border: "1.5px solid rgba(212,160,23,0.7)",
               color: "#d4a017",
@@ -94,7 +96,15 @@ export function NavBar() {
               e.currentTarget.style.background = "#d4a017";
               e.currentTarget.style.color = "#050a14";
             }}
+            onFocus={(e) => {
+              e.currentTarget.style.background = "#d4a017";
+              e.currentTarget.style.color = "#050a14";
+            }}
             onMouseOut={(e) => {
+              e.currentTarget.style.background = "transparent";
+              e.currentTarget.style.color = "#d4a017";
+            }}
+            onBlur={(e) => {
               e.currentTarget.style.background = "transparent";
               e.currentTarget.style.color = "#d4a017";
             }}

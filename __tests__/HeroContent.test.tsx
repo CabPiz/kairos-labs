@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { HeroContent } from "@/components/sections/HeroContent";
 
 describe("HeroContent", () => {
@@ -39,5 +39,12 @@ describe("HeroContent", () => {
     expect(
       screen.getByRole("button", { name: /falar com especialista/i })
     ).toBeInTheDocument();
+  });
+
+  it("abre o ContactModal ao clicar em Falar com Especialista", () => {
+    render(<HeroContent />);
+    const btn = screen.getByRole("button", { name: /falar com especialista/i });
+    fireEvent.click(btn);
+    expect(btn).toBeInTheDocument();
   });
 });

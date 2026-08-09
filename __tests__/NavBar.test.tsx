@@ -31,21 +31,43 @@ describe("NavBar", () => {
     expect(acessoLink).toHaveAttribute("href", "/admin/login");
   });
 
-  it("altera estilo do link no mouseOver e restaura no mouseOut", () => {
-    render(<NavBar />);
-    const link = screen.getByRole("link", { name: /sobre/i });
-    fireEvent.mouseOver(link);
-    expect(link.style.color).toBe("rgb(255, 255, 255)");
-    fireEvent.mouseOut(link);
-    expect(link.style.color).toBe("rgba(255, 255, 255, 0.75)");
-  });
+  it.each(["mouseOver", "focus"] as const)(
+    "altera cor do link no evento %s",
+    (event) => {
+      render(<NavBar />);
+      const link = screen.getByRole("link", { name: /sobre/i });
+      fireEvent[event](link);
+      expect(link.style.color).toBe("rgb(255, 255, 255)");
+    }
+  );
 
-  it("altera estilo do botão Acesso no mouseOver e restaura no mouseOut", () => {
-    render(<NavBar />);
-    const btn = screen.getByRole("button", { name: /acesso/i });
-    fireEvent.mouseOver(btn);
-    expect(btn.style.color).toBe("rgb(5, 10, 20)");
-    fireEvent.mouseOut(btn);
-    expect(btn.style.color).toBe("rgb(212, 160, 23)");
-  });
+  it.each(["mouseOut", "blur"] as const)(
+    "restaura cor do link no evento %s",
+    (event) => {
+      render(<NavBar />);
+      const link = screen.getByRole("link", { name: /sobre/i });
+      fireEvent[event](link);
+      expect(link.style.color).toBe("rgba(255, 255, 255, 0.75)");
+    }
+  );
+
+  it.each(["mouseOver", "focus"] as const)(
+    "altera cor do botão Acesso no evento %s",
+    (event) => {
+      render(<NavBar />);
+      const btn = screen.getByRole("button", { name: /acesso/i });
+      fireEvent[event](btn);
+      expect(btn.style.color).toBe("rgb(5, 10, 20)");
+    }
+  );
+
+  it.each(["mouseOut", "blur"] as const)(
+    "restaura cor do botão Acesso no evento %s",
+    (event) => {
+      render(<NavBar />);
+      const btn = screen.getByRole("button", { name: /acesso/i });
+      fireEvent[event](btn);
+      expect(btn.style.color).toBe("rgb(212, 160, 23)");
+    }
+  );
 });

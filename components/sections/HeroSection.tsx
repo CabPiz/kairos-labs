@@ -31,7 +31,7 @@ export function HeroSection() {
         aria-hidden="true"
       />
 
-      {/* ── Overlay esquerdo — cobre o texto da imagem sem apagar a ampulheta ── */}
+      {/* ── Overlay esquerdo — cobre o texto da imagem sem apagar a ampulheta (desktop) ── */}
       <div
         style={{
           position: "absolute",
@@ -40,6 +40,13 @@ export function HeroSection() {
           background:
             "linear-gradient(to right, rgba(5,10,20,0.97) 0%, rgba(5,10,20,0.97) 30%, rgba(5,10,20,0.0) 42%)",
         }}
+        aria-hidden="true"
+      />
+
+      {/* ── Overlay mobile — cobre a tela inteira em portrait para legibilidade ── */}
+      <div
+        className="absolute inset-0 sm:hidden"
+        style={{ zIndex: 10, background: "rgba(5,10,20,0.88)" }}
         aria-hidden="true"
       />
 

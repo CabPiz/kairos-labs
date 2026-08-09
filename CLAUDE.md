@@ -128,7 +128,7 @@ gh project item-edit --id $ITEM_ID --project-id $PROJECT_ID --field-id $STATUS_F
    | 2 | **Padrões Sonar** | Checar toda a solução candidata contra cada regra da seção `🔍 PADRÕES SONAR` deste arquivo: props `readonly`, `button type`, acessibilidade de mouse, espaçamento JSX, testes parametrizados, index como key, `prefetch={false}`, imports mortos. |
    | 3 | **Dependências entre camadas** | Confirmar que `lib/` não importa de `components/` ou `app/`; `components/` não importa de `app/`; Client Components não importam de `supabase-server` ou `server-only`. |
    | 4 | **Segurança Supabase** | Writes usam `createServerAdminClient()`; reads usam SSR client + RPC com `SECURITY DEFINER`. Cast `as any` onde necessário (ERR-002). |
-   | 5 | **Cobertura de testes** | A solução inclui testes unitários para todo componente e action novos, e spec E2E para todo fluxo com submit ou autenticação. |
+   | 5 | **Cobertura de testes** | A proposta DEVE listar explicitamente cada teste unitário que será criado ou atualizado para cobrir 100% das linhas novas/modificadas — Sonar reprova PRs com cobertura de código novo abaixo do threshold. Spec E2E obrigatória para todo fluxo com submit ou autenticação. Toda nova spec Playwright (`*.spec.ts`) criada na FASE 2 deve ser adicionada a `sonar.coverage.exclusions` em `sonar-project.properties` (padrão `e2e/**,**/*.spec.ts` já configurado). |
    | 6 | **Consistência de estilo** | Tailwind para valores estáticos; `style={{}}` apenas para valores dinâmicos de runtime. Novos componentes seguem o padrão visual existente. |
    | 7 | **Convenções de código** | Conventional Commits em português, branch no padrão correto, sem comentários desnecessários, sem abstrações prematuras. |
    | 8 | **Performance** | A solução introduz queries extras, N+1, re-renders desnecessários ou aumento relevante de bundle? Se sim, propor alternativa mais eficiente ou documentar o trade-off explicitamente na justificativa. |
@@ -850,4 +850,4 @@ Para descobrir o SHA de qualquer Action: olhar o log do CI — o step "Set up jo
 ---
 
 *Kairos Labs — Cesar Antonio Brito Pizarro*
-*CLAUDE.md v2.1 — comentário de certificação de qualidade obrigatório na issue antes do merge; padrão de email sem regex (S8786); 8º eixo de performance; FASE 4.6; setup local e desvio de implementação documentados*
+*CLAUDE.md v2.2 — cobertura 100% de código novo obrigatória na proposta; *.spec.ts excluído do Sonar coverage; setup local e desvio de implementação documentados*

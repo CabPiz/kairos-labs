@@ -25,7 +25,7 @@ export default async function ProdutoDetalhe({ params }: Readonly<Props>) {
   return (
     <main className="min-h-screen text-white font-[var(--font-inter),sans-serif]" style={{ backgroundColor: "#050a14" }}>
       {/* Breadcrumb */}
-      <div className="border-b border-blue-500/15 px-10 py-[1.4rem] flex items-center gap-5">
+      <div className="border-b border-blue-500/15 px-4 sm:px-10 py-[1.4rem] flex items-center gap-5">
         <Link
           href="/#products"
           className="inline-flex items-center gap-2 text-white/55 text-[0.82rem] font-medium tracking-[0.12em] uppercase no-underline transition-colors hover:text-white"
@@ -42,7 +42,7 @@ export default async function ProdutoDetalhe({ params }: Readonly<Props>) {
         </span>
       </div>
 
-      <div className="max-w-[860px] mx-auto px-10 pt-16 pb-24">
+      <div className="max-w-[860px] mx-auto px-4 sm:px-10 pt-16 pb-24">
         {/* Hero */}
         <div className="mb-12">
           <span
@@ -69,7 +69,7 @@ export default async function ProdutoDetalhe({ params }: Readonly<Props>) {
         <Divider />
 
         {/* Problema / Solução */}
-        <div className="grid grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-12">
           <div className="bg-red-500/5 border border-red-500/18 rounded-[10px] p-6">
             <SectionLabel>O Problema</SectionLabel>
             <p className="text-white/60 text-[0.9rem] leading-[1.7]">{produto.problema}</p>
@@ -88,7 +88,7 @@ export default async function ProdutoDetalhe({ params }: Readonly<Props>) {
         {/* Funcionalidades */}
         <div className="mb-12">
           <SectionLabel>Funcionalidades Principais</SectionLabel>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {produto.funcionalidades.map((f, i) => (
               <div
                 key={f.titulo}
