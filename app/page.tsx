@@ -1,19 +1,6 @@
-import { BackToTop } from "@/components/sections/BackToTop";
-import { ContatoSection } from "@/components/sections/ContatoSection";
-import { HeroSection } from "@/components/sections/HeroSection";
-import { Products } from "@/components/sections/Products";
-import { SobreSection } from "@/components/sections/SobreSection";
-import { TecnologiaSection } from "@/components/sections/TecnologiaSection";
-
-export default function Home() {
-  return (
-    <main>
-      <HeroSection />
-      <Products />
-      <SobreSection />
-      <TecnologiaSection />
-      <ContatoSection />
-      <BackToTop />
-    </main>
-  );
+// O middleware do next-intl redireciona `/` para `/{defaultLocale}` antes
+// de esta página ser renderizada. Este arquivo evita o 404 caso o middleware
+// não atue (ex: acesso estático direto ao path raiz).
+export default function RootPage() {
+  return null;
 }
