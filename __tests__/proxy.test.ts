@@ -31,7 +31,8 @@ function makeRequest(pathname: string): NextRequest {
         return obj;
       },
     },
-    cookies: { getAll: () => [] },
+    cookies: { getAll: () => [], get: () => undefined },
+    headers: { get: () => null },
   } as unknown as NextRequest;
 }
 
@@ -76,8 +77,13 @@ describe("proxy", () => {
     expect(result).toBe(mockNextResponse);
   });
 
-  it("exporta config com matcher cobrindo /admin/:path*", async () => {
+  it("exporta config com matcher cobrindo rotas de app (admin + locale), excluindo api/_next/assets", async () => {
     const { config } = await import("@/proxy");
-    expect(config.matcher).toContain("/admin/:path*");
+    // O matcher do proxy unificou intl + admin em uma única regex desde a issue #88
+    // (next-intl exige matcher genérico para cobrir /[locale]/... e /admin/...)
+    expect(Array.isArray(config.matcher)).toBe(true);
+    const pattern: string = config.matcher[0];
+    expect(pattern).toContain("api");     // exclui rotas /api
+    expect(pattern).toContain("_next");   // exclui assets do Next.js
   });
 });

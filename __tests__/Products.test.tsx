@@ -38,11 +38,12 @@ describe("Products", () => {
     expect(links.length).toBeGreaterThanOrEqual(6);
   });
 
-  it("link 'Saiba mais' do Talvrix aponta para /talvrix", () => {
+  it("link 'Saiba mais' do Talvrix aponta para /${locale}/talvrix", () => {
     render(<Products />);
+    // Locale retornado pelo mock: "pt" → href = /pt/talvrix
     const talvrixLinks = screen
       .getAllByRole("link")
-      .filter((l) => l.getAttribute("href") === "/talvrix");
+      .filter((l) => l.getAttribute("href") === "/pt/talvrix");
     expect(talvrixLinks.length).toBeGreaterThan(0);
   });
 

@@ -22,11 +22,19 @@ jest.mock("@/components/feedback/FeedbackCTAButton", () => ({
   ),
 }));
 
-import ProdutoDetalhe from "@/app/[slug]/page";
+// i18n routing mock — evita import de next-intl/server dentro do page.tsx
+jest.mock("@/i18n/routing", () => ({
+  routing: {
+    locales: ["pt", "en", "es"],
+    defaultLocale: "pt",
+  },
+}));
 
-async function renderSlug(slug: string) {
+import ProdutoDetalhe from "@/app/[locale]/[slug]/page";
+
+async function renderSlug(slug: string, locale = "pt") {
   const Component = await Promise.resolve(
-    ProdutoDetalhe({ params: Promise.resolve({ slug }) })
+    ProdutoDetalhe({ params: Promise.resolve({ locale, slug }) })
   );
   return render(Component as React.ReactElement);
 }
@@ -49,10 +57,10 @@ describe("ProdutoDetalhe", () => {
     expect(mockNotFound).toHaveBeenCalled();
   });
 
-  it("exibe link de voltar com texto Portfólio apontando para /#products", async () => {
-    await renderSlug("devprint");
+  it("exibe link de voltar apontando para /${locale}#products", async () => {
+    await renderSlug("devprint", "pt");
     const link = screen.getByRole("link", { name: /portfólio/i });
-    expect(link).toHaveAttribute("href", "/#products");
+    expect(link).toHaveAttribute("href", "/pt#products");
   });
 
   it("exibe botões de waitlist e feedback", async () => {
@@ -77,16 +85,19 @@ describe("ProdutoDetalhe", () => {
 });
 
 describe("generateStaticParams", () => {
-  it("retorna os 6 slugs de produto", async () => {
-    const { generateStaticParams } = await import("@/app/[slug]/page");
+  it("retorna 18 combinações locale × slug (3 locales × 6 produtos)", async () => {
+    const { generateStaticParams } = await import("@/app/[locale]/[slug]/page");
     const params = generateStaticParams();
-    expect(params).toHaveLength(6);
-    const slugs = params.map((p: { slug: string }) => p.slug);
-    expect(slugs).toContain("devprint");
-    expect(slugs).toContain("ascend");
-    expect(slugs).toContain("elucya-talk");
-    expect(slugs).toContain("agora-global");
-    expect(slugs).toContain("talvrix");
-    expect(slugs).toContain("kairos-labs");
+    expect(params).toHaveLength(18);
+    const ptDevprint = params.find(
+      (p: { locale: string; slug: string }) =>
+        p.locale === "pt" && p.slug === "devprint"
+    );
+    expect(ptDevprint).toBeDefined();
+    const enTalvrix = params.find(
+      (p: { locale: string; slug: string }) =>
+        p.locale === "en" && p.slug === "talvrix"
+    );
+    expect(enTalvrix).toBeDefined();
   });
 });

@@ -35,7 +35,8 @@ describe("WaitlistModal", () => {
 
     it("exibe o nome do produto na descrição", () => {
       renderModal();
-      expect(screen.getByText("DevPrint")).toBeInTheDocument();
+      // O productName fica embutido na frase — verificamos via textContent do dialog
+      expect(screen.getByRole("dialog")).toHaveTextContent("DevPrint");
     });
 
     it("exibe o campo de e-mail", () => {

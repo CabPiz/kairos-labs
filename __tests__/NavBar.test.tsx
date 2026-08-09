@@ -1,5 +1,12 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
+
+// LanguageSwitcher (renderizado pela NavBar) usa useRouter e usePathname
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({ push: jest.fn() }),
+  usePathname: () => "/pt",
+}));
+
 import { NavBar } from "@/components/sections/NavBar";
 
 describe("NavBar", () => {
