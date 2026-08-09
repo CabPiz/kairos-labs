@@ -1,0 +1,18 @@
+import { getRequestConfig } from "next-intl/server";
+import { routing } from "./routing";
+
+/**
+ * Carrega o arquivo de mensagens para o locale da requisição atual.
+ * Executado no servidor — sem overhead no cliente.
+ */
+export default getRequestConfig(async ({ requestLocale }) => {
+  let locale = await requestLocale;
+  if (!locale || !routing.locales.includes(locale as never)) {
+    locale = routing.defaultLocale;
+  }
+
+  return {
+    locale,
+    messages: (await import(`../messages/${locale}.json`)).default,
+  };
+});
