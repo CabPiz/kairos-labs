@@ -15,6 +15,15 @@ export type FeedbackActionState =
   | { status: "success" }
   | { status: "error"; message: string };
 
+/**
+ * Registra um feedback de produto na tabela `feedback`.
+ * Invocada via atributo `action` de `<form>` — recebe FormData nativo.
+ * `nome` e `email` são opcionais; e-mail vazio é normalizado para `null`
+ * antes do insert para manter consistência no banco.
+ *
+ * @param formData - Campos: `product_id` (obrigatório), `mensagem` (obrigatório, mín. 10 chars), `nome` (opcional), `email` (opcional)
+ * @returns Estado da operação: idle | success | error
+ */
 export async function sendFeedbackAction(
   formData: FormData
 ): Promise<FeedbackActionState> {

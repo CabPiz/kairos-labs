@@ -29,6 +29,15 @@ export interface ContactFormData {
   description: string;
 }
 
+/**
+ * Registra uma solicitação de contato na tabela `contact_requests`.
+ * Recebe um objeto tipado (não FormData) porque é invocada via
+ * `useTransition` — FormData chega vazio ao servidor nesse contexto
+ * (ver padrão documentado em CLAUDE.md › PADRÕES SONAR › Server Actions).
+ *
+ * @param data - Campos obrigatórios: `name`, `email`, `project_type`, `description`
+ * @returns Estado da operação: idle | success | error
+ */
 export async function sendContactAction(
   data: ContactFormData
 ): Promise<ContactActionState> {
