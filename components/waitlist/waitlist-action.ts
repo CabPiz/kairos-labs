@@ -35,6 +35,15 @@ export type WaitlistActionState =
 // ─────────────────────────────────────────────────────────────
 // Server Action
 // ─────────────────────────────────────────────────────────────
+/**
+ * Insere um e-mail na waitlist do produto especificado.
+ * Invocada via atributo `action` de `<form>` — recebe FormData nativo.
+ * Trata código 23505 (violação UNIQUE email+product_id) retornando
+ * `{ status: "duplicate" }` em vez de erro genérico.
+ *
+ * @param formData - Campos obrigatórios: `email`, `product_id`
+ * @returns Estado da operação: idle | success | duplicate | error
+ */
 export async function joinWaitlistAction(
   formData: FormData
 ): Promise<WaitlistActionState> {

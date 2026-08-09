@@ -4,6 +4,12 @@ import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import type { Database } from "./types";
 
+/**
+ * Cria um cliente Supabase com service_role key — bypassa RLS.
+ * Usar exclusivamente para writes em Server Actions e route handlers.
+ * `persistSession: false` e `autoRefreshToken: false` são obrigatórios
+ * para evitar erros de armazenamento de sessão em contexto de servidor.
+ */
 export function createServerAdminClient() {
   return createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -12,6 +18,12 @@ export function createServerAdminClient() {
   );
 }
 
+/**
+ * Cria um cliente Supabase com anon key, propagando os cookies da requisição.
+ * Usar para leituras em Server Components e verificação de sessão.
+ * O `try/catch` em `setAll` é necessário porque Server Components não podem
+ * escrever cookies — a exceção é silenciada intencionalmente.
+ */
 export async function createServerSupabaseClient() {
   const cookieStore = await cookies();
 

@@ -887,6 +887,29 @@ Para descobrir o SHA de qualquer Action: olhar o log do CI — o step "Set up jo
 
 ---
 
+## 📝 DOCUMENTAÇÃO INLINE
+
+Documentação inline é obrigatória para: funções de `lib/`, Server Actions, hooks customizados e qualquer lógica não trivial. Usar JSDoc com `@param`, `@returns` e `@throws` quando aplicável. Não documentar o óbvio — documentar o **porquê**.
+
+### Quando adicionar JSDoc
+
+| Caso | Obrigatório? |
+|---|---|
+| Funções exportadas em `lib/` | ✅ Sempre |
+| Server Actions (`"use server"`) | ✅ Sempre — descrever efeito colateral e parâmetros |
+| Route handlers (`route.ts`) com efeito colateral | ✅ Sempre |
+| Hooks customizados (`use*.ts`) | ✅ Sempre |
+| Lógica não-óbvia (workarounds, restrições, decisões de design) | ✅ Sempre |
+| Componentes React simples | ❌ Nome do componente já documenta |
+| Funções utilitárias com nome auto-explicativo (ex: `cn()`) | ❌ Desnecessário |
+| Arquivos de convenção Next.js (`page.tsx`, `layout.tsx`, `robots.ts`) | ❌ Desnecessário |
+
+### Checklist de verificação (FASE 1 — Eixo 2, Sonar)
+
+O Claude Code verifica se toda função criada ou modificada na sessão que se enquadra nos casos "Obrigatório" tem JSDoc antes de avançar para a FASE 3. Ausência de JSDoc obrigatório é tratada como não-conformidade equivalente a uma violação Sonar.
+
+---
+
 ## 🌿 CONVENÇÕES DE BRANCHES
 
 | Tipo | Padrão |

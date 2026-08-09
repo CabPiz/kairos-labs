@@ -1,6 +1,12 @@
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { NextResponse } from "next/server";
 
+/**
+ * Route handler de logout do painel admin.
+ * Encerra a sessão Supabase e redireciona para `/admin/login`.
+ * Usar `<Link prefetch={false}>` para este handler — prefetch executaria
+ * o signOut antes do clique (ver CLAUDE.md › PADRÕES SONAR › prefetch).
+ */
 export async function GET() {
   const supabase = await createServerSupabaseClient();
   await supabase.auth.signOut();
