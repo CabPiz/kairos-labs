@@ -70,6 +70,18 @@ ALTER TABLE contact_requests ENABLE ROW LEVEL SECURITY;
 GRANT INSERT ON public.contact_requests TO service_role;
 ```
 
+### [Issue #98] Colunas `phone` e `whatsapp_preferred` em `contact_requests`
+
+Adicionadas para capturar telefone/WhatsApp e preferência de canal de retorno no formulário de contato.
+
+```sql
+ALTER TABLE public.contact_requests
+  ADD COLUMN IF NOT EXISTS phone TEXT,
+  ADD COLUMN IF NOT EXISTS whatsapp_preferred BOOLEAN NOT NULL DEFAULT FALSE;
+```
+
+> Script equivalente disponível em `supabase/migrations/003_contact_requests_phone.sql`.
+
 ---
 
 ## CI/CD
