@@ -34,6 +34,8 @@ export type Database = {
           nome: string | null
           email: string | null
           mensagem: string
+          mensagem_locale: string | null
+          mensagem_traduzida: Record<string, string> | null
           created_at: string
         }
         Insert: {
@@ -42,6 +44,8 @@ export type Database = {
           nome?: string | null
           email?: string | null
           mensagem: string
+          mensagem_locale?: string | null
+          mensagem_traduzida?: Record<string, string> | null
           created_at?: string
         }
         Update: {
@@ -50,6 +54,8 @@ export type Database = {
           nome?: string | null
           email?: string | null
           mensagem?: string
+          mensagem_locale?: string | null
+          mensagem_traduzida?: Record<string, string> | null
           created_at?: string
         }
       }
