@@ -1,12 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { ContactModal } from "@/components/contact/ContactModal";
 
 export function HeroContent() {
   const t = useTranslations("hero");
-  const [contactOpen, setContactOpen] = useState(false);
 
   return (
     <div className="relative z-30 flex flex-col px-4 pt-8 pb-0 sm:px-10 sm:pt-10 sm:max-w-[52%]">
@@ -79,10 +76,10 @@ export function HeroContent() {
           {t("cta1")}
         </a>
 
-        <button
-          type="button"
-          onClick={() => setContactOpen(true)}
+        <a
+          href="#contato"
           style={{
+            display: "inline-block",
             background: "rgba(255,255,255,0.08)",
             color: "rgba(255,255,255,0.85)",
             border: "1.5px solid rgba(255,255,255,0.3)",
@@ -92,15 +89,13 @@ export function HeroContent() {
             letterSpacing: "0.15em",
             textTransform: "uppercase",
             borderRadius: "4px",
-            cursor: "pointer",
+            textDecoration: "none",
             fontFamily: "var(--font-inter), sans-serif",
           }}
         >
           {t("cta2")}
-        </button>
+        </a>
       </div>
-
-      <ContactModal open={contactOpen} onOpenChange={setContactOpen} />
     </div>
   );
 }
