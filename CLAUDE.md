@@ -71,40 +71,24 @@ O Claude Code executa diretamente, nesta ordem:
 git checkout main
 git pull origin main
 git checkout -b tipo/[NUMERO]-descricao-curta
+```
 
-# 2. Atribuir e mover para In Progress
+**Passo 2 — Atribuir e marcar como In Progress (depende do ambiente):**
+
+**Ambiente local** (`gh` CLI disponível — sessão desktop):
+```bash
 gh issue edit [NUMERO] --add-assignee "@me"
 gh issue edit [NUMERO] --add-label "status: in progress"
-
-# 3. Capturar IDs do Board e mover card para "In Progress"
-PROJECT_NUMBER=3
-OWNER="CabPiz"
-ISSUE_NUM=[NUMERO]
-
-ITEM_ID=$(gh project item-list $PROJECT_NUMBER --owner "$OWNER" --format json --limit 100 | jq -r ".items[] | select(.content.number==$ISSUE_NUM) | .id")
-
-PROJECT_META=$(gh api graphql -f query='
-query {
-  user(login: "'"$OWNER"'") {
-    projectV2(number: '$PROJECT_NUMBER') {
-      id
-      field(name: "Status") {
-        ... on ProjectV2SingleSelectField {
-          id
-          options { id name }
-        }
-      }
-    }
-  }
-}')
-
-PROJECT_ID=$(echo $PROJECT_META | jq -r '.data.user.projectV2.id')
-STATUS_FIELD_ID=$(echo $PROJECT_META | jq -r '.data.user.projectV2.field.id')
-IN_PROGRESS_OPTION_ID=$(echo $PROJECT_META | jq -r '.data.user.projectV2.field.options[] | select(.name=="In Progress") | .id')
-IN_REVIEW_OPTION_ID=$(echo $PROJECT_META | jq -r '.data.user.projectV2.field.options[] | select(.name=="In Review") | .id')
-
-gh project item-edit --id $ITEM_ID --project-id $PROJECT_ID --field-id $STATUS_FIELD_ID --single-select-option-id $IN_PROGRESS_OPTION_ID
+gh project item-add 3 --owner CabPiz --url [url-da-issue]
+# mover card para "In Progress" via gh project item-edit (ver FASE 3 para IDs)
 ```
+
+**Ambiente remoto** (`gh` indisponível — sessão web/celular):
+- Usar `mcp__github__issue_write` com `assignees: ["CabPiz"]` e `labels: [..., "status: in progress"]`
+- Movimentação de card no board: **não disponível** — o label `status: in progress` é o mecanismo de rastreio
+- **Done é aplicado automaticamente pelo GitHub Projects na FASE 4 (merge do PR)** — esse é o estado mais importante
+
+> **Regra de ouro do board em sessão remota:** In Progress = label `status: in progress` (visível na issue). Done = automação do GitHub Projects no merge. In Review = label `status: ready for review` (aplicado na FASE 3).
 
 ---
 
