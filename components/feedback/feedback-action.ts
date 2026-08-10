@@ -55,7 +55,13 @@ export async function sendFeedbackAction(
   const { product_id, nome, mensagem, locale } = parsed.data;
   const email = parsed.data.email || null;
 
-  const translations = await translateFeedback(mensagem, locale as Locale);
+  const translationTimeout = new Promise<null>((resolve) =>
+    setTimeout(() => resolve(null), 5000)
+  );
+  const translations = await Promise.race([
+    translateFeedback(mensagem, locale as Locale),
+    translationTimeout,
+  ]);
 
   const supabase = createServerAdminClient();
 
