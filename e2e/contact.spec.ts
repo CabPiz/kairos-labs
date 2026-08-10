@@ -2,12 +2,13 @@ import { test, expect } from "@playwright/test";
 
 async function openContactModal(page: import("@playwright/test").Page) {
   await page.goto("/");
-  await page.getByRole("button", { name: /falar com especialista/i }).click();
+  await page.locator("#contato").scrollIntoViewIfNeeded();
+  await page.getByRole("button", { name: /formulário de contato/i }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
 }
 
-test.describe("Fluxo de Contato — Modal Falar com Especialista", () => {
-  test("abre o modal ao clicar no botão do Hero", async ({ page }) => {
+test.describe("Fluxo de Contato — Modal Formulário de Contato", () => {
+  test("abre o modal ao clicar no card de formulário na seção de contato", async ({ page }) => {
     await openContactModal(page);
     await expect(page.getByText(/vamos conversar sobre seu projeto/i)).toBeVisible();
   });
@@ -54,7 +55,7 @@ test.describe("Fluxo de Contato — Modal Falar com Especialista", () => {
     await expect(page.getByRole("dialog")).not.toBeVisible();
 
     // Ao reabrir, o formulário deve estar limpo
-    await page.getByRole("button", { name: /falar com especialista/i }).click();
+    await page.getByRole("button", { name: /formulário de contato/i }).click();
     await expect(page.locator("#contact-name")).toHaveValue("");
     await expect(page.locator("#contact-email")).toHaveValue("");
     await expect(page.locator("#contact-description")).toHaveValue("");

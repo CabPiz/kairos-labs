@@ -286,9 +286,12 @@
   "contato": {
     "eyebrow": "Get in touch",
     "title": "Contact",
-    "description": "Choose your preferred channel or fill out the form to discuss your project with us.",
-    "formCta": "Fill out contact form",
-    "formDescription": "Prefer to detail your project via form? Fill it out below and we'll reach out through your preferred channel.",
+    "description": "Choose your preferred channel to discuss your project with us.",
+    "form": {
+      "title": "Contact Form",
+      "description": "Describe your project in detail — solution type, deadlines and goals. We reply with a personalized proposal, not a generic script.",
+      "cta": "Fill out form"
+    },
     "social": {
       "github": {
         "description": "Follow our projects, open-source contributions and the technical history of the Kairos Labs ecosystem.",

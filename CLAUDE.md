@@ -127,20 +127,35 @@ gh project item-add 3 --owner CabPiz --url [url-da-issue]
 
 4. **Registro na Issue (executado após aprovação explícita do usuário, antes de iniciar a FASE 2)**
 
-   O Claude Code posta a **"✅ Justificativa de Boas Práticas"** como comentário na issue para rastreabilidade:
+   O Claude Code posta **dois comentários na issue**, nesta ordem obrigatória:
 
+   **Comentário 1 — Proposta Técnica** (resumo do que foi apresentado ao usuário):
+   ```bash
+   gh issue comment [NUMERO] --body "$(cat <<'EOF'
+   ## 📋 Proposta Técnica — [título curto]
+
+   [resumo dos arquivos a criar/modificar, decisões de design e justificativas apresentadas ao usuário]
+
+   *Proposta apresentada e aprovada pelo fundador — CLAUDE.md v[X]*
+   EOF
+   )"
+   ```
+
+   **Comentário 2 — Auditoria de Boas Práticas**:
    ```bash
    gh issue comment [NUMERO] --body "$(cat <<'EOF'
    ## ✅ Auditoria de Boas Práticas — Proposta Aprovada
 
    [conteúdo da seção Justificativa de Boas Práticas]
 
-   *Auditoria executada pelo Claude Code antes da implementação — CLAUDE.md v1.8*
+   *Auditoria executada pelo Claude Code antes da implementação — CLAUDE.md v[X]*
    EOF
    )"
    ```
 
-   Este comentário é a evidência de que a solução passou pela auditoria antes de qualquer linha de código ser escrita.
+   > **Ordem obrigatória:** a proposta técnica sempre precede a auditoria. O histórico da issue deve refletir o fluxo real: primeiro o que foi proposto, depois a checagem de boas práticas que validou a proposta. Postar apenas a auditoria sem a proposta deixa o histórico incompleto — um dev futuro vê que a proposta "passou" mas não consegue reconstruir o que foi proposto.
+
+   Esses dois comentários são a evidência de que a solução foi apresentada, aprovada e auditada antes de qualquer linha de código ser escrita.
 
 #### Formato da seção "✅ Justificativa de Boas Práticas"
 
@@ -890,6 +905,31 @@ Texto que segue
 Texto que segue
 ```
 
+### Imagens externas: usar `<Image>` do Next.js, nunca `<img>` (`@next/next/no-img-element`)
+
+```tsx
+// ❌ Errado — ESLint bloqueia o commit com warning @next/next/no-img-element
+<img src="https://flagcdn.com/w20/br.png" alt="" width={20} height={15} />
+
+// ✅ Correto — usar next/image e registrar o hostname em next.config.ts
+import Image from "next/image";
+<Image src="https://flagcdn.com/w20/br.png" alt="" width={20} height={15} />
+```
+
+Em `next.config.ts`, adicionar o domínio externo ao `remotePatterns`:
+
+```ts
+const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "flagcdn.com" },
+    ],
+  },
+};
+```
+
+> **Escopo da varredura de impacto em testes (FASE 2):** mudanças de estrutura ARIA — troca de `role="group"` com botões filhos por `role="menu"` com `role="menuitem"`, por exemplo — quebram specs E2E que usam `getByRole("group")`. A varredura de impacto deve incluir `e2e/` além de `__tests__/` sempre que a estrutura semântica do componente mudar, mesmo que o texto visível permaneça igual.
+
 ### Imports de módulos Node.js com prefixo `node:` (`javascript:S7772`)
 Sonar S7772 exige o prefixo `node:` em imports de módulos nativos do Node.js em arquivos `.mjs`.
 
@@ -1108,4 +1148,4 @@ O Claude Code verifica se toda função criada ou modificada na sessão que se e
 ---
 
 *Kairos Labs — Cesar Antonio Brito Pizarro*
-*CLAUDE.md v2.8 — adiciona padrões Sonar S8980 (act() redundante em RTL), S6594 (exec() vs match()), S6819 expandido (role="group" → fieldset); atualiza S8786 com fix indexOf/lastIndexOf*
+*CLAUDE.md v2.9 — adiciona comentário de "Proposta Técnica" obrigatório antes da "Auditoria de Boas Práticas" no registro da issue (FASE 1, passo 4); padrões Sonar: S8980, S6594, S6819, S8786*
