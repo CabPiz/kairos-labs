@@ -57,6 +57,15 @@ Isso cria a função `get_dashboard_kpis()` com SECURITY DEFINER, usada pelo das
 
 Adiciona `phone` (texto opcional) e `whatsapp_preferred` (booleano, padrão `false`) à tabela `contact_requests`, permitindo que o formulário de contato capture o canal preferido de retorno.
 
+### Migration 004 — Feedback: locale e tradução automática
+
+1. Abra uma nova query no SQL Editor
+2. Copie o conteúdo completo de [`supabase/migrations/004_feedback_translation.sql`](../supabase/migrations/004_feedback_translation.sql) e cole na janela
+3. Clique em **Run**
+4. Você verá **"Success. No rows returned"**
+
+Adiciona `mensagem_locale` (texto) e `mensagem_traduzida` (JSONB) à tabela `feedback`. Esses campos armazenam o idioma de origem de cada mensagem enviada e as traduções automáticas geradas pela API Gemini 2.0 Flash, permitindo que o admin leia feedbacks no idioma escolhido.
+
 **Para verificar que as migrations rodaram corretamente**, execute essas queries no SQL Editor:
 
 ```sql
@@ -83,7 +92,7 @@ FROM information_schema.routines
 WHERE routine_schema = 'public' AND routine_name = 'get_dashboard_kpis';
 ```
 
-Esperado: tabelas `waitlist`, `feedback` e `contact_requests` com suas colunas (incluindo `phone` e `whatsapp_preferred`), grants corretos, `rowsecurity = true` em todas as tabelas, e `get_dashboard_kpis` com `security_type = DEFINER`.
+Esperado: tabelas `waitlist`, `feedback` e `contact_requests` com suas colunas (incluindo `phone`, `whatsapp_preferred`, `mensagem_locale` e `mensagem_traduzida`), grants corretos, `rowsecurity = true` em todas as tabelas, e `get_dashboard_kpis` com `security_type = DEFINER`.
 
 ---
 
@@ -164,6 +173,8 @@ O servidor de desenvolvimento (`npm run dev`) precisa estar rodando em `localhos
 | Spec | Fluxo validado |
 | :--- | :--- |
 | `e2e/waitlist.spec.ts` | Abre modal de waitlist → preenche e-mail → submete → vê confirmação |
+| `e2e/feedback.spec.ts` | Abre modal de feedback → preenche mensagem → submete → vê confirmação (casos de sucesso e erro de validação) |
+| `e2e/auth.spec.ts` | Redirecionamento de rota protegida, formulário de login, credenciais inválidas, login válido, switcher de idioma, cookie de locale |
 
 No CI (GitHub Actions), os testes E2E rodam automaticamente no job `e2e`, após o job `ci`. Screenshots de falha são salvas como artefatos por 7 dias.
 

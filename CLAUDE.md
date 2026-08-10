@@ -597,11 +597,12 @@ Exemplos de mudanças que ativam esta regra:
 
 | Tipo de mudança | Onde documentar |
 |---|---|
-| Novo arquivo `.sql` (criação de tabela, função, policy RLS, trigger) | `docs/setup.md` → seção `Banco de Dados` + incluir o SQL completo ou referência ao arquivo em `supabase/migrations/` |
-| Nova variável de ambiente obrigatória | `docs/setup.md` → seção `Variáveis de Ambiente` + `.env.example` (sem o valor) |
-| Nova dependência com setup manual (CLI, serviço externo, credencial) | `docs/setup.md` → seção pertinente |
+| Novo arquivo `.sql` (criação de tabela, função, policy RLS, trigger, nova coluna) | `docs/setup.md` → seção `Banco de Dados` + `README.md` → lista de migrations + `CONTRIBUTING.md` → seção "Run the database migrations" + `docs/CONTRIBUTING.pt-BR.md` → seção "Executar as migrations do banco" |
+| Nova variável de ambiente obrigatória | `docs/setup.md` → seção `Variáveis de Ambiente` + `.env.example` (sem o valor) + `CONTRIBUTING.md` → seção de variáveis + `docs/CONTRIBUTING.pt-BR.md` |
+| Nova dependência com setup manual (CLI, serviço externo, credencial) | `docs/setup.md` → seção pertinente + `CONTRIBUTING.md` + `docs/CONTRIBUTING.pt-BR.md` |
 | Novo script npm ou comando de setup | `docs/setup.md` + `package.json` com descrição no campo `scripts` |
 | Mudança em configuração de CI (secrets, permissões) | `docs/setup.md` → seção `CI/CD` + comentário no workflow YAML |
+| Novos specs E2E adicionados | `CONTRIBUTING.md` → tabela "Covered flows" + `docs/CONTRIBUTING.pt-BR.md` → tabela "Fluxos cobertos" |
 
 #### Fluxo obrigatório
 
