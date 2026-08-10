@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail } from "lucide-react";
+import { Mail, FileText } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ContactModal } from "@/components/contact/ContactModal";
 
@@ -29,8 +29,41 @@ const SOCIAL_ICONS = {
   email: <Mail size={22} aria-hidden="true" />,
 } as const;
 
+const SOCIAL_LABELS: Record<keyof typeof SOCIAL_HREFS, string> = {
+  github: "Github",
+  linkedin: "Linkedin",
+  email: "E-mail",
+};
+
 type SocialKey = keyof typeof SOCIAL_HREFS;
-const socialKeys: readonly SocialKey[] = ["github", "linkedin", "email"];
+const socialKeys: readonly SocialKey[] = ["email", "linkedin", "github"];
+
+const cardBaseStyle: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.75rem",
+  padding: "1.5rem",
+  background: "rgba(255,255,255,0.03)",
+  border: "1px solid rgba(59,130,246,0.14)",
+  borderRadius: "12px",
+  textDecoration: "none",
+  color: "rgba(255,255,255,0.75)",
+  transition: "border-color 0.2s, background 0.2s",
+  cursor: "pointer",
+  textAlign: "left",
+  fontFamily: "var(--font-inter), sans-serif",
+  width: "100%",
+};
+
+function onCardEnter(e: React.MouseEvent<HTMLElement> | React.FocusEvent<HTMLElement>) {
+  e.currentTarget.style.borderColor = "rgba(74,144,226,0.4)";
+  e.currentTarget.style.background = "rgba(74,144,226,0.05)";
+}
+
+function onCardLeave(e: React.MouseEvent<HTMLElement> | React.FocusEvent<HTMLElement>) {
+  e.currentTarget.style.borderColor = "rgba(59,130,246,0.14)";
+  e.currentTarget.style.background = "rgba(255,255,255,0.03)";
+}
 
 export function ContatoSection() {
   const t = useTranslations("contato");
@@ -84,49 +117,74 @@ export function ContatoSection() {
           {t("description")}
         </p>
 
-        {/* Cards de redes sociais */}
+        {/* Grid de 4 cards: formulário, e-mail, linkedin, github */}
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
             gap: "1.25rem",
-            marginBottom: "3rem",
           }}
         >
+          {/* Card do formulário de contato */}
+          <button
+            type="button"
+            onClick={() => setModalOpen(true)}
+            style={cardBaseStyle}
+            onMouseOver={onCardEnter}
+            onFocus={onCardEnter}
+            onMouseOut={onCardLeave}
+            onBlur={onCardLeave}
+          >
+            <div style={{ color: "rgba(74,144,226,0.9)" }}>
+              <FileText size={22} aria-hidden="true" />
+            </div>
+            <div>
+              <p
+                style={{
+                  margin: "0 0 0.4rem",
+                  fontWeight: 700,
+                  fontSize: "0.95rem",
+                  color: "#fff",
+                  letterSpacing: "0.02em",
+                }}
+              >
+                {t("form.title")}
+              </p>
+              <p
+                style={{
+                  margin: "0 0 0.75rem",
+                  fontSize: "0.82rem",
+                  color: "rgba(255,255,255,0.45)",
+                  lineHeight: 1.6,
+                }}
+              >
+                {t("form.description")}
+              </p>
+              <span
+                style={{
+                  fontSize: "0.75rem",
+                  color: "rgba(74,144,226,0.8)",
+                  fontWeight: 600,
+                  letterSpacing: "0.06em",
+                }}
+              >
+                {t("form.cta")} →
+              </span>
+            </div>
+          </button>
+
+          {/* Cards de redes sociais: e-mail, linkedin, github */}
           {socialKeys.map((key) => (
             <a
               key={key}
               href={SOCIAL_HREFS[key]}
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "0.75rem",
-                padding: "1.5rem",
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(59,130,246,0.14)",
-                borderRadius: "12px",
-                textDecoration: "none",
-                color: "rgba(255,255,255,0.75)",
-                transition: "border-color 0.2s, background 0.2s",
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.borderColor = "rgba(74,144,226,0.4)";
-                e.currentTarget.style.background = "rgba(74,144,226,0.05)";
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "rgba(74,144,226,0.4)";
-                e.currentTarget.style.background = "rgba(74,144,226,0.05)";
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.borderColor = "rgba(59,130,246,0.14)";
-                e.currentTarget.style.background = "rgba(255,255,255,0.03)";
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "rgba(59,130,246,0.14)";
-                e.currentTarget.style.background = "rgba(255,255,255,0.03)";
-              }}
+              style={cardBaseStyle}
+              onMouseOver={onCardEnter}
+              onFocus={onCardEnter}
+              onMouseOut={onCardLeave}
+              onBlur={onCardLeave}
             >
               <div style={{ color: "rgba(74,144,226,0.9)" }}>{SOCIAL_ICONS[key]}</div>
               <div>
@@ -140,7 +198,7 @@ export function ContatoSection() {
                     textTransform: "capitalize",
                   }}
                 >
-                  {key === "email" ? "E-mail" : key.charAt(0).toUpperCase() + key.slice(1)}
+                  {SOCIAL_LABELS[key]}
                 </p>
                 <p
                   style={{
@@ -165,65 +223,6 @@ export function ContatoSection() {
               </div>
             </a>
           ))}
-        </div>
-
-        {/* Divider */}
-        <div
-          style={{
-            height: "1px",
-            background: "rgba(59,130,246,0.12)",
-            marginBottom: "3rem",
-          }}
-        />
-
-        {/* CTA formulário */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", alignItems: "flex-start" }}>
-          <p
-            style={{
-              margin: 0,
-              color: "rgba(255,255,255,0.5)",
-              fontSize: "0.88rem",
-              lineHeight: 1.6,
-            }}
-          >
-            {t("formDescription")}
-          </p>
-          <button
-            type="button"
-            onClick={() => setModalOpen(true)}
-            style={{
-              border: "1.5px solid rgba(59,130,246,0.5)",
-              color: "rgba(74,144,226,0.9)",
-              background: "transparent",
-              padding: "0.65rem 1.75rem",
-              fontSize: "0.78rem",
-              fontWeight: 600,
-              letterSpacing: "0.16em",
-              textTransform: "uppercase",
-              borderRadius: "6px",
-              cursor: "pointer",
-              transition: "all 0.2s",
-              fontFamily: "var(--font-inter), sans-serif",
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = "rgba(59,130,246,0.1)";
-              e.currentTarget.style.borderColor = "rgba(74,144,226,0.8)";
-            }}
-            onFocus={(e) => {
-              e.currentTarget.style.background = "rgba(59,130,246,0.1)";
-              e.currentTarget.style.borderColor = "rgba(74,144,226,0.8)";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = "transparent";
-              e.currentTarget.style.borderColor = "rgba(59,130,246,0.5)";
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.background = "transparent";
-              e.currentTarget.style.borderColor = "rgba(59,130,246,0.5)";
-            }}
-          >
-            {t("formCta")}
-          </button>
         </div>
       </div>
 

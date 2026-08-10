@@ -127,20 +127,35 @@ gh project item-add 3 --owner CabPiz --url [url-da-issue]
 
 4. **Registro na Issue (executado após aprovação explícita do usuário, antes de iniciar a FASE 2)**
 
-   O Claude Code posta a **"✅ Justificativa de Boas Práticas"** como comentário na issue para rastreabilidade:
+   O Claude Code posta **dois comentários na issue**, nesta ordem obrigatória:
 
+   **Comentário 1 — Proposta Técnica** (resumo do que foi apresentado ao usuário):
+   ```bash
+   gh issue comment [NUMERO] --body "$(cat <<'EOF'
+   ## 📋 Proposta Técnica — [título curto]
+
+   [resumo dos arquivos a criar/modificar, decisões de design e justificativas apresentadas ao usuário]
+
+   *Proposta apresentada e aprovada pelo fundador — CLAUDE.md v[X]*
+   EOF
+   )"
+   ```
+
+   **Comentário 2 — Auditoria de Boas Práticas**:
    ```bash
    gh issue comment [NUMERO] --body "$(cat <<'EOF'
    ## ✅ Auditoria de Boas Práticas — Proposta Aprovada
 
    [conteúdo da seção Justificativa de Boas Práticas]
 
-   *Auditoria executada pelo Claude Code antes da implementação — CLAUDE.md v1.8*
+   *Auditoria executada pelo Claude Code antes da implementação — CLAUDE.md v[X]*
    EOF
    )"
    ```
 
-   Este comentário é a evidência de que a solução passou pela auditoria antes de qualquer linha de código ser escrita.
+   > **Ordem obrigatória:** a proposta técnica sempre precede a auditoria. O histórico da issue deve refletir o fluxo real: primeiro o que foi proposto, depois a checagem de boas práticas que validou a proposta. Postar apenas a auditoria sem a proposta deixa o histórico incompleto — um dev futuro vê que a proposta "passou" mas não consegue reconstruir o que foi proposto.
+
+   Esses dois comentários são a evidência de que a solução foi apresentada, aprovada e auditada antes de qualquer linha de código ser escrita.
 
 #### Formato da seção "✅ Justificativa de Boas Práticas"
 
@@ -1133,4 +1148,4 @@ O Claude Code verifica se toda função criada ou modificada na sessão que se e
 ---
 
 *Kairos Labs — Cesar Antonio Brito Pizarro*
-*CLAUDE.md v2.8 — adiciona padrões Sonar S8980 (act() redundante em RTL), S6594 (exec() vs match()), S6819 expandido (role="group" → fieldset); atualiza S8786 com fix indexOf/lastIndexOf*
+*CLAUDE.md v2.9 — adiciona comentário de "Proposta Técnica" obrigatório antes da "Auditoria de Boas Práticas" no registro da issue (FASE 1, passo 4); padrões Sonar: S8980, S6594, S6819, S8786*

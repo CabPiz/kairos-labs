@@ -18,7 +18,7 @@ describe("ContatoSection", () => {
     expect(screen.getByRole("heading", { name: /contato/i })).toBeInTheDocument();
   });
 
-  it.each(["GitHub", "LinkedIn", "E-mail"])(
+  it.each(["Github", "Linkedin", "E-mail"])(
     "exibe o card %s com link externo",
     (label) => {
       render(<ContatoSection />);
@@ -29,21 +29,21 @@ describe("ContatoSection", () => {
     }
   );
 
-  it("exibe o botão de formulário de contato", () => {
+  it("exibe o card de formulário de contato", () => {
     render(<ContatoSection />);
     expect(
-      screen.getByRole("button", { name: /preencher formulário/i })
+      screen.getByRole("button", { name: /formulário de contato/i })
     ).toBeInTheDocument();
   });
 
-  it("abre o ContactModal ao clicar no botão de formulário", () => {
+  it("abre o ContactModal ao clicar no card de formulário", () => {
     render(<ContatoSection />);
-    fireEvent.click(screen.getByRole("button", { name: /preencher formulário/i }));
+    fireEvent.click(screen.getByRole("button", { name: /formulário de contato/i }));
     expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
 
   it.each(["mouseOver", "focus"] as const)(
-    "altera estilo do card GitHub no evento %s",
+    "altera estilo do card Github no evento %s",
     (event) => {
       render(<ContatoSection />);
       const link = screen.getByRole("link", { name: /github/i });
@@ -53,7 +53,7 @@ describe("ContatoSection", () => {
   );
 
   it.each(["mouseOut", "blur"] as const)(
-    "restaura estilo do card GitHub no evento %s",
+    "restaura estilo do card Github no evento %s",
     (event) => {
       render(<ContatoSection />);
       const link = screen.getByRole("link", { name: /github/i });
@@ -63,22 +63,22 @@ describe("ContatoSection", () => {
   );
 
   it.each(["mouseOver", "focus"] as const)(
-    "altera estilo do botão de formulário no evento %s",
+    "altera estilo do card de formulário no evento %s",
     (event) => {
       render(<ContatoSection />);
-      const btn = screen.getByRole("button", { name: /preencher formulário/i });
+      const btn = screen.getByRole("button", { name: /formulário de contato/i });
       fireEvent[event](btn);
-      expect(btn.style.background).toMatch(/rgba\(59,\s*130,\s*246,\s*0\.1\)/);
+      expect(btn.style.borderColor).toBe("rgba(74,144,226,0.4)");
     }
   );
 
   it.each(["mouseOut", "blur"] as const)(
-    "restaura estilo do botão de formulário no evento %s",
+    "restaura estilo do card de formulário no evento %s",
     (event) => {
       render(<ContatoSection />);
-      const btn = screen.getByRole("button", { name: /preencher formulário/i });
+      const btn = screen.getByRole("button", { name: /formulário de contato/i });
       fireEvent[event](btn);
-      expect(btn.style.background).toBe("transparent");
+      expect(btn.style.borderColor).toBe("rgba(59,130,246,0.14)");
     }
   );
 });

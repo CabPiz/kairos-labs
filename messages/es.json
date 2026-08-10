@@ -286,9 +286,12 @@
   "contato": {
     "eyebrow": "Contáctanos",
     "title": "Contacto",
-    "description": "Elige el canal que prefieras o completa el formulario para conversar sobre tu proyecto.",
-    "formCta": "Completar formulario de contacto",
-    "formDescription": "¿Prefieres detallar tu proyecto por formulario? Complétalo a continuación y nos pondremos en contacto por el canal de tu preferencia.",
+    "description": "Elige el canal que prefieras para conversar sobre tu proyecto.",
+    "form": {
+      "title": "Formulario de Contacto",
+      "description": "Detalla tu proyecto — tipo de solución, plazos y objetivos. Respondemos con una propuesta personalizada, no un guion genérico.",
+      "cta": "Completar formulario"
+    },
     "social": {
       "github": {
         "description": "Sigue nuestros proyectos, contribuciones open-source y el historial técnico del ecosistema Kairos Labs.",
