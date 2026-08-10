@@ -2,8 +2,6 @@
 
 import { z } from "zod";
 import { createServerAdminClient } from "@/lib/supabase-server";
-import { translateFeedback } from "@/lib/admin/translate-feedback";
-import { type Locale } from "@/i18n/routing";
 
 const schema = z.object({
   product_id: z.string().min(1),
@@ -28,9 +26,8 @@ export type FeedbackActionState =
   | { status: "error"; message: string };
 
 /**
- * Registra um feedback de produto na tabela `feedback` com tradução automática.
- * Traduz o texto via Gemini antes do insert; se a tradução falhar, o insert prossegue
- * com `mensagem_traduzida: null` — o admin vê o texto original como fallback.
+ * Registra um feedback de produto na tabela `feedback`.
+ * Armazena o locale de origem para que o painel admin possa traduzir on-demand.
  * `nome` e `email` são opcionais; e-mail vazio é normalizado para `null`.
  *
  * @param formData - Campos: `product_id`, `mensagem` (mín. 10 chars), `nome`, `email`, `locale` (opcional, default "pt")
@@ -55,14 +52,6 @@ export async function sendFeedbackAction(
   const { product_id, nome, mensagem, locale } = parsed.data;
   const email = parsed.data.email || null;
 
-  const translationTimeout = new Promise<null>((resolve) =>
-    setTimeout(() => resolve(null), 5000)
-  );
-  const translations = await Promise.race([
-    translateFeedback(mensagem, locale as Locale),
-    translationTimeout,
-  ]);
-
   const supabase = createServerAdminClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,7 +63,6 @@ export async function sendFeedbackAction(
       email,
       mensagem,
       mensagem_locale: locale,
-      mensagem_traduzida: translations ?? null,
     });
 
   if (error) {

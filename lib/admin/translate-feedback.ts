@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { locales, type Locale } from "@/i18n/routing";
+import { type Locale } from "@/i18n/routing";
 
 const localeNames: Record<Locale, string> = {
   pt: "Brazilian Portuguese",
@@ -8,36 +8,42 @@ const localeNames: Record<Locale, string> = {
 };
 
 /**
- * Traduz o texto de feedback para todos os locales suportados via Gemini 2.0 Flash (free tier).
- * Retorna null se a tradução falhar — o feedback original é preservado pelo chamador.
+ * Traduz em lote os feedbacks exibidos no painel admin para o locale do administrador.
+ * Faz uma única chamada ao Gemini 2.0 Flash (free tier) com todos os textos que precisam
+ * de tradução. Feedbacks cujo locale já é o locale alvo são filtrados antes da chamada.
+ * Retorna Map vazio se a API key não estiver configurada ou se a chamada falhar —
+ * o chamador exibe o texto original como fallback.
  *
- * @param mensagem - Texto original do feedback
- * @param sourceLocale - Locale de origem (idioma em que o texto foi escrito)
- * @returns Objeto com traduções por locale, ou null em caso de falha
+ * @param feedbacks - Feedbacks a exibir no admin (id, mensagem, mensagem_locale)
+ * @param targetLocale - Locale em que o admin está visualizando o dashboard
+ * @returns Map de id → texto traduzido; ids ausentes usam o texto original como fallback
  */
-export async function translateFeedback(
-  mensagem: string,
-  sourceLocale: Locale
-): Promise<Partial<Record<Locale, string>> | null> {
+export async function translateFeedbacksForDisplay(
+  feedbacks: Array<{ id: string; mensagem: string; mensagem_locale: string | null }>,
+  targetLocale: Locale
+): Promise<Map<string, string>> {
   const apiKey = process.env.GOOGLE_AI_API_KEY;
-  if (!apiKey) return null;
+  if (!apiKey || feedbacks.length === 0) return new Map();
 
-  const targetLocales = locales.filter((l) => l !== sourceLocale);
-  if (targetLocales.length === 0) return null;
+  const toTranslate = feedbacks.filter((f) => f.mensagem_locale !== targetLocale);
+  if (toTranslate.length === 0) return new Map();
 
   try {
     const genai = new GoogleGenerativeAI(apiKey);
     const model = genai.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-    const targetList = targetLocales.map((l) => `"${l}": "${localeNames[l]}"`).join(", ");
-    const prompt = `Translate the following product feedback text to the specified languages.
-Return ONLY a valid JSON object with locale codes as keys. Preserve technical terms, product names, and URLs exactly.
+    const messagesObj: Record<string, string> = {};
+    for (const f of toTranslate) {
+      messagesObj[f.id] = f.mensagem;
+    }
 
-Source language: ${localeNames[sourceLocale]}
-Target languages: { ${targetList} }
+    const prompt = `Translate each of the following product feedback messages to ${localeNames[targetLocale]}.
+Return ONLY a valid JSON object where each key is the feedback ID and the value is the translated text.
+Preserve technical terms, product names, and URLs exactly.
+If a message is already in ${localeNames[targetLocale]}, return it unchanged.
 
-Text to translate:
-${mensagem}
+Messages (JSON object with id → text):
+${JSON.stringify(messagesObj)}
 
 Respond with only the JSON object, no markdown, no explanation.`;
 
@@ -46,10 +52,11 @@ Respond with only the JSON object, no markdown, no explanation.`;
 
     const start = text.indexOf("{");
     const end = text.lastIndexOf("}");
-    if (start === -1 || end <= start) return null;
+    if (start === -1 || end <= start) return new Map();
 
-    return JSON.parse(text.slice(start, end + 1)) as Partial<Record<Locale, string>>;
+    const parsed = JSON.parse(text.slice(start, end + 1)) as Record<string, string>;
+    return new Map(Object.entries(parsed));
   } catch {
-    return null;
+    return new Map();
   }
 }
