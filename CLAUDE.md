@@ -204,6 +204,35 @@ EOF
 
 ---
 
+#### Regra de Varredura de Impacto em Testes (obrigatória a cada edição de arquivo)
+
+**Princípio:** toda mudança de contrato de interface — ARIA roles, textos visíveis, URLs, assinatura de props, nomes de funções exportadas — quebra testes existentes de forma previsível e óbvia. O Claude Code não descobre isso no CI; descobre **antes de commitar**, varrendo os testes imediatamente após cada edição.
+
+**Gatilho:** sempre que a FASE 2 editar qualquer arquivo de código-fonte, o Claude Code executa a varredura correspondente nos diretórios `__tests__/` e `e2e/` **antes de avançar para o próximo arquivo ou para os commits**:
+
+| O que foi alterado no arquivo | O que grep nos testes |
+|---|---|
+| `role="X"` trocado por `role="Y"` | `getByRole("X"` — atualizar para o novo papel |
+| `aria-label` ou texto visível alterado | `getByRole(..., {name:})`, `getByText(`, `getByLabelText(` com o texto antigo |
+| Rota ou `href` alterado | `goto(`, `toHaveURL(`, `navigate(` com a URL antiga |
+| Props renomeadas ou removidas | Todos os locais onde o componente é instanciado nos testes |
+| Função exportada renomeada ou removida | Todos os `import` e chamadas nos testes |
+| Estrutura de resposta de Server Action alterada | Testes que fazem `expect(resultado.campo)` |
+
+**Procedimento:**
+
+```bash
+# Exemplo: ao trocar role="listbox" por role="menu" no LanguageSwitcher
+grep -rn "listbox\|getByRole.*option" __tests__/ e2e/ --include="*.ts" --include="*.tsx"
+# → atualizar TODOS os matches antes de avançar
+```
+
+**Regra de ouro:** se o arquivo editado exporta um contrato (componente, função, rota, ARIA) e existem testes para ele, esses testes fazem parte da mesma mudança lógica e **devem ser atualizados no mesmo commit**. Nunca são descobertos no CI — são responsabilidade do Claude Code durante a FASE 2.
+
+> **Motivo (lição da issue #88):** ao corrigir `role="listbox"→"menu"` no `LanguageSwitcher` (Sonar S6819), os testes unitários do componente foram atualizados mas os locators E2E (`e2e/i18n.spec.ts`) foram ignorados — porque estavam em outro arquivo. Resultado: 3 ciclos de CI extras e horas desnecessárias. Um engenheiro sênior atualiza tudo na mesma tacada; o Claude Code deve ter o mesmo reflexo institucionalizado.
+
+---
+
 ### FASE 2.5 — Validação Local Obrigatória (usuário executa)
 
 **Passo 1 — Build do projeto**

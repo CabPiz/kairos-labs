@@ -17,8 +17,8 @@ export const routing = defineRouting({
  * Mantido centralizado aqui para evitar divergências entre layout e LanguageSwitcher.
  * Ao adicionar suporte a árabe, hebraico ou persa, setar dir: 'rtl'.
  */
-export const localeConfig: Record<Locale, { dir: "ltr" | "rtl"; label: string; flag: string }> = {
-  pt: { dir: "ltr", label: "Português", flag: "🇧🇷" },
-  en: { dir: "ltr", label: "English", flag: "🇺🇸" },
-  es: { dir: "ltr", label: "Español", flag: "🇪🇸" },
+export const localeConfig: Record<Locale, { dir: "ltr" | "rtl"; label: string; flag: string; flagImg: string }> = {
+  pt: { dir: "ltr", label: "Português", flag: "🇧🇷", flagImg: "https://flagcdn.com/w20/br.png" },
+  en: { dir: "ltr", label: "English",   flag: "🇺🇸", flagImg: "https://flagcdn.com/w20/us.png" },
+  es: { dir: "ltr", label: "Español",   flag: "🇪🇸", flagImg: "https://flagcdn.com/w20/es.png" },
 };

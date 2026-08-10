@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MessageSquare } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { FeedbackModal } from "./FeedbackModal";
 
 interface FeedbackCTAButtonProps {
@@ -15,6 +16,7 @@ export function FeedbackCTAButton({
   productName,
   productColor,
 }: FeedbackCTAButtonProps) {
+  const t = useTranslations("feedbackModal");
   const [open, setOpen] = useState(false);
 
   return (
@@ -56,7 +58,7 @@ export function FeedbackCTAButton({
         }}
       >
         <MessageSquare size={14} />
-        Enviar Sugestão
+        {t("title")}
       </button>
 
       <FeedbackModal

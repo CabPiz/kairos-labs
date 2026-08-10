@@ -39,12 +39,24 @@ jest.mock("@/components/admin/LeadsTable", () => ({
   ),
 }));
 
-let mockTranslateResult: Map<string, string> = new Map();
-
-jest.mock("@/lib/admin/translate-feedback", () => ({
-  translateFeedbacksForDisplay: jest.fn().mockImplementation(
-    () => Promise.resolve(mockTranslateResult)
-  ),
+jest.mock("@/components/admin/FeedbackList", () => ({
+  FeedbackList: ({
+    feedbacks,
+    noFeedbackText,
+  }: {
+    feedbacks: FeedbackRow[];
+    locale: string;
+    noFeedbackText: string;
+  }) =>
+    feedbacks.length === 0 ? (
+      <p>{noFeedbackText}</p>
+    ) : (
+      <div data-testid="feedback-list">
+        {feedbacks.map((f) => (
+          <p key={f.id}>{f.mensagem}</p>
+        ))}
+      </div>
+    ),
 }));
 
 function makeKpis(
@@ -81,7 +93,6 @@ async function renderAdminPage() {
 
 describe("AdminPage", () => {
   beforeEach(() => {
-    mockTranslateResult = new Map();
     jest.resetModules();
     mockRpc.mockReset();
   });
@@ -131,26 +142,6 @@ describe("AdminPage", () => {
     await renderAdminPage();
     expect(screen.getByText("Ótimo produto!")).toBeInTheDocument();
     expect(screen.getByText("Sugestões Recebidas (1)")).toBeInTheDocument();
-  });
-
-  it("exibe mensagem traduzida quando translateFeedbacksForDisplay retorna tradução", async () => {
-    mockTranslateResult = new Map([["fb-0", "Ótimo produto traduzido!"]]);
-    mockRpc.mockResolvedValue({
-      data: makeKpis([], 0, [{
-        mensagem: "Great product!",
-        mensagem_locale: "en",
-      }]),
-    });
-    await renderAdminPage();
-    expect(screen.getByText("Ótimo produto traduzido!")).toBeInTheDocument();
-  });
-
-  it("exibe mensagem original quando tradução não está disponível", async () => {
-    mockRpc.mockResolvedValue({
-      data: makeKpis([], 0, [{ mensagem: "Texto original sem tradução" }]),
-    });
-    await renderAdminPage();
-    expect(screen.getByText("Texto original sem tradução")).toBeInTheDocument();
   });
 
   it("renderiza o AdminLanguageSwitcher", async () => {
