@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 import { locales, localeConfig, type Locale } from "@/i18n/routing";
 
 /**
@@ -78,7 +79,7 @@ export function LanguageSwitcher() {
           e.currentTarget.style.background = "rgba(255,255,255,0.06)";
         }}
       >
-        <span aria-hidden="true">{current.flag}</span>
+        <Image src={current.flagImg} alt="" width={20} height={15} style={{ borderRadius: "2px", flexShrink: 0 }} />
         <span>{locale.toUpperCase()}</span>
         <span
           style={{
@@ -155,7 +156,7 @@ export function LanguageSwitcher() {
                   listStyle: "none",
                 }}
               >
-                <span aria-hidden="true">{cfg.flag}</span>
+                <Image src={cfg.flagImg} alt="" width={20} height={15} style={{ borderRadius: "2px", flexShrink: 0 }} />
                 <span>{cfg.label}</span>
               </li>
             );
