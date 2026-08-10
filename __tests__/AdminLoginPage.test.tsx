@@ -5,6 +5,10 @@ jest.mock("@/app/admin/login/_components/LoginForm", () => ({
   LoginForm: () => <form data-testid="login-form-mock" />,
 }));
 
+jest.mock("@/components/admin/AdminLanguageSwitcher", () => ({
+  AdminLanguageSwitcher: () => <div data-testid="admin-language-switcher" />,
+}));
+
 async function renderLoginPage() {
   const LoginPage = (await import("@/app/admin/login/page")).default;
   render(await LoginPage());
@@ -40,5 +44,10 @@ describe("LoginPage", () => {
     const backLink = screen.getByRole("link", { name: /voltar ao site/i });
     expect(backLink).toBeInTheDocument();
     expect(backLink).toHaveAttribute("href", "/");
+  });
+
+  it("renderiza o AdminLanguageSwitcher", async () => {
+    await renderLoginPage();
+    expect(screen.getByTestId("admin-language-switcher")).toBeInTheDocument();
   });
 });

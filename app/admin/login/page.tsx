@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { LoginForm } from "./_components/LoginForm";
+import { AdminLanguageSwitcher } from "@/components/admin/AdminLanguageSwitcher";
 
 export default async function LoginPage() {
   const t = await getTranslations("admin.login");
@@ -28,6 +29,16 @@ export default async function LoginPage() {
           padding: "2.5rem",
         }}
       >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginBottom: "1.25rem",
+          }}
+        >
+          <AdminLanguageSwitcher />
+        </div>
+
         <Link
           href="/"
           style={{

@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Saída de comandos (gerado pelo Claude Code para análise)
+saida.log
+
 # dependencies
 /node_modules
 /.pnp

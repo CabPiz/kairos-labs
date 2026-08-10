@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { CheckCircle, Loader2, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isValidEmail } from "@/components/contact/contact-schema";
@@ -36,6 +36,7 @@ export function FeedbackModal({
   productColor,
 }: FeedbackModalProps) {
   const t = useTranslations("feedbackModal");
+  const currentLocale = useLocale();
 
   const formSchema = z.object({
     nome: z.string().optional(),
@@ -74,6 +75,7 @@ export function FeedbackModal({
     formData.set("nome", values.nome ?? "");
     formData.set("email", values.email ?? "");
     formData.set("mensagem", values.mensagem);
+    formData.set("locale", currentLocale);
 
     startTransition(async () => {
       const result = await sendFeedbackAction(formData);

@@ -71,40 +71,24 @@ O Claude Code executa diretamente, nesta ordem:
 git checkout main
 git pull origin main
 git checkout -b tipo/[NUMERO]-descricao-curta
+```
 
-# 2. Atribuir e mover para In Progress
+**Passo 2 — Atribuir e marcar como In Progress (depende do ambiente):**
+
+**Ambiente local** (`gh` CLI disponível — sessão desktop):
+```bash
 gh issue edit [NUMERO] --add-assignee "@me"
 gh issue edit [NUMERO] --add-label "status: in progress"
-
-# 3. Capturar IDs do Board e mover card para "In Progress"
-PROJECT_NUMBER=3
-OWNER="CabPiz"
-ISSUE_NUM=[NUMERO]
-
-ITEM_ID=$(gh project item-list $PROJECT_NUMBER --owner "$OWNER" --format json --limit 100 | jq -r ".items[] | select(.content.number==$ISSUE_NUM) | .id")
-
-PROJECT_META=$(gh api graphql -f query='
-query {
-  user(login: "'"$OWNER"'") {
-    projectV2(number: '$PROJECT_NUMBER') {
-      id
-      field(name: "Status") {
-        ... on ProjectV2SingleSelectField {
-          id
-          options { id name }
-        }
-      }
-    }
-  }
-}')
-
-PROJECT_ID=$(echo $PROJECT_META | jq -r '.data.user.projectV2.id')
-STATUS_FIELD_ID=$(echo $PROJECT_META | jq -r '.data.user.projectV2.field.id')
-IN_PROGRESS_OPTION_ID=$(echo $PROJECT_META | jq -r '.data.user.projectV2.field.options[] | select(.name=="In Progress") | .id')
-IN_REVIEW_OPTION_ID=$(echo $PROJECT_META | jq -r '.data.user.projectV2.field.options[] | select(.name=="In Review") | .id')
-
-gh project item-edit --id $ITEM_ID --project-id $PROJECT_ID --field-id $STATUS_FIELD_ID --single-select-option-id $IN_PROGRESS_OPTION_ID
+gh project item-add 3 --owner CabPiz --url [url-da-issue]
+# mover card para "In Progress" via gh project item-edit (ver FASE 3 para IDs)
 ```
+
+**Ambiente remoto** (`gh` indisponível — sessão web/celular):
+- Usar `mcp__github__issue_write` com `assignees: ["CabPiz"]` e `labels: [..., "status: in progress"]`
+- Movimentação de card no board: **não disponível** — o label `status: in progress` é o mecanismo de rastreio
+- **Done é aplicado automaticamente pelo GitHub Projects na FASE 4 (merge do PR)** — esse é o estado mais importante
+
+> **Regra de ouro do board em sessão remota:** In Progress = label `status: in progress` (visível na issue). Done = automação do GitHub Projects no merge. In Review = label `status: ready for review` (aplicado na FASE 3).
 
 ---
 
@@ -613,11 +597,12 @@ Exemplos de mudanças que ativam esta regra:
 
 | Tipo de mudança | Onde documentar |
 |---|---|
-| Novo arquivo `.sql` (criação de tabela, função, policy RLS, trigger) | `docs/setup.md` → seção `Banco de Dados` + incluir o SQL completo ou referência ao arquivo em `supabase/migrations/` |
-| Nova variável de ambiente obrigatória | `docs/setup.md` → seção `Variáveis de Ambiente` + `.env.example` (sem o valor) |
-| Nova dependência com setup manual (CLI, serviço externo, credencial) | `docs/setup.md` → seção pertinente |
+| Novo arquivo `.sql` (criação de tabela, função, policy RLS, trigger, nova coluna) | `docs/setup.md` → seção `Banco de Dados` + `README.md` → lista de migrations + `CONTRIBUTING.md` → seção "Run the database migrations" + `docs/CONTRIBUTING.pt-BR.md` → seção "Executar as migrations do banco" |
+| Nova variável de ambiente obrigatória | `docs/setup.md` → seção `Variáveis de Ambiente` + `.env.example` (sem o valor) + `CONTRIBUTING.md` → seção de variáveis + `docs/CONTRIBUTING.pt-BR.md` |
+| Nova dependência com setup manual (CLI, serviço externo, credencial) | `docs/setup.md` → seção pertinente + `CONTRIBUTING.md` + `docs/CONTRIBUTING.pt-BR.md` |
 | Novo script npm ou comando de setup | `docs/setup.md` + `package.json` com descrição no campo `scripts` |
 | Mudança em configuração de CI (secrets, permissões) | `docs/setup.md` → seção `CI/CD` + comentário no workflow YAML |
+| Novos specs E2E adicionados | `CONTRIBUTING.md` → tabela "Covered flows" + `docs/CONTRIBUTING.pt-BR.md` → tabela "Fluxos cobertos" |
 
 #### Fluxo obrigatório
 
@@ -953,8 +938,8 @@ Para descobrir o SHA de qualquer Action: olhar o log do CI — o step "Set up jo
 
 ---
 
-### Dropdowns de seleção de idioma: usar `role="menu"` em vez de `role="listbox"` (`typescript:S6819`)
-Sonar S6819 proíbe `role="listbox"` em elementos não-nativos (como `<ul>`). Usar `role="menu"` + `role="menuitem"` e `aria-haspopup="menu"` no botão disparador.
+### ARIA roles em elementos não-nativos: preferir tag HTML nativa (`typescript:S6819`)
+Sonar S6819 proíbe ARIA roles em elementos não-nativos quando existe um elemento HTML com role implícita equivalente. Regra geral: **prefira a tag HTML semântica sobre `role="..."`**.
 
 ```tsx
 // ❌ Errado — Sonar S6819: listbox em elemento não-nativo
@@ -968,6 +953,65 @@ Sonar S6819 proíbe `role="listbox"` em elementos não-nativos (como `<ul>`). Us
   <li role="menuitem" aria-current={isActive ? "true" : undefined}>...</li>
 </ul>
 <button aria-haspopup="menu">...</button>
+
+// ❌ Errado — Sonar S6819: role="group" em <div> — <fieldset> tem role "group" implícito
+<div role="group" aria-label="Language" className="flex gap-1">
+  {/* botões */}
+</div>
+
+// ✅ Correto — usar <fieldset> (role "group" implícito) + <legend> para accessible name
+<fieldset className="flex gap-1 border-none p-0 m-0">
+  <legend className="sr-only">Language</legend>
+  {/* botões */}
+</fieldset>
+```
+
+**Mapeamento de roles para tags nativas:**
+
+| `role="..."` | Tag HTML nativa equivalente |
+|---|---|
+| `group` | `<fieldset>` (com `<legend>` para accessible name) |
+| `listbox` | Usar `role="menu"` + `role="menuitem"` em dropdowns custom |
+| `list` | `<ul>` ou `<ol>` |
+| `article` | `<article>` |
+
+### Testes RTL: não envolver `fireEvent` em `await act()` (`typescript:S8980`)
+React Testing Library já envolve `fireEvent` em `act()` internamente. Adicionar `await act(async () => { fireEvent.click(...) })` é redundante e gera S8980.
+
+```tsx
+// ❌ Errado — Sonar S8980: act() redundante — fireEvent já faz act() internamente
+it("clica no botão", async () => {
+  render(<Component />);
+  await act(async () => {
+    fireEvent.click(screen.getByRole("button", { name: "English" }));
+  });
+  expect(mockFn).toHaveBeenCalled();
+});
+
+// ✅ Correto — fireEvent sem act() explícito; remover async do test se não há mais await
+it("clica no botão", () => {
+  render(<Component />);
+  fireEvent.click(screen.getByRole("button", { name: "English" }));
+  expect(mockFn).toHaveBeenCalled();
+});
+```
+
+**Nota:** Handlers que chamam `startTransition(async () => { await action(...) })` funcionam corretamente sem `act()` explícito porque `action(...)` é invocado sincronamente (antes do primeiro `await` da função async), então `expect().toHaveBeenCalledWith()` captura a chamada imediatamente após o `fireEvent`.
+
+### `String.match()` deve ser substituído por `RegExp.exec()` (`typescript:S6594`)
+Sonar S6594 prefere `RegExp.exec()` sobre `String.match()`. Na prática, a melhor solução é evitar o regex quando `indexOf`/`lastIndexOf` resolve o problema sem backtracking (resolve S8786 e S6594 simultaneamente).
+
+```ts
+// ❌ Errado — Sonar S6594 + S8786: .match() com regex de backtracking superlinear
+const match = text.match(/\{[\s\S]*\}/);
+if (!match) return null;
+return JSON.parse(match[0]);
+
+// ✅ Correto — sem regex, sem backtracking, sem S6594
+const start = text.indexOf("{");
+const end = text.lastIndexOf("}");
+if (start === -1 || end <= start) return null;
+return JSON.parse(text.slice(start, end + 1));
 ```
 
 ### Regex em config Next.js: `String.raw` não pode ser usado em `config.matcher` (`typescript:S7780`)
@@ -1035,4 +1079,4 @@ O Claude Code verifica se toda função criada ou modificada na sessão que se e
 ---
 
 *Kairos Labs — Cesar Antonio Brito Pizarro*
-*CLAUDE.md v2.7 — corrige busca de ITEM_ID na FASE 0 com --limit 100, eliminando falha silenciosa em issues recém-adicionadas ao board; atualiza exemplo da FASE 4.7 com status de correção aplicada*
+*CLAUDE.md v2.8 — adiciona padrões Sonar S8980 (act() redundante em RTL), S6594 (exec() vs match()), S6819 expandido (role="group" → fieldset); atualiza S8786 com fix indexOf/lastIndexOf*

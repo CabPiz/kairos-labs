@@ -48,4 +48,28 @@ test.describe("Autenticação /admin", () => {
     await page.goto("/admin/login");
     await expect(page).toHaveURL(/\/admin(?!\/login)/, { timeout: 10_000 });
   });
+
+  test("página de login exibe o switcher de idioma", async ({ page }) => {
+    await page.context().clearCookies();
+    await page.goto("/admin/login");
+    await expect(page.getByRole("group", { name: "Language" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Português" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "English" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Español" })).toBeVisible();
+  });
+
+  test("cookie NEXT_LOCALE=en faz a página de login renderizar em inglês", async ({
+    browser,
+  }) => {
+    const ctx = await browser.newContext({
+      extraHTTPHeaders: {},
+    });
+    await ctx.addCookies([
+      { name: "NEXT_LOCALE", value: "en", domain: "localhost", path: "/" },
+    ]);
+    const page = await ctx.newPage();
+    await page.goto("/admin/login");
+    await expect(page.getByRole("button", { name: "Sign In" })).toBeVisible();
+    await ctx.close();
+  });
 });
