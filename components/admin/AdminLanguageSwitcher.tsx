@@ -6,6 +6,15 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { localeConfig, type Locale } from "@/i18n/routing";
 import { setAdminLocaleAction } from "@/lib/admin/set-locale-action";
+import {
+  toggleButtonBase,
+  toggleButtonHover,
+  toggleButtonRest,
+  menuBase,
+  menuItemActive,
+  menuItemInactive,
+  caretStyle,
+} from "@/components/ui/language-switcher-styles";
 
 const LOCALES: Locale[] = ["pt", "en", "es"];
 
@@ -50,75 +59,22 @@ export function AdminLanguageSwitcher() {
         aria-expanded={open}
         disabled={isPending}
         onClick={() => setOpen((prev) => !prev)}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-          background: "rgba(255,255,255,0.06)",
-          border: "1px solid rgba(255,255,255,0.15)",
-          borderRadius: "6px",
-          padding: "0.35rem 0.75rem",
-          cursor: isPending ? "not-allowed" : "pointer",
-          color: "rgba(255,255,255,0.75)",
-          fontSize: "0.75rem",
-          fontWeight: 600,
-          letterSpacing: "0.08em",
-          fontFamily: "var(--font-inter), sans-serif",
-          opacity: isPending ? 0.5 : 1,
-          transition: "border-color 0.2s, background 0.2s",
-        }}
-        onMouseOver={(e) => {
-          e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)";
-          e.currentTarget.style.background = "rgba(255,255,255,0.1)";
-        }}
-        onFocus={(e) => {
-          e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)";
-          e.currentTarget.style.background = "rgba(255,255,255,0.1)";
-        }}
-        onMouseOut={(e) => {
-          e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
-          e.currentTarget.style.background = "rgba(255,255,255,0.06)";
-        }}
-        onBlur={(e) => {
-          e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
-          e.currentTarget.style.background = "rgba(255,255,255,0.06)";
-        }}
+        style={{ ...toggleButtonBase, cursor: isPending ? "not-allowed" : "pointer", opacity: isPending ? 0.5 : 1 }}
+        onMouseOver={(e) => Object.assign(e.currentTarget.style, toggleButtonHover)}
+        onFocus={(e) => Object.assign(e.currentTarget.style, toggleButtonHover)}
+        onMouseOut={(e) => Object.assign(e.currentTarget.style, toggleButtonRest)}
+        onBlur={(e) => Object.assign(e.currentTarget.style, toggleButtonRest)}
       >
         <Image src={current.flagImg} alt="" width={20} height={15} style={{ borderRadius: "2px", flexShrink: 0 }} />
         <span>{currentLocale.toUpperCase()}</span>
-        <span
-          style={{
-            display: "inline-block",
-            width: "0",
-            height: "0",
-            borderLeft: "4px solid transparent",
-            borderRight: "4px solid transparent",
-            borderTop: "5px solid rgba(255,255,255,0.5)",
-            transition: "transform 0.2s",
-            transform: open ? "rotate(180deg)" : "none",
-          }}
-          aria-hidden="true"
-        />
+        <span style={caretStyle(open)} aria-hidden="true" />
       </button>
 
       {open && (
         <ul
           role="menu"
           aria-label="Idioma"
-          style={{
-            position: "absolute",
-            top: "calc(100% + 6px)",
-            right: 0,
-            minWidth: "140px",
-            background: "#0b1221",
-            border: "1px solid rgba(59,130,246,0.25)",
-            borderRadius: "8px",
-            padding: "4px",
-            margin: 0,
-            listStyle: "none",
-            zIndex: 100,
-            boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
-          }}
+          style={menuBase}
         >
           {LOCALES.map((locale) => {
             const cfg = localeConfig[locale];
@@ -145,21 +101,7 @@ export function AdminLanguageSwitcher() {
                 onBlur={(e) => {
                   if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent";
                 }}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "0.5rem 0.75rem",
-                  background: isActive ? "rgba(59,130,246,0.12)" : "transparent",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                  color: isActive ? "#fff" : "rgba(255,255,255,0.65)",
-                  fontSize: "0.8rem",
-                  fontWeight: isActive ? 700 : 400,
-                  fontFamily: "var(--font-inter), sans-serif",
-                  transition: "background 0.15s, color 0.15s",
-                  listStyle: "none",
-                }}
+                style={isActive ? menuItemActive : menuItemInactive}
               >
                 <Image src={cfg.flagImg} alt="" width={20} height={15} style={{ borderRadius: "2px", flexShrink: 0 }} />
                 <span>{cfg.label}</span>

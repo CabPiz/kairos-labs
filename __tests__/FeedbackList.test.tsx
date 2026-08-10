@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, act } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { FeedbackList } from "@/components/admin/FeedbackList";
 import type { Database } from "@/lib/types";
 
@@ -49,11 +49,9 @@ describe("FeedbackList", () => {
   it("chama translate API e exibe texto traduzido quando locales diferem", async () => {
     (global.fetch as jest.Mock).mockReturnValueOnce(mockTranslateResponse("Great product!"));
     const feedback = makeFeedback({ mensagem_locale: "pt" });
-    await act(async () => {
-      render(<FeedbackList feedbacks={[feedback]} locale="en" noFeedbackText="No feedback." />);
-    });
+    render(<FeedbackList feedbacks={[feedback]} locale="en" noFeedbackText="No feedback." />);
 
-    expect(screen.getByText("Great product!")).toBeInTheDocument();
+    expect(await screen.findByText("Great product!")).toBeInTheDocument();
     expect(global.fetch).toHaveBeenCalledWith(
       expect.stringContaining("translate.googleapis.com")
     );
@@ -70,30 +68,24 @@ describe("FeedbackList", () => {
     async (targetLocale, expectedText) => {
       (global.fetch as jest.Mock).mockReturnValueOnce(mockTranslateResponse(expectedText));
       const feedback = makeFeedback({ mensagem_locale: "pt" });
-      await act(async () => {
-        render(
-          <FeedbackList feedbacks={[feedback]} locale={targetLocale} noFeedbackText="No feedback." />
-        );
-      });
-      expect(screen.getByText(expectedText)).toBeInTheDocument();
+      render(
+        <FeedbackList feedbacks={[feedback]} locale={targetLocale} noFeedbackText="No feedback." />
+      );
+      expect(await screen.findByText(expectedText)).toBeInTheDocument();
     }
   );
 
   it("exibe texto original como fallback quando fetch falha", async () => {
     (global.fetch as jest.Mock).mockRejectedValueOnce(new Error("Network error"));
     const feedback = makeFeedback({ mensagem_locale: "pt" });
-    await act(async () => {
-      render(<FeedbackList feedbacks={[feedback]} locale="en" noFeedbackText="No feedback." />);
-    });
-    expect(screen.getByText("Ótimo produto!")).toBeInTheDocument();
+    render(<FeedbackList feedbacks={[feedback]} locale="en" noFeedbackText="No feedback." />);
+    expect(await screen.findByText("Ótimo produto!")).toBeInTheDocument();
   });
 
   it("exibe badge do idioma original quando locale difere do admin", async () => {
     const feedback = makeFeedback({ mensagem_locale: "pt" });
     (global.fetch as jest.Mock).mockReturnValueOnce(mockTranslateResponse("Great product!"));
-    await act(async () => {
-      render(<FeedbackList feedbacks={[feedback]} locale="en" noFeedbackText="No feedback." />);
-    });
-    expect(screen.getByText("PT")).toBeInTheDocument();
+    render(<FeedbackList feedbacks={[feedback]} locale="en" noFeedbackText="No feedback." />);
+    expect(await screen.findByText("PT")).toBeInTheDocument();
   });
 });

@@ -52,10 +52,13 @@ test.describe("Autenticação /admin", () => {
   test("página de login exibe o switcher de idioma", async ({ page }) => {
     await page.context().clearCookies();
     await page.goto("/admin/login");
-    await expect(page.getByRole("group", { name: "Language" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Português" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "English" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Español" })).toBeVisible();
+    const toggleBtn = page.getByRole("button", { name: "Idioma" });
+    await expect(toggleBtn).toBeVisible();
+    await toggleBtn.click();
+    await expect(page.getByRole("menu")).toBeVisible();
+    await expect(page.getByRole("menuitem", { name: /Português/ })).toBeVisible();
+    await expect(page.getByRole("menuitem", { name: /English/ })).toBeVisible();
+    await expect(page.getByRole("menuitem", { name: /Español/ })).toBeVisible();
   });
 
   test("cookie NEXT_LOCALE=en faz a página de login renderizar em inglês", async ({
