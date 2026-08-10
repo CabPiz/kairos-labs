@@ -890,6 +890,31 @@ Texto que segue
 Texto que segue
 ```
 
+### Imagens externas: usar `<Image>` do Next.js, nunca `<img>` (`@next/next/no-img-element`)
+
+```tsx
+// ❌ Errado — ESLint bloqueia o commit com warning @next/next/no-img-element
+<img src="https://flagcdn.com/w20/br.png" alt="" width={20} height={15} />
+
+// ✅ Correto — usar next/image e registrar o hostname em next.config.ts
+import Image from "next/image";
+<Image src="https://flagcdn.com/w20/br.png" alt="" width={20} height={15} />
+```
+
+Em `next.config.ts`, adicionar o domínio externo ao `remotePatterns`:
+
+```ts
+const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "flagcdn.com" },
+    ],
+  },
+};
+```
+
+> **Escopo da varredura de impacto em testes (FASE 2):** mudanças de estrutura ARIA — troca de `role="group"` com botões filhos por `role="menu"` com `role="menuitem"`, por exemplo — quebram specs E2E que usam `getByRole("group")`. A varredura de impacto deve incluir `e2e/` além de `__tests__/` sempre que a estrutura semântica do componente mudar, mesmo que o texto visível permaneça igual.
+
 ### Imports de módulos Node.js com prefixo `node:` (`javascript:S7772`)
 Sonar S7772 exige o prefixo `node:` em imports de módulos nativos do Node.js em arquivos `.mjs`.
 
