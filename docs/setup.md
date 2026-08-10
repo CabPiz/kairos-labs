@@ -34,9 +34,9 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 
-# Google AI (tradução automática de feedbacks via Gemini 2.0 Flash — free tier)
+# Google AI (tradução on-demand de feedbacks no painel admin via Gemini 2.0 Flash — free tier)
 # Obter em: https://aistudio.google.com/apikey
-# Opcional: se ausente, feedbacks são salvos sem tradução automática
+# Opcional: se ausente, feedbacks são exibidos no idioma original
 GOOGLE_AI_API_KEY=
 
 # SonarCloud (necessário para rodar os scripts sonar-check.sh localmente)
@@ -88,18 +88,27 @@ ALTER TABLE public.contact_requests
 
 > Script equivalente disponível em `supabase/migrations/003_contact_requests_phone.sql`.
 
-### [Issue #101] Colunas `mensagem_locale` e `mensagem_traduzida` em `feedback`
+### [Issue #101] Coluna `mensagem_locale` em `feedback` (migration 004)
 
-Adicionadas para armazenar o idioma de origem e as traduções automáticas geradas via Gemini 2.0 Flash.
+Armazena o idioma de origem de cada feedback enviado. O painel admin usa esse campo para traduzir on-demand via Gemini ao visualizar em outro idioma.
 
 ```sql
 ALTER TABLE public.feedback
-  ADD COLUMN IF NOT EXISTS mensagem_locale TEXT,
-  ADD COLUMN IF NOT EXISTS mensagem_traduzida JSONB;
+  ADD COLUMN IF NOT EXISTS mensagem_locale TEXT;
 ```
 
-> Script equivalente disponível em `supabase/migrations/004_feedback_translation.sql`.
-> Requer execução no SQL Editor do Supabase antes de usar a funcionalidade de tradução em produção.
+> Script completo disponível em `supabase/migrations/004_feedback_translation.sql` (também adiciona `mensagem_traduzida`, removida pela migration 005).
+
+### [Issue #101] Remove coluna `mensagem_traduzida` de `feedback` (migration 005)
+
+Tradução passou a ser feita on-demand no painel admin — sem armazenamento em banco.
+
+```sql
+ALTER TABLE public.feedback
+  DROP COLUMN IF EXISTS mensagem_traduzida;
+```
+
+> Script equivalente disponível em `supabase/migrations/005_drop_mensagem_traduzida.sql`.
 
 ---
 
@@ -117,7 +126,7 @@ O pipeline GitHub Actions requer os seguintes secrets configurados no repositór
 | `SONAR_PROJECT_KEY` | Chave do projeto no SonarCloud |
 | `E2E_EMAIL` | E-mail de usuário de teste para specs E2E de autenticação |
 | `E2E_PASSWORD` | Senha do usuário de teste E2E |
-| `GOOGLE_AI_API_KEY` | Chave da Google AI Studio para tradução de feedbacks via Gemini (opcional — sem ela, feedbacks são salvos sem tradução) |
+| `GOOGLE_AI_API_KEY` | Chave da Google AI Studio para tradução on-demand de feedbacks no painel admin via Gemini (opcional — sem ela, feedbacks são exibidos no idioma original) |
 
 ---
 
