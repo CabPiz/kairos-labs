@@ -39,6 +39,14 @@ jest.mock("@/components/admin/LeadsTable", () => ({
   ),
 }));
 
+let mockTranslateResult: Map<string, string> = new Map();
+
+jest.mock("@/lib/admin/translate-feedback", () => ({
+  translateFeedbacksForDisplay: jest.fn().mockImplementation(
+    () => Promise.resolve(mockTranslateResult)
+  ),
+}));
+
 function makeKpis(
   leads: Partial<WaitlistRow>[] = [],
   recentCount = 0,
@@ -60,7 +68,6 @@ function makeKpis(
       email: null,
       mensagem: `Sugestão ${i}`,
       mensagem_locale: null,
-      mensagem_traduzida: null,
       created_at: new Date(2026, 0, i + 1).toISOString(),
       ...f,
     })),
@@ -74,6 +81,7 @@ async function renderAdminPage() {
 
 describe("AdminPage", () => {
   beforeEach(() => {
+    mockTranslateResult = new Map();
     jest.resetModules();
     mockRpc.mockReset();
   });
@@ -125,24 +133,21 @@ describe("AdminPage", () => {
     expect(screen.getByText("Sugestões Recebidas (1)")).toBeInTheDocument();
   });
 
-  it("exibe mensagem traduzida quando mensagem_traduzida contém o locale ativo", async () => {
+  it("exibe mensagem traduzida quando translateFeedbacksForDisplay retorna tradução", async () => {
+    mockTranslateResult = new Map([["fb-0", "Ótimo produto traduzido!"]]);
     mockRpc.mockResolvedValue({
       data: makeKpis([], 0, [{
         mensagem: "Great product!",
         mensagem_locale: "en",
-        mensagem_traduzida: { pt: "Ótimo produto!", es: "¡Excelente producto!" },
       }]),
     });
     await renderAdminPage();
-    expect(screen.getByText("Ótimo produto!")).toBeInTheDocument();
+    expect(screen.getByText("Ótimo produto traduzido!")).toBeInTheDocument();
   });
 
-  it("exibe mensagem original quando mensagem_traduzida é null", async () => {
+  it("exibe mensagem original quando tradução não está disponível", async () => {
     mockRpc.mockResolvedValue({
-      data: makeKpis([], 0, [{
-        mensagem: "Texto original sem tradução",
-        mensagem_traduzida: null,
-      }]),
+      data: makeKpis([], 0, [{ mensagem: "Texto original sem tradução" }]),
     });
     await renderAdminPage();
     expect(screen.getByText("Texto original sem tradução")).toBeInTheDocument();

@@ -8,19 +8,38 @@ jest.mock("@google/generative-ai", () => ({
   })),
 }));
 
-import { translateFeedback } from "@/lib/admin/translate-feedback";
+import { translateFeedbacksForDisplay } from "@/lib/admin/translate-feedback";
 
-describe("translateFeedback", () => {
+const ptFeedback = { id: "fb-pt", mensagem: "Ótimo produto!", mensagem_locale: "pt" as const };
+const enFeedback = { id: "fb-en", mensagem: "Great product!", mensagem_locale: "en" as const };
+
+describe("translateFeedbacksForDisplay", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it("retorna null quando GOOGLE_AI_API_KEY não está definida", async () => {
+  it("retorna Map vazio quando GOOGLE_AI_API_KEY não está definida", async () => {
     const original = process.env.GOOGLE_AI_API_KEY;
     delete process.env.GOOGLE_AI_API_KEY;
-    const result = await translateFeedback("Hello", "en");
-    expect(result).toBeNull();
+    const result = await translateFeedbacksForDisplay([ptFeedback], "en");
+    expect(result.size).toBe(0);
     process.env.GOOGLE_AI_API_KEY = original;
+  });
+
+  it("retorna Map vazio quando a lista de feedbacks está vazia", async () => {
+    process.env.GOOGLE_AI_API_KEY = "test-key";
+    const result = await translateFeedbacksForDisplay([], "en");
+    expect(result.size).toBe(0);
+    expect(mockGenerateContent).not.toHaveBeenCalled();
+    delete process.env.GOOGLE_AI_API_KEY;
+  });
+
+  it("retorna Map vazio e não chama Gemini quando todos os feedbacks já estão no locale alvo", async () => {
+    process.env.GOOGLE_AI_API_KEY = "test-key";
+    const result = await translateFeedbacksForDisplay([enFeedback], "en");
+    expect(result.size).toBe(0);
+    expect(mockGenerateContent).not.toHaveBeenCalled();
+    delete process.env.GOOGLE_AI_API_KEY;
   });
 
   describe("com GOOGLE_AI_API_KEY definida", () => {
@@ -32,53 +51,81 @@ describe("translateFeedback", () => {
       delete process.env.GOOGLE_AI_API_KEY;
     });
 
-    it("retorna traduções quando a API retorna JSON válido", async () => {
+    it("retorna Map com tradução quando a API retorna JSON válido", async () => {
       mockGenerateContent.mockResolvedValue({
-        response: { text: () => '{"pt": "Olá", "es": "Hola"}' },
+        response: { text: () => '{"fb-pt": "Great product!"}' },
       });
-      const result = await translateFeedback("Hello", "en");
-      expect(result).toEqual({ pt: "Olá", es: "Hola" });
+      const result = await translateFeedbacksForDisplay([ptFeedback], "en");
+      expect(result.get("fb-pt")).toBe("Great product!");
     });
 
     it("extrai JSON mesmo com texto extra ao redor", async () => {
       mockGenerateContent.mockResolvedValue({
-        response: { text: () => 'Aqui está: {"pt": "Oi"} pronto.' },
+        response: { text: () => 'Aqui está: {"fb-pt": "Great!"} pronto.' },
       });
-      const result = await translateFeedback("Hi", "en");
-      expect(result).toEqual({ pt: "Oi" });
+      const result = await translateFeedbacksForDisplay([ptFeedback], "en");
+      expect(result.get("fb-pt")).toBe("Great!");
     });
 
-    it("retorna null quando a API lança exceção", async () => {
+    it("retorna Map vazio quando a API lança exceção", async () => {
       mockGenerateContent.mockRejectedValue(new Error("API error"));
-      const result = await translateFeedback("Hello", "en");
-      expect(result).toBeNull();
+      const result = await translateFeedbacksForDisplay([ptFeedback], "en");
+      expect(result.size).toBe(0);
     });
 
-    it("retorna null quando a resposta não contém JSON", async () => {
+    it("retorna Map vazio quando a resposta não contém JSON", async () => {
       mockGenerateContent.mockResolvedValue({
         response: { text: () => "não é JSON válido" },
       });
-      const result = await translateFeedback("Hello", "en");
-      expect(result).toBeNull();
+      const result = await translateFeedbacksForDisplay([ptFeedback], "en");
+      expect(result.size).toBe(0);
     });
 
-    it("chama generateContent com o texto a ser traduzido", async () => {
+    it("inclui o texto dos feedbacks no prompt enviado ao Gemini", async () => {
       mockGenerateContent.mockResolvedValue({
-        response: { text: () => '{"pt": "Ótimo produto!"}' },
+        response: { text: () => '{"fb-pt": "Great!"}' },
       });
-      await translateFeedback("Great product!", "en");
+      await translateFeedbacksForDisplay([ptFeedback], "en");
       expect(mockGenerateContent).toHaveBeenCalledWith(
-        expect.stringContaining("Great product!")
+        expect.stringContaining("Ótimo produto!")
       );
     });
 
-    it("não inclui o locale de origem como alvo de tradução", async () => {
+    it.each([
+      ["pt", "Brazilian Portuguese"],
+      ["es", "Spanish"],
+    ] as const)(
+      "inclui o nome do locale alvo '%s' no prompt",
+      async (locale, localeName) => {
+        mockGenerateContent.mockResolvedValue({
+          response: { text: () => `{"fb-en": "translated"}` },
+        });
+        await translateFeedbacksForDisplay([enFeedback], locale);
+        const prompt = mockGenerateContent.mock.calls[0][0] as string;
+        expect(prompt).toContain(localeName);
+      }
+    );
+
+    it("filtra feedbacks no locale alvo e traduz apenas os demais", async () => {
       mockGenerateContent.mockResolvedValue({
-        response: { text: () => '{"en": "Hello", "es": "Hola"}' },
+        response: { text: () => '{"fb-pt": "Great!"}' },
       });
-      await translateFeedback("Olá", "pt");
+      const result = await translateFeedbacksForDisplay([ptFeedback, enFeedback], "en");
       const prompt = mockGenerateContent.mock.calls[0][0] as string;
-      expect(prompt).not.toContain('"pt": "Brazilian Portuguese"');
+      expect(prompt).toContain("fb-pt");
+      expect(prompt).not.toContain("fb-en");
+      expect(result.get("fb-pt")).toBe("Great!");
+    });
+
+    it("inclui feedbacks com mensagem_locale null na tradução", async () => {
+      mockGenerateContent.mockResolvedValue({
+        response: { text: () => '{"fb-null": "Translated!"}' },
+      });
+      const result = await translateFeedbacksForDisplay(
+        [{ id: "fb-null", mensagem: "Texto sem locale", mensagem_locale: null }],
+        "en"
+      );
+      expect(result.get("fb-null")).toBe("Translated!");
     });
   });
 });

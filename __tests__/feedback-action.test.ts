@@ -1,9 +1,3 @@
-const mockTranslateFeedback = jest.fn().mockResolvedValue(null);
-
-jest.mock("@/lib/admin/translate-feedback", () => ({
-  translateFeedback: mockTranslateFeedback,
-}));
-
 const mockInsert = jest.fn();
 const mockFrom = jest.fn(() => ({ insert: mockInsert }));
 const mockAdminClient = { from: mockFrom };
@@ -103,44 +97,27 @@ describe("sendFeedbackAction", () => {
       expect(result.status).toBe("success");
     });
 
-    it("chama translateFeedback com o texto e locale do feedback", async () => {
+    it("inclui mensagem_locale no payload do insert", async () => {
       const fd = makeFormData({
         product_id: "devprint",
         mensagem: "Ótimo produto para desenvolvedores!",
         locale: "pt",
       });
       await sendFeedbackAction(fd);
-      expect(mockTranslateFeedback).toHaveBeenCalledWith(
-        "Ótimo produto para desenvolvedores!",
-        "pt"
+      expect(mockInsert).toHaveBeenCalledWith(
+        expect.objectContaining({ mensagem_locale: "pt" })
       );
     });
 
-    it("retorna success mesmo quando translateFeedback retorna null", async () => {
-      mockTranslateFeedback.mockResolvedValue(null);
+    it("não inclui mensagem_traduzida no payload do insert", async () => {
       const fd = makeFormData({
         product_id: "devprint",
         mensagem: "mensagem de feedback válida aqui",
-        locale: "en",
-      });
-      const result = await sendFeedbackAction(fd);
-      expect(result.status).toBe("success");
-    });
-
-    it("inclui locale e traduções no payload do insert", async () => {
-      mockTranslateFeedback.mockResolvedValue({ en: "Great!", es: "¡Genial!" });
-      const fd = makeFormData({
-        product_id: "devprint",
-        mensagem: "Ótimo produto aqui!",
         locale: "pt",
       });
       await sendFeedbackAction(fd);
-      expect(mockInsert).toHaveBeenCalledWith(
-        expect.objectContaining({
-          mensagem_locale: "pt",
-          mensagem_traduzida: { en: "Great!", es: "¡Genial!" },
-        })
-      );
+      const payload = mockInsert.mock.calls[0][0] as Record<string, unknown>;
+      expect(payload).not.toHaveProperty("mensagem_traduzida");
     });
   });
 
