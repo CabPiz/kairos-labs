@@ -26,7 +26,8 @@ export function AdminLanguageSwitcher() {
   }
 
   return (
-    <div role="group" aria-label="Language" className="flex gap-[0.35rem]">
+    <fieldset className="flex gap-[0.35rem] border-none p-0 m-0 min-w-0">
+      <legend className="sr-only">Language</legend>
       {LOCALES.map((locale) => {
         const { flag, label } = localeConfig[locale];
         const isActive = locale === currentLocale;
@@ -53,6 +54,6 @@ export function AdminLanguageSwitcher() {
           </button>
         );
       })}
-    </div>
+    </fieldset>
   );
 }

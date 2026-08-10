@@ -44,10 +44,11 @@ Respond with only the JSON object, no markdown, no explanation.`;
     const result = await model.generateContent(prompt);
     const text = result.response.text().trim();
 
-    const match = text.match(/\{[\s\S]*\}/);
-    if (!match) return null;
+    const start = text.indexOf("{");
+    const end = text.lastIndexOf("}");
+    if (start === -1 || end <= start) return null;
 
-    return JSON.parse(match[0]) as Partial<Record<Locale, string>>;
+    return JSON.parse(text.slice(start, end + 1)) as Partial<Record<Locale, string>>;
   } catch {
     return null;
   }

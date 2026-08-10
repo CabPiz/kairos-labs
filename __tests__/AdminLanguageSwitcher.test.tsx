@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 
 jest.mock("@/lib/admin/set-locale-action", () => ({
   setAdminLocaleAction: jest.fn().mockResolvedValue(undefined),
@@ -37,27 +37,21 @@ describe("AdminLanguageSwitcher", () => {
     }
   );
 
-  it("chama setAdminLocaleAction com locale e pathname ao clicar em outro idioma", async () => {
+  it("chama setAdminLocaleAction com locale e pathname ao clicar em outro idioma", () => {
     render(<AdminLanguageSwitcher />);
-    await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "English" }));
-    });
+    fireEvent.click(screen.getByRole("button", { name: "English" }));
     expect(setAdminLocaleAction).toHaveBeenCalledWith("en", "/admin");
   });
 
-  it("chama setAdminLocaleAction com 'es' ao clicar em Español", async () => {
+  it("chama setAdminLocaleAction com 'es' ao clicar em Español", () => {
     render(<AdminLanguageSwitcher />);
-    await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "Español" }));
-    });
+    fireEvent.click(screen.getByRole("button", { name: "Español" }));
     expect(setAdminLocaleAction).toHaveBeenCalledWith("es", "/admin");
   });
 
-  it("não chama setAdminLocaleAction ao clicar no locale já ativo", async () => {
+  it("não chama setAdminLocaleAction ao clicar no locale já ativo", () => {
     render(<AdminLanguageSwitcher />);
-    await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "Português" }));
-    });
+    fireEvent.click(screen.getByRole("button", { name: "Português" }));
     expect(setAdminLocaleAction).not.toHaveBeenCalled();
   });
 });
