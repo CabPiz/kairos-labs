@@ -4,14 +4,12 @@ import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import type { Database } from "@/lib/types";
-import { productNames } from "@/lib/product-names";
 import { getMostDemandedProduct } from "@/lib/admin/analytics";
-import { translateFeedbacksForDisplay } from "@/lib/admin/translate-feedback";
-import { type Locale } from "@/i18n/routing";
 import { KPICard } from "@/components/admin/KPICard";
 import { DemandChart } from "@/components/admin/DemandChart";
 import { LeadsTable } from "@/components/admin/LeadsTable";
 import { AdminLanguageSwitcher } from "@/components/admin/AdminLanguageSwitcher";
+import { FeedbackList } from "@/components/admin/FeedbackList";
 
 type WaitlistRow = Database["public"]["Tables"]["waitlist"]["Row"];
 type FeedbackRow = Database["public"]["Tables"]["feedback"]["Row"];
@@ -38,12 +36,6 @@ export default async function AdminPage() {
   const sugestoes: FeedbackRow[] = kpis.all_feedback ?? [];
 
   const topProduct = getMostDemandedProduct(allLeads);
-
-  const feedbacksToTranslate = sugestoes.filter((s) => s.mensagem_locale !== locale);
-  const translationMap =
-    feedbacksToTranslate.length > 0
-      ? await translateFeedbacksForDisplay(feedbacksToTranslate, locale as Locale)
-      : new Map<string, string>();
 
   return (
     <main
@@ -111,53 +103,11 @@ export default async function AdminPage() {
         <h2 className="m-0 mb-5 text-[0.72rem] font-bold tracking-[0.22em] uppercase text-white/35">
           {t("feedbackSection", { count: sugestoes.length })}
         </h2>
-
-        {sugestoes.length === 0 && (
-          <p className="text-white/35 text-[0.88rem]">
-            {t("noFeedback")}
-          </p>
-        )}
-
-        {sugestoes.length > 0 && (
-          <div className="flex flex-col gap-4 max-w-[860px]">
-            {sugestoes.map((s) => {
-              const displayText = translationMap.get(s.id) ?? s.mensagem;
-              return (
-                <div
-                  key={s.id}
-                  className="bg-white/[0.03] border border-[rgba(59,130,246,0.14)] rounded-[10px] px-6 py-5"
-                >
-                  <div className="flex items-center gap-3 mb-3 flex-wrap">
-                    <span className="text-[0.68rem] font-bold tracking-[0.14em] uppercase text-[#d4a017] bg-[rgba(212,160,23,0.12)] border border-[rgba(212,160,23,0.3)] rounded-[4px] px-[0.6rem] py-[0.2rem]">
-                      {productNames[s.product_id] ?? s.product_id}
-                    </span>
-                    <span className="text-white/30 text-[0.78rem]">
-                      {new Date(s.created_at).toLocaleString(locale)}
-                    </span>
-                    {s.mensagem_locale && s.mensagem_locale !== locale && (
-                      <span className="text-[0.65rem] font-semibold tracking-[0.1em] uppercase text-white/30 border border-white/[0.1] rounded-[3px] px-[0.45rem] py-[0.15rem]">
-                        {s.mensagem_locale.toUpperCase()}
-                      </span>
-                    )}
-                    {s.nome && (
-                      <span className="text-white/55 text-[0.78rem]">
-                        {s.nome}
-                      </span>
-                    )}
-                    {s.email && (
-                      <span className="text-white/40 text-[0.78rem]">
-                        {s.email}
-                      </span>
-                    )}
-                  </div>
-                  <p className="m-0 text-white/70 text-[0.88rem] leading-[1.7] whitespace-pre-wrap">
-                    {displayText}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        )}
+        <FeedbackList
+          feedbacks={sugestoes}
+          locale={locale}
+          noFeedbackText={t("noFeedback")}
+        />
       </section>
     </main>
   );
