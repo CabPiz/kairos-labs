@@ -6,6 +6,8 @@ import { createServerSupabaseClient } from "@/lib/supabase-server";
 import type { Database } from "@/lib/types";
 import { productNames } from "@/lib/product-names";
 import { getMostDemandedProduct } from "@/lib/admin/analytics";
+import { translateFeedbacksForDisplay } from "@/lib/admin/translate-feedback";
+import { type Locale } from "@/i18n/routing";
 import { KPICard } from "@/components/admin/KPICard";
 import { DemandChart } from "@/components/admin/DemandChart";
 import { LeadsTable } from "@/components/admin/LeadsTable";
@@ -36,6 +38,12 @@ export default async function AdminPage() {
   const sugestoes: FeedbackRow[] = kpis.all_feedback ?? [];
 
   const topProduct = getMostDemandedProduct(allLeads);
+
+  const feedbacksToTranslate = sugestoes.filter((s) => s.mensagem_locale !== locale);
+  const translationMap =
+    feedbacksToTranslate.length > 0
+      ? await translateFeedbacksForDisplay(feedbacksToTranslate, locale as Locale)
+      : new Map<string, string>();
 
   return (
     <main
@@ -113,7 +121,7 @@ export default async function AdminPage() {
         {sugestoes.length > 0 && (
           <div className="flex flex-col gap-4 max-w-[860px]">
             {sugestoes.map((s) => {
-              const translated = s.mensagem_traduzida?.[locale];
+              const displayText = translationMap.get(s.id) ?? s.mensagem;
               return (
                 <div
                   key={s.id}
@@ -143,7 +151,7 @@ export default async function AdminPage() {
                     )}
                   </div>
                   <p className="m-0 text-white/70 text-[0.88rem] leading-[1.7] whitespace-pre-wrap">
-                    {translated ?? s.mensagem}
+                    {displayText}
                   </p>
                 </div>
               );
