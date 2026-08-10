@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import type React from "react";
 
 export const toggleButtonBase: CSSProperties = {
   display: "flex",
@@ -73,6 +74,24 @@ export const menuItemInactive: CSSProperties = {
   transition: "background 0.15s, color 0.15s",
   listStyle: "none",
 };
+
+/** Gera os handlers de hover/focus para um item de menu, condicionalmente ao estado ativo. */
+export function makeMenuItemHandlers(isActive: boolean) {
+  return {
+    onMouseOver: (e: React.MouseEvent<HTMLLIElement>) => {
+      if (!isActive) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.06)";
+    },
+    onFocus: (e: React.FocusEvent<HTMLLIElement>) => {
+      if (!isActive) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.06)";
+    },
+    onMouseOut: (e: React.MouseEvent<HTMLLIElement>) => {
+      if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent";
+    },
+    onBlur: (e: React.FocusEvent<HTMLLIElement>) => {
+      if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent";
+    },
+  };
+}
 
 export const caretStyle = (open: boolean): CSSProperties => ({
   display: "inline-block",

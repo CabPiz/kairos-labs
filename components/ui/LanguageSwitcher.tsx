@@ -12,6 +12,7 @@ import {
   menuBase,
   menuItemActive,
   menuItemInactive,
+  makeMenuItemHandlers,
   caretStyle,
 } from "./language-switcher-styles";
 
@@ -85,18 +86,7 @@ export function LanguageSwitcher() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") switchLocale(loc);
                 }}
-                onMouseOver={(e) => {
-                  if (!isActive) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.06)";
-                }}
-                onFocus={(e) => {
-                  if (!isActive) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.06)";
-                }}
-                onMouseOut={(e) => {
-                  if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent";
-                }}
-                onBlur={(e) => {
-                  if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent";
-                }}
+                {...makeMenuItemHandlers(isActive)}
                 style={isActive ? menuItemActive : menuItemInactive}
               >
                 <Image src={cfg.flagImg} alt="" width={20} height={15} style={{ borderRadius: "2px", flexShrink: 0 }} />
