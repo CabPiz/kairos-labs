@@ -28,7 +28,7 @@ for (const viewport of MOBILE_VIEWPORTS) {
 
     test("CTA Falar com Especialista visível e clicável", async ({ page }) => {
       await page.goto("/");
-      const cta = page.getByRole("button", { name: /falar com especialista/i });
+      const cta = page.getByRole("link", { name: /falar com especialista/i });
       await expect(cta).toBeVisible();
       const box = await cta.boundingBox();
       expect(box).not.toBeNull();
@@ -44,9 +44,10 @@ for (const viewport of MOBILE_VIEWPORTS) {
       expect(count).toBeGreaterThan(0);
     });
 
-    test("modal de contato abre e exibe formulário em mobile", async ({ page }) => {
+    test("modal de contato abre a partir do card na seção de contato em mobile", async ({ page }) => {
       await page.goto("/");
-      await page.getByRole("button", { name: /falar com especialista/i }).click();
+      await page.locator("#contato").scrollIntoViewIfNeeded();
+      await page.getByRole("button", { name: /formulário de contato/i }).click();
       const dialog = page.getByRole("dialog");
       await expect(dialog).toBeVisible();
       await expect(dialog.getByLabel(/nome/i)).toBeVisible();

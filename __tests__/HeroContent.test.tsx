@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { HeroContent } from "@/components/sections/HeroContent";
 
 describe("HeroContent", () => {
@@ -34,17 +34,10 @@ describe("HeroContent", () => {
     expect(link).toHaveAttribute("href", "#products");
   });
 
-  it("exibe o botão Falar com Especialista", () => {
+  it("exibe o link Falar com Especialista apontando para #contato", () => {
     render(<HeroContent />);
-    expect(
-      screen.getByRole("button", { name: /falar com especialista/i })
-    ).toBeInTheDocument();
-  });
-
-  it("abre o ContactModal ao clicar em Falar com Especialista", () => {
-    render(<HeroContent />);
-    const btn = screen.getByRole("button", { name: /falar com especialista/i });
-    fireEvent.click(btn);
-    expect(btn).toBeInTheDocument();
+    const link = screen.getByRole("link", { name: /falar com especialista/i });
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute("href", "#contato");
   });
 });
