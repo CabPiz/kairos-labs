@@ -19,6 +19,10 @@ jest.mock("next/navigation", () => ({
   useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),
 }));
 
+jest.mock("@/components/admin/AdminLanguageSwitcher", () => ({
+  AdminLanguageSwitcher: () => <div data-testid="admin-language-switcher" />,
+}));
+
 jest.mock("@/components/admin/KPICard", () => ({
   KPICard: ({ label, value }: { label: string; value: string | number }) => (
     <div data-testid="kpi-card">{label}: {value}</div>
@@ -55,6 +59,8 @@ function makeKpis(
       nome: null,
       email: null,
       mensagem: `Sugestão ${i}`,
+      mensagem_locale: null,
+      mensagem_traduzida: null,
       created_at: new Date(2026, 0, i + 1).toISOString(),
       ...f,
     })),
@@ -117,6 +123,35 @@ describe("AdminPage", () => {
     await renderAdminPage();
     expect(screen.getByText("Ótimo produto!")).toBeInTheDocument();
     expect(screen.getByText("Sugestões Recebidas (1)")).toBeInTheDocument();
+  });
+
+  it("exibe mensagem traduzida quando mensagem_traduzida contém o locale ativo", async () => {
+    mockRpc.mockResolvedValue({
+      data: makeKpis([], 0, [{
+        mensagem: "Great product!",
+        mensagem_locale: "en",
+        mensagem_traduzida: { pt: "Ótimo produto!", es: "¡Excelente producto!" },
+      }]),
+    });
+    await renderAdminPage();
+    expect(screen.getByText("Ótimo produto!")).toBeInTheDocument();
+  });
+
+  it("exibe mensagem original quando mensagem_traduzida é null", async () => {
+    mockRpc.mockResolvedValue({
+      data: makeKpis([], 0, [{
+        mensagem: "Texto original sem tradução",
+        mensagem_traduzida: null,
+      }]),
+    });
+    await renderAdminPage();
+    expect(screen.getByText("Texto original sem tradução")).toBeInTheDocument();
+  });
+
+  it("renderiza o AdminLanguageSwitcher", async () => {
+    mockRpc.mockResolvedValue({ data: makeKpis() });
+    await renderAdminPage();
+    expect(screen.getByTestId("admin-language-switcher")).toBeInTheDocument();
   });
 
   it("renderiza com data nula do RPC sem quebrar", async () => {
