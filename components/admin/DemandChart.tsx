@@ -7,7 +7,7 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  Cell, // NOSONAR — Cell é a única API do Recharts para coloração por barra; sem substituto na versão atual
+  Cell,
 } from "recharts";
 
 import { productNames as PRODUCT_NAMES } from "@/lib/products";
@@ -84,7 +84,6 @@ export function DemandChart({ leads }: DemandChartProps) {
           />
           <Bar dataKey="inscritos" radius={[4, 4, 0, 0]}>
             {data.map((entry, index) => (
-              // NOSONAR — Cell é a única API do Recharts para coloração por barra
               <Cell
                 key={entry.produto}
                 fill={BAR_COLORS[index % BAR_COLORS.length]}
