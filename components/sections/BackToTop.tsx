@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from "react";
 
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 export function BackToTop() {
   const [visible, setVisible] = useState(false);
 
@@ -12,10 +16,6 @@ export function BackToTop() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
 
   if (!visible) return null;
 

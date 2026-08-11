@@ -14,18 +14,11 @@ jest.mock("@/components/sections/FeatureCards", () => ({
 import { HeroSection } from "@/components/sections/HeroSection";
 
 describe("HeroSection", () => {
-  it("renderiza o NavBar", () => {
-    render(<HeroSection />);
-    expect(screen.getByTestId("navbar-mock")).toBeInTheDocument();
-  });
-
-  it("renderiza o HeroContent", () => {
-    render(<HeroSection />);
-    expect(screen.getByTestId("herocontent-mock")).toBeInTheDocument();
-  });
-
-  it("renderiza o FeatureCards", () => {
-    render(<HeroSection />);
-    expect(screen.getByTestId("featurecards-mock")).toBeInTheDocument();
-  });
+  it.each(["navbar-mock", "herocontent-mock", "featurecards-mock"])(
+    "renderiza o elemento %s",
+    (testId) => {
+      render(<HeroSection />);
+      expect(screen.getByTestId(testId)).toBeInTheDocument();
+    }
+  );
 });

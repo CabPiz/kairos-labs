@@ -77,9 +77,7 @@ describe("FeedbackModal", () => {
       await userEvent.click(
         screen.getByRole("button", { name: /enviar sugestão/i })
       );
-      await waitFor(() =>
-        expect(screen.getByText(/sugestão enviada/i)).toBeInTheDocument()
-      );
+      expect(await screen.findByText(/sugestão enviada/i)).toBeInTheDocument();
       await userEvent.click(screen.getByRole("button", { name: /ok/i }));
       expect(onOpenChange).toHaveBeenCalledWith(false);
     });
@@ -91,11 +89,7 @@ describe("FeedbackModal", () => {
       await userEvent.click(
         screen.getByRole("button", { name: /enviar sugestão/i })
       );
-      await waitFor(() =>
-        expect(
-          screen.getByText(/pelo menos 10 caracteres/i)
-        ).toBeInTheDocument()
-      );
+      expect(await screen.findByText(/pelo menos 10 caracteres/i)).toBeInTheDocument();
     });
 
     it("exibe erro de e-mail quando formato é inválido", async () => {
@@ -108,9 +102,7 @@ describe("FeedbackModal", () => {
       );
       // fireEvent.submit bypassa a constraint validation nativa do jsdom no type="email"
       fireEvent.submit(emailInput.closest("form")!);
-      await waitFor(() =>
-        expect(screen.getByText(/formato de e-mail inválido/i)).toBeInTheDocument()
-      );
+      expect(await screen.findByText(/formato de e-mail inválido/i)).toBeInTheDocument();
     });
 
     it("aceita nome preenchido no submit", async () => {
@@ -127,9 +119,7 @@ describe("FeedbackModal", () => {
       await userEvent.click(
         screen.getByRole("button", { name: /enviar sugestão/i })
       );
-      await waitFor(() =>
-        expect(screen.getByText(/sugestão enviada/i)).toBeInTheDocument()
-      );
+      expect(await screen.findByText(/sugestão enviada/i)).toBeInTheDocument();
     });
   });
 
