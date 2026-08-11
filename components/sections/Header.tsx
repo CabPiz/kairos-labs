@@ -26,7 +26,7 @@ export function Header() {
           </span>
           <span className="flex items-center gap-1.5 text-[9px] tracking-[0.12em] uppercase text-amber-400 
             bg-amber-400/8 border border-amber-400/25 rounded px-1.5 py-0.5 w-fit">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_5px_#fbbf24]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_5px_#fbbf24]" />{" "}
             Marca Protocolada · INPI Nº 944610498
           </span>
         </div>
