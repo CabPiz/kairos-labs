@@ -10,7 +10,10 @@ const waitlistSchema = z.object({
   email: z
     .string()
     .min(1, "E-mail é obrigatório.")
-    .email("Formato de e-mail inválido."),
+    .refine(
+      (val) => { const at = val.indexOf("@"); return at > 0 && val.indexOf(".", at) > at + 1; },
+      { message: "Formato de e-mail inválido." }
+    ),
   product_id: z.enum([
     "devprint",
     "ai-saas",

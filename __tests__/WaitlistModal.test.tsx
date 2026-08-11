@@ -147,9 +147,7 @@ describe("WaitlistModal", () => {
       await userEvent.click(
         screen.getByRole("button", { name: /garantir acesso antecipado/i })
       );
-      await waitFor(() =>
-        expect(screen.getByText(/você está na lista/i)).toBeInTheDocument()
-      );
+      expect(await screen.findByText(/você está na lista/i)).toBeInTheDocument();
       await userEvent.click(screen.getByRole("button", { name: /ok/i }));
       expect(onOpenChange).toHaveBeenCalledWith(false);
     });
@@ -165,9 +163,7 @@ describe("WaitlistModal", () => {
       await userEvent.click(
         screen.getByRole("button", { name: /garantir acesso antecipado/i })
       );
-      await waitFor(() =>
-        expect(screen.getByText(/já registrado/i)).toBeInTheDocument()
-      );
+      expect(await screen.findByText(/já registrado/i)).toBeInTheDocument();
       await userEvent.click(screen.getByRole("button", { name: /ok/i }));
       expect(onOpenChange).toHaveBeenCalledWith(false);
     });

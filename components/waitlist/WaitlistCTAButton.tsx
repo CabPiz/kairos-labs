@@ -4,10 +4,10 @@ import { useState } from "react";
 import { WaitlistModal } from "./WaitlistModal";
 
 interface WaitlistCTAButtonProps {
-  productId: string;
-  productName: string;
-  productColor: string;
-  ctaLabel: string;
+  readonly productId: string;
+  readonly productName: string;
+  readonly productColor: string;
+  readonly ctaLabel: string;
 }
 
 export function WaitlistCTAButton({
