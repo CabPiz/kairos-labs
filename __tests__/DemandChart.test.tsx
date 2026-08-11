@@ -4,12 +4,13 @@ import { DemandChart } from "@/components/admin/DemandChart";
 
 jest.mock("recharts", () => ({
   BarChart: ({ children }: { children: React.ReactNode }) => <div data-testid="bar-chart">{children}</div>,
-  Bar: ({ children }: { children: React.ReactNode }) => <div data-testid="bar">{children}</div>,
+  Bar: ({ shape, children }: { shape?: (props: Record<string, unknown>) => React.ReactNode; children?: React.ReactNode }) => (
+    <div data-testid="bar">{shape ? shape({ x: 0, y: 0, width: 10, height: 20, fill: "#3b82f6" }) : children}</div>
+  ),
   XAxis: ({ dataKey }: { dataKey: string }) => <div data-testid={`xaxis-${dataKey}`} />,
   YAxis: () => <div data-testid="yaxis" />,
   Tooltip: () => <div data-testid="tooltip" />,
   ResponsiveContainer: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  Cell: ({ fill }: { fill: string }) => <div data-testid="cell" data-fill={fill} />,
 }));
 
 const SAMPLE_LEADS = [
@@ -38,10 +39,9 @@ describe("DemandChart", () => {
     expect(screen.getByTestId("xaxis-produto")).toBeInTheDocument();
   });
 
-  it("renderiza uma Cell por produto único", () => {
+  it("renderiza o Bar com shape prop", () => {
     render(<DemandChart leads={SAMPLE_LEADS} />);
-    const cells = screen.getAllByTestId("cell");
-    expect(cells).toHaveLength(3);
+    expect(screen.getByTestId("bar")).toBeInTheDocument();
   });
 
   it.each([

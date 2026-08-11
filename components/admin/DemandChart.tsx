@@ -7,7 +7,6 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  Cell,
 } from "recharts";
 
 import { productNames as PRODUCT_NAMES } from "@/lib/products";
@@ -21,6 +20,19 @@ interface DemandChartProps {
 interface ChartEntry {
   produto: string;
   inscritos: number;
+  fill: string;
+}
+
+interface BarShapeProps {
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  fill?: string;
+}
+
+function coloredBar({ x = 0, y = 0, width = 0, height = 0, fill = "#000" }: Readonly<BarShapeProps>) {
+  return <rect x={x} y={y} width={width} height={height} fill={fill} rx={4} ry={4} />;
 }
 
 function aggregateByProduct(leads: { product_id: string }[]): ChartEntry[] {
@@ -33,7 +45,11 @@ function aggregateByProduct(leads: { product_id: string }[]): ChartEntry[] {
       produto: PRODUCT_NAMES[id] ?? id,
       inscritos,
     }))
-    .sort((a, b) => b.inscritos - a.inscritos);
+    .sort((a, b) => b.inscritos - a.inscritos)
+    .map((entry, index) => ({
+      ...entry,
+      fill: BAR_COLORS[index % BAR_COLORS.length],
+    }));
 }
 
 export function DemandChart({ leads }: DemandChartProps) {
@@ -82,14 +98,7 @@ export function DemandChart({ leads }: DemandChartProps) {
             }}
             formatter={(value) => [value, "Inscritos"]}
           />
-          <Bar dataKey="inscritos" radius={[4, 4, 0, 0]}>
-            {data.map((entry, index) => (
-              <Cell
-                key={entry.produto}
-                fill={BAR_COLORS[index % BAR_COLORS.length]}
-              />
-            ))}
-          </Bar>
+          <Bar dataKey="inscritos" shape={coloredBar} />
         </BarChart>
       </ResponsiveContainer>
     </div>
