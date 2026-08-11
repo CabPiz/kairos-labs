@@ -4,8 +4,8 @@
  * Uso: node scripts/check-coverage.mjs [--threshold=80]
  */
 import { readFileSync, existsSync } from 'node:fs';
-import { execSync } from 'node:child_process';
-import { resolve, sep } from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { resolve } from 'node:path';
 
 const THRESHOLD = (() => {
   const arg = process.argv.find((a) => a.startsWith('--threshold='));
@@ -27,21 +27,21 @@ function getSonarExclusions() {
 function matchesGlob(filePath, pattern) {
   // Converte glob simples em regex (suporta ** e *)
   const escaped = pattern
-    .replace(/\./g, '\\.')
-    .replace(/\*\*/g, '§§')
-    .replace(/\*/g, '[^/\\\\]*')
-    .replace(/§§/g, '.*');
-  return new RegExp(escaped).test(filePath.replace(/\\/g, '/'));
+    .replaceAll('.', String.raw`\.`)
+    .replaceAll('**', '§§')
+    .replaceAll('*', String.raw`[^/\\]*`)
+    .replaceAll('§§', '.*');
+  return new RegExp(escaped).test(filePath.replaceAll('\\', '/'));
 }
 
 // --- Arquivos modificados na branch atual vs main ---
 function getChangedFiles() {
   try {
-    const out = execSync('git diff --name-only main...HEAD', { encoding: 'utf8' });
+    const out = execFileSync('git', ['diff', '--name-only', 'main...HEAD'], { encoding: 'utf8' });
     return out.trim().split('\n').filter(Boolean);
   } catch {
     // Fallback: todos os arquivos staged
-    const out = execSync('git diff --name-only --cached', { encoding: 'utf8' });
+    const out = execFileSync('git', ['diff', '--name-only', '--cached'], { encoding: 'utf8' });
     return out.trim().split('\n').filter(Boolean);
   }
 }
@@ -103,15 +103,15 @@ if (changedFiles.length === 0) {
   process.exit(0);
 }
 
-const root = resolve('.').replace(/\\/g, '/') + '/';
+const root = resolve('.').replaceAll('\\', '/') + '/';
 
 const gaps = [];
 
 for (const [absPath, entry] of Object.entries(coverageData)) {
-  const relPath = absPath.replace(/\\/g, '/').replace(root, '');
+  const relPath = absPath.replaceAll('\\', '/').replace(root, '');
 
   // Checar se o arquivo foi modificado nesta branch
-  const wasChanged = changedFiles.some((f) => relPath.endsWith(f.replace(/\\/g, '/')));
+  const wasChanged = changedFiles.some((f) => relPath.endsWith(f.replaceAll('\\', '/')));
   if (!wasChanged) continue;
 
   // Checar se está excluído do Sonar
