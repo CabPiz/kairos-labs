@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { WaitlistModal } from "@/components/waitlist/WaitlistModal";
 import * as waitlistAction from "@/components/waitlist/waitlist-action";
@@ -79,9 +79,7 @@ describe("WaitlistModal", () => {
       await userEvent.type(input, "nao-e-email");
       // fireEvent.submit bypassa a constraint validation nativa do jsdom no type="email"
       fireEvent.submit(input.closest("form")!);
-      await waitFor(() => {
-        expect(screen.getByText(/formato de e-mail inv/i)).toBeInTheDocument();
-      });
+      expect(await screen.findByText(/formato de e-mail inv/i)).toBeInTheDocument();
     });
 
     it("não chama a action quando a validação falha", async () => {
@@ -108,9 +106,7 @@ describe("WaitlistModal", () => {
       await userEvent.click(
         screen.getByRole("button", { name: /garantir acesso antecipado/i })
       );
-      await waitFor(() => {
-        expect(screen.getByText(/você está na lista/i)).toBeInTheDocument();
-      });
+      expect(await screen.findByText(/você está na lista/i)).toBeInTheDocument();
       expect(screen.getByText("test@example.com")).toBeInTheDocument();
     });
   });
@@ -126,9 +122,7 @@ describe("WaitlistModal", () => {
       await userEvent.click(
         screen.getByRole("button", { name: /garantir acesso antecipado/i })
       );
-      await waitFor(() => {
-        expect(screen.getByText(/já registrado/i)).toBeInTheDocument();
-      });
+      expect(await screen.findByText(/já registrado/i)).toBeInTheDocument();
     });
   });
 
@@ -183,11 +177,7 @@ describe("WaitlistModal", () => {
       await userEvent.click(
         screen.getByRole("button", { name: /garantir acesso antecipado/i })
       );
-      await waitFor(() => {
-        expect(
-          screen.getByText(/erro interno/i)
-        ).toBeInTheDocument();
-      });
+      expect(await screen.findByText(/erro interno/i)).toBeInTheDocument();
     });
   });
 });

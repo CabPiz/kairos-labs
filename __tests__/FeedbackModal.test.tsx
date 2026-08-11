@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import * as feedbackAction from "@/components/feedback/feedback-action";
@@ -61,9 +61,7 @@ describe("FeedbackModal", () => {
       await userEvent.click(
         screen.getByRole("button", { name: /enviar sugestão/i })
       );
-      await waitFor(() => {
-        expect(screen.getByText(/sugestão enviada/i)).toBeInTheDocument();
-      });
+      expect(await screen.findByText(/sugestão enviada/i)).toBeInTheDocument();
     });
 
     it("botão OK no painel de sucesso chama onOpenChange(false)", async () => {
@@ -137,11 +135,7 @@ describe("FeedbackModal", () => {
       await userEvent.click(
         screen.getByRole("button", { name: /enviar sugestão/i })
       );
-      await waitFor(() => {
-        expect(
-          screen.getByText(/não foi possível/i)
-        ).toBeInTheDocument();
-      });
+      expect(await screen.findByText(/não foi possível/i)).toBeInTheDocument();
     });
   });
 });
