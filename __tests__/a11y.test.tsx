@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { axe } from "jest-axe";
 import { WaitlistModal } from "@/components/waitlist/WaitlistModal";
@@ -56,9 +56,7 @@ describe("WaitlistModal — acessibilidade (axe)", () => {
     await userEvent.click(
       screen.getByRole("button", { name: /garantir acesso antecipado/i })
     );
-    await waitFor(() =>
-      expect(screen.getByText(/você está na lista/i)).toBeInTheDocument()
-    );
+    expect(await screen.findByText(/você está na lista/i)).toBeInTheDocument();
     expect(await axe(container)).toHaveNoViolations();
   });
 
@@ -69,9 +67,7 @@ describe("WaitlistModal — acessibilidade (axe)", () => {
     await userEvent.click(
       screen.getByRole("button", { name: /garantir acesso antecipado/i })
     );
-    await waitFor(() =>
-      expect(screen.getByText(/já registrado/i)).toBeInTheDocument()
-    );
+    expect(await screen.findByText(/já registrado/i)).toBeInTheDocument();
     expect(await axe(container)).toHaveNoViolations();
   });
 
@@ -85,9 +81,7 @@ describe("WaitlistModal — acessibilidade (axe)", () => {
     await userEvent.click(
       screen.getByRole("button", { name: /garantir acesso antecipado/i })
     );
-    await waitFor(() =>
-      expect(screen.getByText(/erro interno/i)).toBeInTheDocument()
-    );
+    expect(await screen.findByText(/erro interno/i)).toBeInTheDocument();
     expect(await axe(container)).toHaveNoViolations();
   });
 });
@@ -131,9 +125,7 @@ describe("FeedbackModal — acessibilidade (axe)", () => {
     await userEvent.click(
       screen.getByRole("button", { name: /enviar sugestão/i })
     );
-    await waitFor(() =>
-      expect(screen.getByText(/sugestão enviada/i)).toBeInTheDocument()
-    );
+    expect(await screen.findByText(/sugestão enviada/i)).toBeInTheDocument();
     expect(await axe(container)).toHaveNoViolations();
   });
 });
