@@ -65,7 +65,7 @@ export function NavBar() {
                 textDecoration: "none",
               }}
             >
-              Kairos Labs<sup
+              {"Kairos Labs"}<sup
                 style={{
                   fontSize: "0.55rem",
                   WebkitTextFillColor: "rgba(200,134,10,0.8)",
