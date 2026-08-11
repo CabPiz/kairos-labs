@@ -1094,6 +1094,42 @@ matcher: [String.raw`/((?!api|_next|.*\..*).*)`],
 matcher: ["/((?!api|_next|.*\\..*).*)"], // NOSONAR — Next.js exige string literal aqui
 ```
 
+### Não modificar arquivos com baixa cobertura apenas para anotações de tipo (new_coverage Sonar)
+
+Sonar PR analysis mede `new_coverage` como a porcentagem de **linhas no diff da PR** cobertas por testes. Mesmo mudanças puramente de tipo (`Readonly<>`, `readonly`, interfaces) adicionam linhas ao diff — e se essas linhas estão em funções sem teste, elas entram como "new uncovered code".
+
+**Regra:** antes de aplicar `Readonly<>` ou `readonly` em qualquer arquivo, verificar a cobertura atual desse arquivo:
+
+```bash
+node scripts/check-coverage.mjs 2>&1 | grep "nome-do-arquivo"
+```
+
+Se o arquivo tiver funções sem cobertura (linhas sem teste), **não modificá-lo** apenas para conformidade de tipo. O Sonar tratará as assinaturas de função como linhas novas não cobertas e reprovará `new_coverage`.
+
+**Exceção:** se já existe teste cobrindo todas as funções do arquivo, a mudança de tipo é segura.
+
+> **Motivo (lição da issue #108):** adicionar `Readonly<>` a `dialog.tsx` arrastou `new_coverage` de 80.0% para 77.8% porque `DialogTrigger`, `DialogClose` e `DialogFooter` não tinham testes. Foram necessários 3 ciclos de CI para identificar e reverter a mudança.
+
+### `async function` + `FormEventHandler<void>` gera S6544 (Unhandled Promise)
+
+`React.FormEventHandler<T>` é tipado como `(event: FormEvent<T>) => void`. Uma `async function` retorna `Promise<void>`, que não é atribuível a `void` no contexto do Sonar — resulta em S6544 (Unhandled Promise = novo bug).
+
+```tsx
+// ❌ Errado — Sonar S6544: FormEventHandler é void, async retorna Promise<void>
+const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+  e.preventDefault();
+  await algumaAction();
+};
+
+// ✅ Correto — declaração de função direta, sem tipagem explícita de FormEventHandler
+async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  e.preventDefault();
+  await algumaAction();
+}
+```
+
+---
+
 ## 📝 DOCUMENTAÇÃO INLINE
 
 Documentação inline é obrigatória para: funções de `lib/`, Server Actions, hooks customizados e qualquer lógica não trivial. Usar JSDoc com `@param`, `@returns` e `@throws` quando aplicável. Não documentar o óbvio — documentar o **porquê**.
@@ -1148,4 +1184,4 @@ O Claude Code verifica se toda função criada ou modificada na sessão que se e
 ---
 
 *Kairos Labs — Cesar Antonio Brito Pizarro*
-*CLAUDE.md v2.9 — adiciona comentário de "Proposta Técnica" obrigatório antes da "Auditoria de Boas Práticas" no registro da issue (FASE 1, passo 4); padrões Sonar: S8980, S6594, S6819, S8786*
+*CLAUDE.md v3.0 — adiciona padrões Sonar: não modificar arquivos com baixa cobertura para anotações de tipo (new_coverage), S6544 async+FormEventHandler*
