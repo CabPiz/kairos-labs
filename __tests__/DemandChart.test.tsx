@@ -5,7 +5,10 @@ import { DemandChart } from "@/components/admin/DemandChart";
 jest.mock("recharts", () => ({
   BarChart: ({ children }: { children: React.ReactNode }) => <div data-testid="bar-chart">{children}</div>,
   Bar: ({ shape, children }: { shape?: (props: Record<string, unknown>) => React.ReactNode; children?: React.ReactNode }) => (
-    <div data-testid="bar">{shape ? shape({ x: 0, y: 0, width: 10, height: 20, fill: "#3b82f6" }) : children}</div>
+    <div data-testid="bar">
+      {shape ? shape({ x: 0, y: 0, width: 10, height: 20, fill: "#3b82f6" }) : children}
+      {shape && shape({})}
+    </div>
   ),
   XAxis: ({ dataKey }: { dataKey: string }) => <div data-testid={`xaxis-${dataKey}`} />,
   YAxis: () => <div data-testid="yaxis" />,

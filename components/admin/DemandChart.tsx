@@ -24,14 +24,14 @@ interface ChartEntry {
 }
 
 interface BarShapeProps {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  fill: string;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  fill?: string;
 }
 
-function coloredBar({ x, y, width, height, fill }: Readonly<BarShapeProps>) {
+function coloredBar({ x = 0, y = 0, width = 0, height = 0, fill = "#000" }: Readonly<BarShapeProps>) {
   return <rect x={x} y={y} width={width} height={height} fill={fill} rx={4} ry={4} />;
 }
 
