@@ -21,9 +21,7 @@ export function Header() {
           priority
         />
         <div className="flex flex-col gap-0.5">
-          <span className="text-xl font-bold tracking-[0.15em] bg-gradient-to-r from-blue-300 via-white to-amber-400 bg-clip-text text-transparent">
-            Kairos Labs<sup className="text-[10px] font-normal text-gray-400 not-italic ml-0.5">™</sup>
-          </span>
+          <span className="text-xl font-bold tracking-[0.15em] bg-gradient-to-r from-blue-300 via-white to-amber-400 bg-clip-text text-transparent">{"Kairos Labs"}<sup className="text-[10px] font-normal text-gray-400 not-italic ml-0.5">™</sup></span>
           <span className="flex items-center gap-1.5 text-[9px] tracking-[0.12em] uppercase text-amber-400 
             bg-amber-400/8 border border-amber-400/25 rounded px-1.5 py-0.5 w-fit">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_5px_#fbbf24]" />{" "}

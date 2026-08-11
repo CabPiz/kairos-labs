@@ -26,7 +26,7 @@ function DialogClose({ ...props }: Readonly<DialogPrimitive.Close.Props>) {
 function DialogOverlay({
   className,
   ...props
-}: DialogPrimitive.Backdrop.Props) {
+}: Readonly<DialogPrimitive.Backdrop.Props>) {
   return (
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
@@ -44,9 +44,9 @@ function DialogContent({
   children,
   showCloseButton = true,
   ...props
-}: DialogPrimitive.Popup.Props & {
+}: Readonly<DialogPrimitive.Popup.Props & {
   showCloseButton?: boolean
-}) {
+}>) {
   return (
     <DialogPortal>
       <DialogOverlay />
