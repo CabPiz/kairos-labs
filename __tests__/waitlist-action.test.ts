@@ -30,8 +30,11 @@ describe("joinWaitlistAction", () => {
       }
     });
 
-    it("retorna erro quando e-mail tem formato inválido", async () => {
-      const fd = makeFormData({ email: "nao-e-email", product_id: "devprint" });
+    it.each([
+      ["nao-e-email", "sem arroba"],
+      ["user@nodot", "arroba sem ponto depois"],
+    ])("retorna erro quando e-mail tem formato inválido (%s — %s)", async (email) => {
+      const fd = makeFormData({ email, product_id: "devprint" });
       const result = await joinWaitlistAction(fd);
       expect(result.status).toBe("error");
       if (result.status === "error") {
