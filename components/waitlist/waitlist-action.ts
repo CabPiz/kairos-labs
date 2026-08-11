@@ -12,7 +12,7 @@ const waitlistSchema = z.object({
     .min(1, "E-mail é obrigatório.")
     .refine(
       (val) => { const at = val.indexOf("@"); return at > 0 && val.indexOf(".", at) > at + 1; },
-      { message: "Formato de e-mail inválido." }
+      "Formato de e-mail inválido."
     ),
   product_id: z.enum([
     "devprint",
