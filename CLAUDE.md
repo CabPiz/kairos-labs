@@ -4,12 +4,12 @@ Arquivo de contexto lido automaticamente pelo Claude Code a cada sessão.
 Repositório: `CabPiz/kairos-labs` | Owner: `CabPiz` | Project Board: nº 3
 
 ### 📓 Diário de Aprendizado — Repositório Central
-O diário centralizado de todos os projetos fica em **`CabPiz/diario`** (privado).
+O diário centralizado de todos os projetos fica em **`CabPiz/concentrador`** (privado).
 O arquivo `1.diario_de_aprendizado.md` deste projeto está no `.gitignore` — **nunca sobe para o GitHub do projeto**.
 Ao encerrar cada sessão, o Claude Code escreve a entrada **apenas no repo central**:
 
 ```bash
-cd /tmp/diario && git pull origin main
+cd /tmp/concentrador && git pull origin main
 # inserir entrada no topo do arquivo 1.diario_de_aprendizado.md
 git add 1.diario_de_aprendizado.md
 git commit -m "diario(kairos-labs): [título curto da entrada]"
@@ -17,7 +17,7 @@ git push origin main
 ```
 
 ### 📋 Business Plan — Localização
-O business plan deste projeto está em **`CabPiz/diario`** (privado), no caminho:
+O business plan deste projeto está em **`CabPiz/concentrador`** (privado), no caminho:
 `kairos-labs/business_plan.md`
 
 O arquivo `docs/business_plan.md` deste projeto está no `.gitignore` — **nunca sobe para o GitHub do projeto**.
