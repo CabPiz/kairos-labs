@@ -3,6 +3,27 @@
 Arquivo de contexto lido automaticamente pelo Claude Code a cada sessão.
 Repositório: `CabPiz/kairos-labs` | Owner: `CabPiz` | Project Board: nº 3
 
+### 📓 Diário de Aprendizado — Repositório Central
+O diário centralizado de todos os projetos fica em **`CabPiz/diario`** (privado).
+O arquivo `1.diario_de_aprendizado.md` deste projeto está no `.gitignore` — **nunca sobe para o GitHub do projeto**.
+Ao encerrar cada sessão, o Claude Code escreve a entrada **apenas no repo central**:
+
+```bash
+cd /tmp/diario && git pull origin main
+# inserir entrada no topo do arquivo 1.diario_de_aprendizado.md
+git add 1.diario_de_aprendizado.md
+git commit -m "diario(kairos-labs): [título curto da entrada]"
+git push origin main
+```
+
+### 📋 Business Plan — Localização
+O business plan deste projeto está em **`CabPiz/diario`** (privado), no caminho:
+`kairos-labs/business_plan.md`
+
+O arquivo `docs/business_plan.md` deste projeto está no `.gitignore` — **nunca sobe para o GitHub do projeto**.
+
+**Campo obrigatório em toda entrada do diário:** `* **Projeto:** \`Kairos Labs\`` — inserir antes de `* **Issue:**`.
+
 ---
 
 ## ⚙️ PERMISSÕES DO CLAUDE CODE NESTA SESSÃO
@@ -339,6 +360,14 @@ Se qualquer item falhar: corrigir o arquivo, rodar `npm run build` e re-executar
 ---
 
 ### FASE 3 — Commits Atômicos (Claude Code executa diretamente)
+
+**Verificação obrigatória antes do primeiro `git add`:**
+
+```bash
+git branch --show-current
+```
+
+Confirmar que a branch ativa é a branch da issue (ex: `feature/107-descricao`). Se retornar `main`, parar imediatamente e mudar para a branch correta antes de qualquer commit. Commits na branch errada exigem recuperação com `merge --ff-only` + `reset --hard` — evitável com 1 segundo de verificação.
 
 **Regra:** cada commit cobre UMA mudança lógica. Commits intermediários usam `Ref #[NUMERO]`. Apenas o último usa `Closes #[NUMERO]`.
 

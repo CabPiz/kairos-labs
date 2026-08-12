@@ -3,6 +3,10 @@
 # Saída de comandos (gerado pelo Claude Code para análise)
 saida.log
 
+# Documentos privados — mantidos exclusivamente em CabPiz/diario
+1.diario_de_aprendizado.md
+docs/business_plan.md
+
 # dependencies
 /node_modules
 /.pnp
