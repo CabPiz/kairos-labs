@@ -74,11 +74,8 @@ export function ContatoSection() {
       id="contato"
       style={{
         padding: "5rem 1.5rem",
-        background: "linear-gradient(180deg, #050a14 0%, #080f1e 100%)",
-        backgroundImage: "url('/backgrounds/contact-admin-bg.webp')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
+        background: "url('/backgrounds/contact-admin-bg.webp') center/cover no-repeat, linear-gradient(180deg, #050a14 0%, #080f1e 100%)",
+        backgroundColor: "#050a14",
         borderTop: "1px solid rgba(0,240,255,0.12)",
       }}
     >
