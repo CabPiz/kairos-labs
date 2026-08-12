@@ -11,7 +11,7 @@ import {
 
 import { productNames as PRODUCT_NAMES } from "@/lib/products";
 
-const BAR_COLORS = ["#3b82f6", "#d4a017", "#6366f1", "#10b981", "#f59e0b"];
+const BAR_COLORS = ["#00F0FF", "#D4A338", "#2B7FFF", "#00F0FF", "#D4A338"];
 
 interface DemandChartProps {
   readonly leads: { product_id: string }[];
@@ -67,7 +67,7 @@ export function DemandChart({ leads }: DemandChartProps) {
     <div
       style={{
         background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(59,130,246,0.14)",
+        border: "1px solid rgba(0,240,255,0.14)",
         borderRadius: "12px",
         padding: "1.5rem",
         maxWidth: "860px",
