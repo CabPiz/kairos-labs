@@ -11,6 +11,9 @@ export default async function LoginPage() {
       style={{
         minHeight: "100vh",
         backgroundColor: "#050a14",
+        backgroundImage: "url('/backgrounds/contact-admin-bg.webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
         color: "#fff",
         fontFamily: "var(--font-inter), sans-serif",
         display: "flex",
@@ -58,12 +61,12 @@ export default async function LoginPage() {
         <h1
           style={{
             margin: "0 0 0.5rem",
-            fontFamily: "var(--font-orbitron), sans-serif",
-            fontSize: "1rem",
-            fontWeight: 800,
-            letterSpacing: "0.08em",
+            fontFamily: "var(--font-rajdhani), var(--font-michroma), sans-serif",
+            fontSize: "1.1rem",
+            fontWeight: 700,
+            letterSpacing: "0.1em",
             textTransform: "uppercase",
-            color: "#d4a017",
+            color: "#D4A338",
           }}
         >
           Kairos Labs
