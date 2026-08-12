@@ -56,8 +56,8 @@ export function NavBar() {
             alt=""
             width={250}
             height={52}
-            className="object-contain"
-            style={{ height: "32px", width: "auto" }}
+            className="object-contain h-6 sm:h-8"
+            style={{ width: "auto" }}
           />
         </Link>
 
