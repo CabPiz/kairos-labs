@@ -37,79 +37,16 @@ export function NavBar() {
           background: "linear-gradient(to bottom, rgba(7,10,18,0.85) 0%, transparent 100%)",
         }}
       >
-        {/* Logo — flex-shrink:0 evita colapso em viewports intermediários */}
-        <Link
-          href="/"
-          className="flex items-center gap-3"
-          style={{ textDecoration: "none", flexShrink: 0 }}
-        >
+        {/* Logo — imagem completa com marca e moldura */}
+        <Link href="/" style={{ textDecoration: "none", flexShrink: 0 }}>
           <Image
             src="/logo.png"
             alt="Kairos Labs"
-            width={52}
-            height={52}
-            className="rounded-lg object-contain"
+            width={110}
+            height={110}
+            className="object-contain sm:w-[110px] sm:h-[110px] w-[88px] h-[88px]"
             priority
           />
-          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-            {/* Top frame ornament — golden lines + small blue diamond, matching logo */}
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
-              <div style={{ height: "1px", width: "22px", background: "linear-gradient(to right, transparent, rgba(200,144,32,0.7))" }} />
-              <div style={{ width: "5px", height: "5px", background: "#60a5fa", transform: "rotate(45deg)", boxShadow: "0 0 4px rgba(96,165,250,0.8)", flexShrink: 0 }} />
-              <div style={{ height: "1px", width: "22px", background: "linear-gradient(to left, transparent, rgba(200,144,32,0.7))" }} />
-            </div>
-            {/* Kairos (blue metallic) + Labs™ (gold metallic) */}
-            <div style={{ display: "flex", alignItems: "baseline", gap: "0.3em" }}>
-              <span
-                style={{
-                  fontFamily: "var(--font-cormorant), serif",
-                  fontWeight: 700,
-                  fontSize: "1.35rem",
-                  letterSpacing: "0.06em",
-                  lineHeight: 1,
-                  whiteSpace: "nowrap",
-                  backgroundImage: "linear-gradient(180deg, #b8d8ff 0%, #4888e0 45%, #1840c0 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                Kairos
-              </span>
-              <span
-                style={{
-                  fontFamily: "var(--font-cormorant), serif",
-                  fontWeight: 700,
-                  fontSize: "1.35rem",
-                  letterSpacing: "0.06em",
-                  lineHeight: 1,
-                  whiteSpace: "nowrap",
-                  backgroundImage: "linear-gradient(180deg, #ffe878 0%, #c89020 50%, #8a6010 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                {"Labs"}
-                <sup
-                  style={{
-                    fontSize: "0.55rem",
-                    WebkitTextFillColor: "rgba(200,134,10,0.8)",
-                    marginLeft: "2px",
-                    verticalAlign: "super",
-                  }}
-                >
-                  {"™"}
-                </sup>
-              </span>
-            </div>
-            {/* Bottom frame ornament — golden lines + larger blue diamond, matching logo */}
-            <div style={{ display: "flex", alignItems: "center", gap: "5px", marginTop: "3px" }}>
-              <div style={{ height: "1px", width: "30px", background: "linear-gradient(to right, transparent, rgba(200,144,32,0.7))" }} />
-              <div style={{ width: "7px", height: "7px", background: "#60a5fa", transform: "rotate(45deg)", boxShadow: "0 0 6px rgba(96,165,250,0.9)", flexShrink: 0 }} />
-              <div style={{ height: "1px", width: "30px", background: "linear-gradient(to left, transparent, rgba(200,144,32,0.7))" }} />
-            </div>
-          </div>
         </Link>
 
         {/* Desktop nav — gap menor em tablet, maior em desktop */}
@@ -257,61 +194,15 @@ export function NavBar() {
             <Link
               href="/"
               onClick={handleNavLink}
-              style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}
+              style={{ textDecoration: "none" }}
             >
               <Image
                 src="/logo.png"
                 alt="Kairos Labs"
-                width={40}
-                height={40}
-                className="rounded-lg object-contain"
+                width={90}
+                height={90}
+                className="object-contain"
               />
-              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                {/* Top frame ornament */}
-                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                  <div style={{ height: "1px", width: "18px", background: "linear-gradient(to right, transparent, rgba(200,144,32,0.7))" }} />
-                  <div style={{ width: "4px", height: "4px", background: "#60a5fa", transform: "rotate(45deg)", boxShadow: "0 0 4px rgba(96,165,250,0.8)", flexShrink: 0 }} />
-                  <div style={{ height: "1px", width: "18px", background: "linear-gradient(to left, transparent, rgba(200,144,32,0.7))" }} />
-                </div>
-                <div style={{ display: "flex", alignItems: "baseline", gap: "0.3em" }}>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-cormorant), serif",
-                      fontWeight: 700,
-                      fontSize: "1.1rem",
-                      letterSpacing: "0.06em",
-                      whiteSpace: "nowrap",
-                      backgroundImage: "linear-gradient(180deg, #b8d8ff 0%, #4888e0 45%, #1840c0 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                    }}
-                  >
-                    Kairos
-                  </span>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-cormorant), serif",
-                      fontWeight: 700,
-                      fontSize: "1.1rem",
-                      letterSpacing: "0.06em",
-                      whiteSpace: "nowrap",
-                      backgroundImage: "linear-gradient(180deg, #ffe878 0%, #c89020 50%, #8a6010 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                    }}
-                  >
-                    Labs
-                  </span>
-                </div>
-                {/* Bottom frame ornament */}
-                <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "2px" }}>
-                  <div style={{ height: "1px", width: "22px", background: "linear-gradient(to right, transparent, rgba(200,144,32,0.7))" }} />
-                  <div style={{ width: "6px", height: "6px", background: "#60a5fa", transform: "rotate(45deg)", boxShadow: "0 0 5px rgba(96,165,250,0.9)", flexShrink: 0 }} />
-                  <div style={{ height: "1px", width: "22px", background: "linear-gradient(to left, transparent, rgba(200,144,32,0.7))" }} />
-                </div>
-              </div>
             </Link>
 
             <button
