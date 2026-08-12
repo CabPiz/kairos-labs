@@ -10,7 +10,8 @@ describe("Header", () => {
 
   it("exibe o nome da marca", () => {
     render(<Header />);
-    expect(screen.getByText(/Kairos Labs/i)).toBeInTheDocument();
+    // Brand name is split into two styled spans (Kairos silver + Labs gold)
+    expect(screen.getByRole("link", { name: /kairos labs/i })).toBeInTheDocument();
   });
 
   it("exibe o badge INPI", () => {

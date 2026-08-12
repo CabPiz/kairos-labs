@@ -51,32 +51,58 @@ export function NavBar() {
             className="rounded-lg object-contain"
             priority
           />
-          <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
-            <span
-              style={{
-                fontFamily: "var(--font-cinzel), serif",
-                fontWeight: 700,
-                fontSize: "1.35rem",
-                letterSpacing: "0.06em",
-                lineHeight: 1,
-                whiteSpace: "nowrap",
-                background:
-                  "linear-gradient(to right, #7ab3e0 0%, #e8f4ff 40%, #f0c040 70%, #c8860a 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                textDecoration: "none",
-              }}
-            >
-              {"Kairos Labs"}<sup
+          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+            {/* Silver "Kairos" + gold "Labs" — matching logo file */}
+            <div style={{ display: "flex", alignItems: "baseline", gap: "0.3em" }}>
+              <span
                 style={{
-                  fontSize: "0.55rem",
-                  WebkitTextFillColor: "rgba(200,134,10,0.8)",
-                  marginLeft: "2px",
-                  verticalAlign: "super",
+                  fontFamily: "var(--font-cinzel), serif",
+                  fontWeight: 700,
+                  fontSize: "1.35rem",
+                  letterSpacing: "0.06em",
+                  lineHeight: 1,
+                  whiteSpace: "nowrap",
+                  backgroundImage: "linear-gradient(180deg, #e8f2ff 0%, #a0bcd8 45%, #5880b0 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
                 }}
-              >{"™"}</sup>
-            </span>
+              >
+                Kairos
+              </span>
+              <span
+                style={{
+                  fontFamily: "var(--font-cinzel), serif",
+                  fontWeight: 700,
+                  fontSize: "1.35rem",
+                  letterSpacing: "0.06em",
+                  lineHeight: 1,
+                  whiteSpace: "nowrap",
+                  backgroundImage: "linear-gradient(180deg, #ffe08a 0%, #ffa020 45%, #c87000 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                {"Labs"}
+                <sup
+                  style={{
+                    fontSize: "0.55rem",
+                    WebkitTextFillColor: "rgba(200,134,10,0.8)",
+                    marginLeft: "2px",
+                    verticalAlign: "super",
+                  }}
+                >
+                  {"™"}
+                </sup>
+              </span>
+            </div>
+            {/* Decorative ornament (moldura) matching logo file */}
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", marginTop: "3px" }}>
+              <div style={{ height: "1px", width: "26px", background: "linear-gradient(to right, transparent, rgba(96,165,250,0.6))" }} />
+              <div style={{ width: "5px", height: "5px", background: "#60a5fa", transform: "rotate(45deg)", boxShadow: "0 0 5px rgba(96,165,250,0.9)", flexShrink: 0 }} />
+              <div style={{ height: "1px", width: "26px", background: "linear-gradient(to left, transparent, rgba(96,165,250,0.6))" }} />
+            </div>
           </div>
         </Link>
 
@@ -234,22 +260,38 @@ export function NavBar() {
                 height={40}
                 className="rounded-lg object-contain"
               />
-              <span
-                style={{
-                  fontFamily: "var(--font-cinzel), serif",
-                  fontWeight: 700,
-                  fontSize: "1.1rem",
-                  letterSpacing: "0.06em",
-                  whiteSpace: "nowrap",
-                  background:
-                    "linear-gradient(to right, #7ab3e0 0%, #e8f4ff 40%, #f0c040 70%, #c8860a 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                Kairos Labs
-              </span>
+              <div style={{ display: "flex", alignItems: "baseline", gap: "0.3em" }}>
+                <span
+                  style={{
+                    fontFamily: "var(--font-cinzel), serif",
+                    fontWeight: 700,
+                    fontSize: "1.1rem",
+                    letterSpacing: "0.06em",
+                    whiteSpace: "nowrap",
+                    backgroundImage: "linear-gradient(180deg, #e8f2ff 0%, #a0bcd8 45%, #5880b0 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
+                >
+                  Kairos
+                </span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-cinzel), serif",
+                    fontWeight: 700,
+                    fontSize: "1.1rem",
+                    letterSpacing: "0.06em",
+                    whiteSpace: "nowrap",
+                    backgroundImage: "linear-gradient(180deg, #ffe08a 0%, #ffa020 45%, #c87000 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
+                >
+                  Labs
+                </span>
+              </div>
             </Link>
 
             <button
