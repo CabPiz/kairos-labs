@@ -56,7 +56,7 @@ export function NavBar() {
             <div style={{ display: "flex", alignItems: "baseline", gap: "0.3em" }}>
               <span
                 style={{
-                  fontFamily: "var(--font-cinzel), serif",
+                  fontFamily: "var(--font-cormorant), serif",
                   fontWeight: 700,
                   fontSize: "1.35rem",
                   letterSpacing: "0.06em",
@@ -72,7 +72,7 @@ export function NavBar() {
               </span>
               <span
                 style={{
-                  fontFamily: "var(--font-cinzel), serif",
+                  fontFamily: "var(--font-cormorant), serif",
                   fontWeight: 700,
                   fontSize: "1.35rem",
                   letterSpacing: "0.06em",
@@ -263,7 +263,7 @@ export function NavBar() {
               <div style={{ display: "flex", alignItems: "baseline", gap: "0.3em" }}>
                 <span
                   style={{
-                    fontFamily: "var(--font-cinzel), serif",
+                    fontFamily: "var(--font-cormorant), serif",
                     fontWeight: 700,
                     fontSize: "1.1rem",
                     letterSpacing: "0.06em",
@@ -278,7 +278,7 @@ export function NavBar() {
                 </span>
                 <span
                   style={{
-                    fontFamily: "var(--font-cinzel), serif",
+                    fontFamily: "var(--font-cormorant), serif",
                     fontWeight: 700,
                     fontSize: "1.1rem",
                     letterSpacing: "0.06em",

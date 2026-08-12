@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Orbitron, Cinzel_Decorative, Rajdhani, Michroma, Exo_2 } from "next/font/google";
+import { Inter, Orbitron, Cinzel_Decorative, Rajdhani, Michroma, Exo_2, Cormorant_Garamond } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -39,6 +39,13 @@ const exo2 = Exo_2({
   subsets: ["latin"],
   weight: ["500", "600"],
   variable: "--font-exo2",
+  display: "swap",
+});
+
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["700"],
+  variable: "--font-cormorant",
   display: "swap",
 });
 
@@ -100,7 +107,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <html lang={locale} dir={cfg.dir}>
       <body
-        className={`${inter.variable} ${orbitron.variable} ${cinzelDecorative.variable} ${rajdhani.variable} ${michroma.variable} ${exo2.variable} ${inter.className}`}
+        className={`${inter.variable} ${orbitron.variable} ${cinzelDecorative.variable} ${rajdhani.variable} ${michroma.variable} ${exo2.variable} ${cormorant.variable} ${inter.className}`}
       >
         <NextIntlClientProvider messages={messages}>
           {children}
