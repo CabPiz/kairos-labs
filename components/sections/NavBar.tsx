@@ -52,7 +52,13 @@ export function NavBar() {
             priority
           />
           <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-            {/* Silver "Kairos" + gold "Labs" — matching logo file */}
+            {/* Top frame ornament — golden lines + small blue diamond, matching logo */}
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "3px" }}>
+              <div style={{ height: "1px", width: "22px", background: "linear-gradient(to right, transparent, rgba(200,144,32,0.7))" }} />
+              <div style={{ width: "5px", height: "5px", background: "#60a5fa", transform: "rotate(45deg)", boxShadow: "0 0 4px rgba(96,165,250,0.8)", flexShrink: 0 }} />
+              <div style={{ height: "1px", width: "22px", background: "linear-gradient(to left, transparent, rgba(200,144,32,0.7))" }} />
+            </div>
+            {/* Kairos (blue metallic) + Labs™ (gold metallic) */}
             <div style={{ display: "flex", alignItems: "baseline", gap: "0.3em" }}>
               <span
                 style={{
@@ -97,11 +103,11 @@ export function NavBar() {
                 </sup>
               </span>
             </div>
-            {/* Decorative ornament (moldura) matching logo file */}
+            {/* Bottom frame ornament — golden lines + larger blue diamond, matching logo */}
             <div style={{ display: "flex", alignItems: "center", gap: "5px", marginTop: "3px" }}>
-              <div style={{ height: "1px", width: "26px", background: "linear-gradient(to right, transparent, rgba(96,165,250,0.6))" }} />
-              <div style={{ width: "5px", height: "5px", background: "#60a5fa", transform: "rotate(45deg)", boxShadow: "0 0 5px rgba(96,165,250,0.9)", flexShrink: 0 }} />
-              <div style={{ height: "1px", width: "26px", background: "linear-gradient(to left, transparent, rgba(96,165,250,0.6))" }} />
+              <div style={{ height: "1px", width: "30px", background: "linear-gradient(to right, transparent, rgba(200,144,32,0.7))" }} />
+              <div style={{ width: "7px", height: "7px", background: "#60a5fa", transform: "rotate(45deg)", boxShadow: "0 0 6px rgba(96,165,250,0.9)", flexShrink: 0 }} />
+              <div style={{ height: "1px", width: "30px", background: "linear-gradient(to left, transparent, rgba(200,144,32,0.7))" }} />
             </div>
           </div>
         </Link>
@@ -260,37 +266,51 @@ export function NavBar() {
                 height={40}
                 className="rounded-lg object-contain"
               />
-              <div style={{ display: "flex", alignItems: "baseline", gap: "0.3em" }}>
-                <span
-                  style={{
-                    fontFamily: "var(--font-cormorant), serif",
-                    fontWeight: 700,
-                    fontSize: "1.1rem",
-                    letterSpacing: "0.06em",
-                    whiteSpace: "nowrap",
-                    backgroundImage: "linear-gradient(180deg, #b8d8ff 0%, #4888e0 45%, #1840c0 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
-                  Kairos
-                </span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-cormorant), serif",
-                    fontWeight: 700,
-                    fontSize: "1.1rem",
-                    letterSpacing: "0.06em",
-                    whiteSpace: "nowrap",
-                    backgroundImage: "linear-gradient(180deg, #ffe878 0%, #c89020 50%, #8a6010 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
-                  Labs
-                </span>
+              <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                {/* Top frame ornament */}
+                <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                  <div style={{ height: "1px", width: "18px", background: "linear-gradient(to right, transparent, rgba(200,144,32,0.7))" }} />
+                  <div style={{ width: "4px", height: "4px", background: "#60a5fa", transform: "rotate(45deg)", boxShadow: "0 0 4px rgba(96,165,250,0.8)", flexShrink: 0 }} />
+                  <div style={{ height: "1px", width: "18px", background: "linear-gradient(to left, transparent, rgba(200,144,32,0.7))" }} />
+                </div>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "0.3em" }}>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-cormorant), serif",
+                      fontWeight: 700,
+                      fontSize: "1.1rem",
+                      letterSpacing: "0.06em",
+                      whiteSpace: "nowrap",
+                      backgroundImage: "linear-gradient(180deg, #b8d8ff 0%, #4888e0 45%, #1840c0 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                    }}
+                  >
+                    Kairos
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-cormorant), serif",
+                      fontWeight: 700,
+                      fontSize: "1.1rem",
+                      letterSpacing: "0.06em",
+                      whiteSpace: "nowrap",
+                      backgroundImage: "linear-gradient(180deg, #ffe878 0%, #c89020 50%, #8a6010 100%)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                    }}
+                  >
+                    Labs
+                  </span>
+                </div>
+                {/* Bottom frame ornament */}
+                <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "2px" }}>
+                  <div style={{ height: "1px", width: "22px", background: "linear-gradient(to right, transparent, rgba(200,144,32,0.7))" }} />
+                  <div style={{ width: "6px", height: "6px", background: "#60a5fa", transform: "rotate(45deg)", boxShadow: "0 0 5px rgba(96,165,250,0.9)", flexShrink: 0 }} />
+                  <div style={{ height: "1px", width: "22px", background: "linear-gradient(to left, transparent, rgba(200,144,32,0.7))" }} />
+                </div>
               </div>
             </Link>
 
