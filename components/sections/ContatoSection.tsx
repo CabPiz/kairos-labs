@@ -56,8 +56,8 @@ const cardBaseStyle: React.CSSProperties = {
 };
 
 function onCardEnter(e: React.MouseEvent<HTMLElement> | React.FocusEvent<HTMLElement>) {
-  e.currentTarget.style.borderColor = "rgba(74,144,226,0.4)";
-  e.currentTarget.style.background = "rgba(74,144,226,0.05)";
+  e.currentTarget.style.borderColor = "rgba(0,240,255,0.4)";
+  e.currentTarget.style.background = "rgba(0,240,255,0.05)";
 }
 
 function onCardLeave(e: React.MouseEvent<HTMLElement> | React.FocusEvent<HTMLElement>) {
@@ -75,7 +75,11 @@ export function ContatoSection() {
       style={{
         padding: "5rem 1.5rem",
         background: "linear-gradient(180deg, #050a14 0%, #080f1e 100%)",
-        borderTop: "1px solid rgba(59,130,246,0.12)",
+        backgroundImage: "url('/backgrounds/contact-admin-bg.webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        borderTop: "1px solid rgba(0,240,255,0.12)",
       }}
     >
       <div style={{ maxWidth: "960px", margin: "0 auto" }}>
@@ -83,12 +87,12 @@ export function ContatoSection() {
         <p
           style={{
             margin: "0 0 0.5rem",
-            color: "rgba(74,144,226,0.8)",
+            color: "#D4A338",
             fontSize: "0.72rem",
             fontWeight: 600,
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            fontFamily: "var(--font-inter), sans-serif",
+            fontFamily: "var(--font-exo2), var(--font-inter), sans-serif",
           }}
         >
           {t("eyebrow")}
@@ -96,7 +100,7 @@ export function ContatoSection() {
         <h2
           style={{
             margin: "0 0 1rem",
-            fontFamily: "var(--font-cinzel), serif",
+            fontFamily: "var(--font-rajdhani), var(--font-michroma), sans-serif",
             fontWeight: 700,
             fontSize: "clamp(1.6rem, 4vw, 2.2rem)",
             color: "#fff",
@@ -135,7 +139,7 @@ export function ContatoSection() {
             onMouseOut={onCardLeave}
             onBlur={onCardLeave}
           >
-            <div style={{ color: "rgba(74,144,226,0.9)" }}>
+            <div style={{ color: "rgba(0,240,255,0.9)" }}>
               <FileText size={22} aria-hidden="true" />
             </div>
             <div>
@@ -163,7 +167,7 @@ export function ContatoSection() {
               <span
                 style={{
                   fontSize: "0.75rem",
-                  color: "rgba(74,144,226,0.8)",
+                  color: "#00F0FF",
                   fontWeight: 600,
                   letterSpacing: "0.06em",
                 }}
@@ -186,7 +190,7 @@ export function ContatoSection() {
               onMouseOut={onCardLeave}
               onBlur={onCardLeave}
             >
-              <div style={{ color: "rgba(74,144,226,0.9)" }}>{SOCIAL_ICONS[key]}</div>
+              <div style={{ color: "rgba(0,240,255,0.9)" }}>{SOCIAL_ICONS[key]}</div>
               <div>
                 <p
                   style={{
@@ -213,7 +217,7 @@ export function ContatoSection() {
                 <span
                   style={{
                     fontSize: "0.75rem",
-                    color: "rgba(74,144,226,0.8)",
+                    color: "#00F0FF",
                     fontWeight: 600,
                     letterSpacing: "0.06em",
                   }}
