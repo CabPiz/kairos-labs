@@ -1,12 +1,21 @@
+import type React from "react";
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
 import { getProducts } from "@/lib/products";
 import type { Product } from "@/lib/products/types";
 import { WaitlistCTAButton } from "@/components/waitlist/WaitlistCTAButton";
 
-const statusStyles: Record<string, string> = {
-  ativo: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/40",
-  breve: "bg-yellow-600/12 text-yellow-500 border border-yellow-600/35",
+const statusStyles: Record<string, React.CSSProperties> = {
+  ativo: {
+    background: "rgba(0,240,255,0.12)",
+    color: "#00F0FF",
+    border: "1px solid rgba(0,240,255,0.35)",
+  },
+  breve: {
+    background: "rgba(197,145,40,0.15)",
+    color: "#C59128",
+    border: "1px solid rgba(197,145,40,0.4)",
+  },
 };
 
 export function Products() {
@@ -15,13 +24,23 @@ export function Products() {
   const produtos = getProducts();
 
   return (
-    <section id="products" className="px-4 sm:px-10 py-20" style={{ backgroundColor: "#050a14" }}>
+    <section
+      id="products"
+      className="px-4 sm:px-10 py-20"
+      style={{
+        backgroundColor: "#050a14",
+        backgroundImage: "url('/backgrounds/products-bg.webp')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-12">
           <p className="mb-3 text-[#d4a017] text-[0.75rem] font-bold tracking-[0.22em] uppercase">
             {t("eyebrow")}
           </p>
-          <h2 className="mb-4 font-[var(--font-orbitron),sans-serif] font-extrabold tracking-[0.04em] uppercase leading-[1.15] text-[clamp(1.6rem,2.5vw,2.2rem)] text-white">
+          <h2 className="mb-4 font-[var(--font-rajdhani),var(--font-michroma),sans-serif] font-bold tracking-[0.08em] uppercase leading-[1.15] text-[clamp(1.6rem,2.5vw,2.2rem)] text-white">
             {t("title")}
           </h2>
           <p className="text-white/55 text-base leading-[1.7] max-w-[520px]">
@@ -69,7 +88,8 @@ function ProductCard({ produto, locale, t }: ProductCardProps) {
           {produto.icone}
         </div>
         <span
-          className={`text-[0.7rem] font-semibold tracking-[0.14em] uppercase rounded-[4px] px-[0.65rem] py-[0.28rem] ${statusStyles[produto.statusTipo]}`}
+          className="text-[0.7rem] font-semibold tracking-[0.14em] uppercase rounded-[4px] px-[0.65rem] py-[0.28rem]"
+          style={statusStyles[produto.statusTipo]}
         >
           {status}
         </span>
@@ -77,7 +97,7 @@ function ProductCard({ produto, locale, t }: ProductCardProps) {
 
       {/* Nome + Tagline */}
       <div>
-        <h3 className="mb-[0.35rem] font-[var(--font-orbitron),sans-serif] text-[0.95rem] font-bold tracking-[0.05em] text-white">
+        <h3 className="mb-[0.35rem] font-[var(--font-rajdhani),sans-serif] text-[1rem] font-bold tracking-[0.08em] uppercase text-white">
           {produto.nome}
         </h3>
         <p className="font-medium italic text-[0.8rem]" style={{ color: produto.cor }}>
