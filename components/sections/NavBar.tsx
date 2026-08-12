@@ -37,15 +37,27 @@ export function NavBar() {
           background: "linear-gradient(to bottom, rgba(7,10,18,0.85) 0%, transparent 100%)",
         }}
       >
-        {/* Logo — imagem completa com marca e moldura */}
-        <Link href="/" style={{ textDecoration: "none", flexShrink: 0 }}>
+        {/* Logo + wordmark */}
+        <Link
+          href="/"
+          className="flex items-center gap-2 sm:gap-3"
+          style={{ textDecoration: "none", flexShrink: 0 }}
+        >
           <Image
             src="/logo.png"
             alt="Kairos Labs"
-            width={110}
-            height={110}
-            className="object-contain sm:w-[110px] sm:h-[110px] w-[88px] h-[88px]"
+            width={52}
+            height={52}
+            className="rounded-lg object-contain w-9 h-9 sm:w-[52px] sm:h-[52px]"
             priority
+          />
+          <Image
+            src="/wordmark.png"
+            alt=""
+            width={250}
+            height={52}
+            className="object-contain"
+            style={{ height: "32px", width: "auto" }}
           />
         </Link>
 
@@ -194,14 +206,22 @@ export function NavBar() {
             <Link
               href="/"
               onClick={handleNavLink}
-              style={{ textDecoration: "none" }}
+              style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}
             >
               <Image
                 src="/logo.png"
                 alt="Kairos Labs"
-                width={90}
-                height={90}
+                width={40}
+                height={40}
+                className="rounded-lg object-contain"
+              />
+              <Image
+                src="/wordmark.png"
+                alt=""
+                width={200}
+                height={42}
                 className="object-contain"
+                style={{ height: "38px", width: "auto" }}
               />
             </Link>
 
