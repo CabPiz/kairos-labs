@@ -5,6 +5,17 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* ── Brand tokens — Kairos Labs Design System ── */
+  --color-brand-gold:      #D4A338;
+  --color-brand-gold-dark: #C59128;
+  --color-brand-cyan:      #00F0FF;
+  --color-brand-cyan-deep: #2B7FFF;
+  --color-bg-void:         #070A12;
+  --color-bg-deep:         #0B0F19;
+  --font-rajdhani:         var(--font-rajdhani);
+  --font-michroma:         var(--font-michroma);
+  --font-exo2:             var(--font-exo2);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);

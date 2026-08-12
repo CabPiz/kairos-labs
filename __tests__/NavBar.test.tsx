@@ -72,7 +72,7 @@ describe("NavBar", () => {
       render(<NavBar />);
       const btn = screen.getByRole("button", { name: /acesso/i });
       fireEvent[event](btn);
-      expect(btn.style.color).toBe("rgb(212, 160, 23)");
+      expect(btn.style.color).toBe("rgb(212, 163, 56)");
     }
   );
 

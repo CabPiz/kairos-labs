@@ -9,8 +9,8 @@ export function KPICard({ label, value, sublabel, highlight = false }: KPICardPr
   return (
     <div
       style={{
-        background: highlight ? "rgba(212,160,23,0.07)" : "rgba(255,255,255,0.03)",
-        border: `1px solid ${highlight ? "rgba(212,160,23,0.35)" : "rgba(59,130,246,0.14)"}`,
+        background: highlight ? "rgba(212,163,56,0.07)" : "rgba(255,255,255,0.03)",
+        border: `1px solid ${highlight ? "rgba(212,163,56,0.35)" : "rgba(0,240,255,0.14)"}`,
         borderRadius: "12px",
         padding: "1.5rem 1.75rem",
         display: "flex",
@@ -25,18 +25,18 @@ export function KPICard({ label, value, sublabel, highlight = false }: KPICardPr
           fontWeight: 700,
           letterSpacing: "0.2em",
           textTransform: "uppercase",
-          color: highlight ? "rgba(212,160,23,0.8)" : "rgba(255,255,255,0.35)",
+          color: highlight ? "rgba(212,163,56,0.8)" : "rgba(255,255,255,0.35)",
         }}
       >
         {label}
       </span>
       <span
         style={{
-          fontSize: "2rem",
-          fontWeight: 800,
-          color: highlight ? "#d4a017" : "#fff",
+          fontSize: "2.2rem",
+          fontWeight: 700,
+          color: highlight ? "#D4A338" : "#fff",
           lineHeight: 1,
-          fontFamily: "var(--font-orbitron), sans-serif",
+          fontFamily: "var(--font-rajdhani), sans-serif",
         }}
       >
         {value}

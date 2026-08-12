@@ -48,7 +48,7 @@ describe("ContatoSection", () => {
       render(<ContatoSection />);
       const link = screen.getByRole("link", { name: /github/i });
       fireEvent[event](link);
-      expect(link.style.borderColor).toBe("rgba(74,144,226,0.4)");
+      expect(link.style.borderColor).toBe("rgba(0,240,255,0.4)");
     }
   );
 
@@ -68,7 +68,7 @@ describe("ContatoSection", () => {
       render(<ContatoSection />);
       const btn = screen.getByRole("button", { name: /formulário de contato/i });
       fireEvent[event](btn);
-      expect(btn.style.borderColor).toBe("rgba(74,144,226,0.4)");
+      expect(btn.style.borderColor).toBe("rgba(0,240,255,0.4)");
     }
   );
 

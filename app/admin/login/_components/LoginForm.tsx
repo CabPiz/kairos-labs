@@ -84,7 +84,24 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className={`mt-2 py-[0.8rem] border-none rounded-[8px] text-[#050a14] font-bold text-[0.88rem] tracking-[0.06em] uppercase ${loading ? "bg-[rgba(212,160,23,0.5)] cursor-not-allowed" : "bg-[#d4a017] cursor-pointer"}`}
+        style={{
+          marginTop: "0.5rem",
+          paddingTop: "0.8rem",
+          paddingBottom: "0.8rem",
+          border: "none",
+          borderRadius: "8px",
+          color: "#070A12",
+          fontFamily: "var(--font-rajdhani), var(--font-inter), sans-serif",
+          fontWeight: 700,
+          fontSize: "0.9rem",
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          background: loading
+            ? "rgba(212,163,56,0.45)"
+            : "linear-gradient(135deg, #D4A338 0%, #C59128 100%)",
+          cursor: loading ? "not-allowed" : "pointer",
+          transition: "opacity 0.2s",
+        }}
       >
         {loading ? t("loading") : t("submit")}
       </button>

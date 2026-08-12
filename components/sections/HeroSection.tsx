@@ -23,7 +23,7 @@ export function HeroSection() {
           position: "absolute",
           inset: 0,
           zIndex: 0,
-          backgroundImage: "url('/hero-bg.webp')",
+          backgroundImage: "url('/backgrounds/hero-bg.webp')",
           backgroundSize: "cover",
           backgroundPosition: "center top",
           backgroundRepeat: "no-repeat",

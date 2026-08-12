@@ -16,10 +16,10 @@ export function HeroContent() {
               display: "block",
               color: "#ffffff",
               fontSize: "clamp(2.2rem, 3.8vw, 3.6rem)",
-              fontWeight: 800,
-              letterSpacing: "0.04em",
+              fontWeight: 700,
+              letterSpacing: "0.06em",
               textTransform: "uppercase",
-              fontFamily: "var(--font-orbitron), sans-serif",
+              fontFamily: "var(--font-rajdhani), var(--font-michroma), sans-serif",
             }}
           >
             {line}
@@ -29,11 +29,11 @@ export function HeroContent() {
           style={{
             display: "block",
             fontSize: "clamp(2.2rem, 3.8vw, 3.6rem)",
-            fontWeight: 800,
-            letterSpacing: "0.04em",
+            fontWeight: 700,
+            letterSpacing: "0.06em",
             textTransform: "uppercase",
-            fontFamily: "var(--font-orbitron), sans-serif",
-            color: "#d4a017",
+            fontFamily: "var(--font-rajdhani), var(--font-michroma), sans-serif",
+            color: "#D4A338",
           }}
         >
           {t("highlight")}
@@ -61,7 +61,7 @@ export function HeroContent() {
           href="#products"
           style={{
             display: "inline-block",
-            background: "#1a56db",
+            background: "#2B7FFF",
             color: "#fff",
             textDecoration: "none",
             padding: "0.7rem 1.8rem",
