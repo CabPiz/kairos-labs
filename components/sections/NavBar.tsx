@@ -40,7 +40,7 @@ export function NavBar() {
         {/* Logo + wordmark */}
         <Link
           href="/"
-          className="flex items-center gap-2 sm:gap-3"
+          className="flex items-end gap-2 sm:gap-3"
           style={{ textDecoration: "none", flexShrink: 0 }}
         >
           <Image
