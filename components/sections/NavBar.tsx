@@ -37,10 +37,10 @@ export function NavBar() {
           background: "linear-gradient(to bottom, rgba(7,10,18,0.85) 0%, transparent 100%)",
         }}
       >
-        {/* Logo — flex-shrink:0 evita colapso em viewports intermediários */}
+        {/* Logo + wordmark */}
         <Link
           href="/"
-          className="flex items-center gap-3"
+          className="flex items-end gap-2 sm:gap-3"
           style={{ textDecoration: "none", flexShrink: 0 }}
         >
           <Image
@@ -48,36 +48,17 @@ export function NavBar() {
             alt="Kairos Labs"
             width={52}
             height={52}
-            className="rounded-lg object-contain"
+            className="rounded-lg object-contain w-9 h-9 sm:w-[52px] sm:h-[52px]"
             priority
           />
-          <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
-            <span
-              style={{
-                fontFamily: "var(--font-cinzel), serif",
-                fontWeight: 700,
-                fontSize: "1.35rem",
-                letterSpacing: "0.06em",
-                lineHeight: 1,
-                whiteSpace: "nowrap",
-                background:
-                  "linear-gradient(to right, #7ab3e0 0%, #e8f4ff 40%, #f0c040 70%, #c8860a 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                textDecoration: "none",
-              }}
-            >
-              {"Kairos Labs"}<sup
-                style={{
-                  fontSize: "0.55rem",
-                  WebkitTextFillColor: "rgba(200,134,10,0.8)",
-                  marginLeft: "2px",
-                  verticalAlign: "super",
-                }}
-              >{"™"}</sup>
-            </span>
-          </div>
+          <Image
+            src="/wordmark.png"
+            alt=""
+            width={250}
+            height={52}
+            className="object-contain h-6 sm:h-8"
+            style={{ width: "auto" }}
+          />
         </Link>
 
         {/* Desktop nav — gap menor em tablet, maior em desktop */}
@@ -234,22 +215,14 @@ export function NavBar() {
                 height={40}
                 className="rounded-lg object-contain"
               />
-              <span
-                style={{
-                  fontFamily: "var(--font-cinzel), serif",
-                  fontWeight: 700,
-                  fontSize: "1.1rem",
-                  letterSpacing: "0.06em",
-                  whiteSpace: "nowrap",
-                  background:
-                    "linear-gradient(to right, #7ab3e0 0%, #e8f4ff 40%, #f0c040 70%, #c8860a 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                Kairos Labs
-              </span>
+              <Image
+                src="/wordmark.png"
+                alt=""
+                width={200}
+                height={42}
+                className="object-contain"
+                style={{ height: "38px", width: "auto" }}
+              />
             </Link>
 
             <button
