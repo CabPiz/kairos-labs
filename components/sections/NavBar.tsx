@@ -9,12 +9,12 @@ import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 const navLinkStyle = {
   color: "rgba(255,255,255,0.75)",
   fontSize: "0.78rem",
-  fontWeight: 500,
+  fontWeight: 600,
   letterSpacing: "0.18em",
   textTransform: "uppercase" as const,
   textDecoration: "none",
   transition: "color 0.2s",
-  fontFamily: "var(--font-inter), sans-serif",
+  fontFamily: "var(--font-exo2), var(--font-inter), sans-serif",
   background: "none",
   border: "none",
   cursor: "pointer",
@@ -33,6 +33,9 @@ export function NavBar() {
     <>
       <nav
         className="relative z-30 flex items-center justify-between px-4 py-4 sm:px-10 sm:py-[1.4rem]"
+        style={{
+          background: "linear-gradient(to bottom, rgba(7,10,18,0.85) 0%, transparent 100%)",
+        }}
       >
         {/* Logo — flex-shrink:0 evita colapso em viewports intermediários */}
         <Link
@@ -118,8 +121,8 @@ export function NavBar() {
             <button
               type="button"
               style={{
-                border: "1.5px solid rgba(212,160,23,0.7)",
-                color: "#d4a017",
+                border: "1.5px solid rgba(212,163,56,0.7)",
+                color: "#D4A338",
                 background: "transparent",
                 padding: "0.45rem 1.4rem",
                 fontSize: "0.78rem",
@@ -132,20 +135,20 @@ export function NavBar() {
                 fontFamily: "var(--font-inter), sans-serif",
               }}
               onMouseOver={(e) => {
-                e.currentTarget.style.background = "#d4a017";
+                e.currentTarget.style.background = "#D4A338";
                 e.currentTarget.style.color = "#050a14";
               }}
               onFocus={(e) => {
-                e.currentTarget.style.background = "#d4a017";
+                e.currentTarget.style.background = "#D4A338";
                 e.currentTarget.style.color = "#050a14";
               }}
               onMouseOut={(e) => {
                 e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "#d4a017";
+                e.currentTarget.style.color = "#D4A338";
               }}
               onBlur={(e) => {
                 e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "#d4a017";
+                e.currentTarget.style.color = "#D4A338";
               }}
             >
               {t("acesso")}
@@ -303,8 +306,8 @@ export function NavBar() {
                 style={{
                   display: "block",
                   textAlign: "center",
-                  border: "1.5px solid rgba(212,160,23,0.7)",
-                  color: "#d4a017",
+                  border: "1.5px solid rgba(212,163,56,0.7)",
+                  color: "#D4A338",
                   textDecoration: "none",
                   padding: "0.85rem 1.4rem",
                   fontSize: "0.85rem",
@@ -312,7 +315,7 @@ export function NavBar() {
                   letterSpacing: "0.18em",
                   textTransform: "uppercase",
                   borderRadius: "4px",
-                  fontFamily: "var(--font-inter), sans-serif",
+                  fontFamily: "var(--font-exo2), var(--font-inter), sans-serif",
                 }}
               >
                 {t("acesso")}

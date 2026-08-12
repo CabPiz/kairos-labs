@@ -6,24 +6,24 @@ const featureKeys = ["performance", "seguranca", "escalabilidade", "inovacao"] a
 
 const icons = {
   performance: (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4a90e2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="3"/>
       <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
     </svg>
   ),
   seguranca: (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4a90e2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
     </svg>
   ),
   escalabilidade: (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4a90e2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
       <polyline points="17 6 23 6 23 12"/>
     </svg>
   ),
   inovacao: (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4a90e2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00F0FF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="10"/>
       <line x1="12" y1="8" x2="12" y2="12"/>
       <line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -50,8 +50,8 @@ export function FeatureCards() {
               width: "48px",
               height: "48px",
               borderRadius: "8px",
-              border: "1px solid rgba(59,130,246,0.45)",
-              background: "rgba(26,86,219,0.12)",
+              border: "1px solid rgba(0,240,255,0.35)",
+              background: "rgba(0,240,255,0.08)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
