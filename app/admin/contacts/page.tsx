@@ -17,10 +17,12 @@ export default async function AdminContactsPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any;
 
-  const { data: requestsData } = await db
+  const { data: requestsData, error: requestsError } = await db
     .from("contact_requests")
     .select("*")
     .order("created_at", { ascending: false });
+
+  if (requestsError) console.error("[AdminContacts] SELECT error:", JSON.stringify(requestsError));
 
   const rows = (requestsData ?? []) as ContactRequest[];
 
@@ -73,6 +75,11 @@ export default async function AdminContactsPage() {
         </div>
       </div>
 
+      {requestsError && (
+        <pre className="text-red-400 text-xs mb-4 bg-red-900/20 p-3 rounded">
+          QUERY ERROR: {JSON.stringify(requestsError)}
+        </pre>
+      )}
       <ContactsClient contacts={contacts} />
     </main>
   );
