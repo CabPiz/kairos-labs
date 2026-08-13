@@ -1,4 +1,6 @@
-const mockInsert = jest.fn();
+const mockSingle = jest.fn();
+const mockSelect = jest.fn(() => ({ single: mockSingle }));
+const mockInsert = jest.fn(() => ({ select: mockSelect }));
 const mockFrom = jest.fn(() => ({ insert: mockInsert }));
 const mockAdminClient = { from: mockFrom };
 
@@ -11,15 +13,16 @@ import { sendContactAction } from "@/components/contact/contact-action";
 const validData = {
   name: "César Pizarro",
   email: "cesar@exemplo.com",
-  // project_type armazenado como chave locale-agnóstica desde a issue #88
   project_type: "web",
   description: "Preciso de um sistema de gestão completo para minha empresa.",
 };
 
+const SUCCESS_RESULT = { data: { id: "uuid-123" }, error: null };
+
 describe("sendContactAction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockInsert.mockResolvedValue({ error: null });
+    mockSingle.mockResolvedValue(SUCCESS_RESULT);
   });
 
   describe("validação Zod", () => {
@@ -60,15 +63,19 @@ describe("sendContactAction", () => {
   });
 
   describe("sucesso", () => {
-    it.each([
-      "web",
-      "ai",
-      "consulting",
-      "other",
-    ])("insere no Supabase com tipo de projeto '%s'", async (project_type) => {
-      const result = await sendContactAction({ ...validData, project_type });
+    it.each(["web", "ai", "consulting", "other"])(
+      "insere no Supabase com tipo de projeto '%s'",
+      async (project_type) => {
+        const result = await sendContactAction({ ...validData, project_type });
+        expect(result.status).toBe("success");
+        expect(mockFrom).toHaveBeenCalledWith("contact_requests");
+      }
+    );
+
+    it("retorna o id do registro criado no sucesso", async () => {
+      const result = await sendContactAction(validData);
       expect(result.status).toBe("success");
-      expect(mockFrom).toHaveBeenCalledWith("contact_requests");
+      if (result.status === "success") expect(result.id).toBe("uuid-123");
     });
 
     it("repassa todos os campos ao insert do Supabase", async () => {
@@ -93,7 +100,7 @@ describe("sendContactAction", () => {
 
   describe("erro do Supabase", () => {
     it("retorna error quando Supabase retorna error", async () => {
-      mockInsert.mockResolvedValue({ error: { code: "23505" } });
+      mockSingle.mockResolvedValue({ data: null, error: { code: "23505" } });
       const result = await sendContactAction(validData);
       expect(result.status).toBe("error");
       if (result.status === "error") expect(result.message).toMatch(/não foi possível/i);
