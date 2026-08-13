@@ -26,10 +26,12 @@ describe("Products", () => {
     expect(screen.getAllByText(nome).length).toBeGreaterThan(0);
   });
 
-  it("exibe botão de waitlist para cada produto", () => {
+  it("exibe botão de waitlist para produtos exceto kairos-labs", () => {
     render(<Products />);
     const buttons = screen.getAllByRole("button", { name: /waitlist/i });
-    expect(buttons.length).toBeGreaterThanOrEqual(6);
+    expect(buttons.length).toBeGreaterThanOrEqual(5);
+    const kairosBtn = screen.queryByRole("button", { name: /waitlist kairos labs/i });
+    expect(kairosBtn).not.toBeInTheDocument();
   });
 
   it("exibe links 'Saiba mais' para cada produto", () => {
