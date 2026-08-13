@@ -145,3 +145,36 @@ $$;
 
 -- Apenas usuários autenticados (o fundador) podem chamar a função
 GRANT EXECUTE ON FUNCTION public.get_dashboard_kpis() TO authenticated;
+
+-- =============================================
+-- OBSERVABILIDADE DE IA (Pilar 5)
+-- =============================================
+
+-- Tabela de registros de execução de agentes IA.
+-- RLS bloqueia todo acesso por JWT; apenas service_role (BYPASSRLS) pode escrever.
+-- Leitura para o admin via #126 deve usar service_role ou RPC SECURITY DEFINER.
+CREATE TABLE public.agent_runs (
+  id                 UUID          PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id         TEXT          NOT NULL DEFAULT 'kairos-labs',
+  session_id         TEXT,
+  user_id            UUID          REFERENCES auth.users(id),
+  agent_name         TEXT          NOT NULL,
+  model              TEXT          NOT NULL,
+  input_tokens       INT,
+  output_tokens      INT,
+  estimated_cost_usd NUMERIC(10,6),
+  latency_ms         INT,
+  tools_called       TEXT[],
+  stop_reason        TEXT,
+  status             TEXT          CHECK (status IN ('success','error','timeout','max_iter')),
+  error_message      TEXT,
+  metadata           JSONB         DEFAULT '{}',
+  created_at         TIMESTAMPTZ   DEFAULT NOW()
+);
+
+ALTER TABLE public.agent_runs ENABLE ROW LEVEL SECURITY;
+
+-- Bloqueia acesso via JWT; service_role contorna via BYPASSRLS
+CREATE POLICY "service role only" ON public.agent_runs USING (false);
+
+GRANT ALL ON public.agent_runs TO service_role;
