@@ -86,7 +86,7 @@ ALTER TABLE public.contact_requests
   ADD COLUMN IF NOT EXISTS whatsapp_preferred BOOLEAN NOT NULL DEFAULT FALSE;
 ```
 
-> Script equivalente disponível em `supabase/migrations/003_contact_requests_phone.sql`.
+> Coluna já incluída no schema unificado `supabase/migrations/001_schema.sql`.
 
 ### [Issue #101] Coluna `mensagem_locale` em `feedback` (migration 004)
 
@@ -97,7 +97,7 @@ ALTER TABLE public.feedback
   ADD COLUMN IF NOT EXISTS mensagem_locale TEXT;
 ```
 
-> Script completo disponível em `supabase/migrations/004_feedback_translation.sql` (também adiciona `mensagem_traduzida`, removida pela migration 005).
+> Coluna já incluída no schema unificado `supabase/migrations/001_schema.sql`.
 
 ### [Issue #101] Remove coluna `mensagem_traduzida` de `feedback` (migration 005)
 
@@ -108,7 +108,7 @@ ALTER TABLE public.feedback
   DROP COLUMN IF EXISTS mensagem_traduzida;
 ```
 
-> Script equivalente disponível em `supabase/migrations/005_drop_mensagem_traduzida.sql`.
+> Coluna não existe no schema unificado `supabase/migrations/001_schema.sql` (nunca foi adicionada).
 
 ---
 

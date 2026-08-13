@@ -20,65 +20,27 @@ Guia para qualquer pessoa clonar, configurar e rodar o projeto localmente.
    - **Project name:** qualquer nome (ex: `kairos-labs`)
    - **Database password:** clique em **Generate a password** e guarde o valor
    - **Region:** Americas (ou a mais próxima dos seus usuários)
-   - **Security:** desmarque **"Automatically expose new tables"** — o script de migration define os grants manualmente
-   - Deixe **"Enable automatic RLS"** desmarcado — a migration ativa o RLS explicitamente
+   - **Security:** desmarque **"Automatically expose new tables"** — o schema define os grants manualmente
+   - Deixe **"Enable automatic RLS"** desmarcado — o schema ativa o RLS explicitamente
 3. Clique em **Create new project** e aguarde ~1 minuto para o provisionamento
 
 ---
 
-## 2. Executar as migrations do banco
+## 2. Executar o schema do banco
 
-Execute as migrations **em ordem** — cada uma depende da anterior.
-
-### Migration 001 — Schema inicial
+Existe um único arquivo de schema que representa o estado completo e final do banco de dados.
 
 1. No seu projeto Supabase, acesse o **SQL Editor** (barra lateral esquerda) → **New query**
-2. Copie o conteúdo completo de [`supabase/migrations/001_initial_schema.sql`](../supabase/migrations/001_initial_schema.sql) e cole na janela
+2. Copie o conteúdo completo de [`supabase/migrations/001_schema.sql`](../supabase/migrations/001_schema.sql) e cole na janela
 3. Clique em **Run** (ou `Ctrl+Enter`)
 4. Você verá **"Success. No rows returned"**
 
-Isso cria as tabelas `waitlist` e `feedback`, ativa o RLS em ambas e define os grants corretos para `anon` e `service_role`.
+Isso cria todas as tabelas (`waitlist`, `feedback`, `contact_requests`), ativa o RLS, define os grants e cria a função `get_dashboard_kpis()` usada pelo painel admin.
 
-### Migration 002 — RPC do dashboard
-
-1. Abra uma nova query no SQL Editor
-2. Copie o conteúdo completo de [`supabase/migrations/002_dashboard_rpc.sql`](../supabase/migrations/002_dashboard_rpc.sql) e cole na janela
-3. Clique em **Run**
-4. Você verá **"Success. No rows returned"**
-
-Isso cria a função `get_dashboard_kpis()` com SECURITY DEFINER, usada pelo dashboard admin para ler dados sem depender de BYPASSRLS (service_role).
-
-### Migration 003 — Contato: telefone e WhatsApp
-
-1. Abra uma nova query no SQL Editor
-2. Copie o conteúdo completo de [`supabase/migrations/003_contact_requests_phone.sql`](../supabase/migrations/003_contact_requests_phone.sql) e cole na janela
-3. Clique em **Run**
-4. Você verá **"Success. No rows returned"**
-
-Adiciona `phone` (texto opcional) e `whatsapp_preferred` (booleano, padrão `false`) à tabela `contact_requests`, permitindo que o formulário de contato capture o canal preferido de retorno.
-
-### Migration 004 — Feedback: locale de origem
-
-1. Abra uma nova query no SQL Editor
-2. Copie o conteúdo completo de [`supabase/migrations/004_feedback_translation.sql`](../supabase/migrations/004_feedback_translation.sql) e cole na janela
-3. Clique em **Run**
-4. Você verá **"Success. No rows returned"**
-
-Adiciona `mensagem_locale` (texto) à tabela `feedback` para armazenar o idioma de origem de cada mensagem enviada. O painel admin usa esse campo para traduzir os feedbacks on-demand via API Gemini ao visualizar em outro idioma.
-
-### Migration 005 — Feedback: remove coluna mensagem_traduzida
-
-1. Abra uma nova query no SQL Editor
-2. Copie o conteúdo completo de [`supabase/migrations/005_drop_mensagem_traduzida.sql`](../supabase/migrations/005_drop_mensagem_traduzida.sql) e cole na janela
-3. Clique em **Run**
-4. Você verá **"Success. No rows returned"**
-
-Remove a coluna `mensagem_traduzida` adicionada na migration 004. As traduções agora são geradas on-demand na visualização do admin (sem armazenamento em banco).
-
-**Para verificar que as migrations rodaram corretamente**, execute essas queries no SQL Editor:
+**Para verificar que o schema rodou corretamente**, execute essas queries no SQL Editor:
 
 ```sql
--- Verificar colunas
+-- Verificar tabelas e colunas
 SELECT table_name, column_name, data_type, is_nullable
 FROM information_schema.columns
 WHERE table_schema = 'public'
@@ -101,11 +63,27 @@ FROM information_schema.routines
 WHERE routine_schema = 'public' AND routine_name = 'get_dashboard_kpis';
 ```
 
-Esperado: tabelas `waitlist`, `feedback` e `contact_requests` com suas colunas (incluindo `phone`, `whatsapp_preferred` e `mensagem_locale`), grants corretos, `rowsecurity = true` em todas as tabelas, e `get_dashboard_kpis` com `security_type = DEFINER`.
+Esperado: tabelas `waitlist`, `feedback` e `contact_requests` com suas colunas, grants corretos, `rowsecurity = true` em todas as tabelas, e `get_dashboard_kpis` com `security_type = DEFINER`.
 
 ---
 
-## 3. Configurar variáveis de ambiente
+## 3. Conceder acesso de Fundador (apenas local)
+
+O dashboard `/admin` é protegido por uma **policy RLS baseada em role** — ela verifica `app_metadata.role = 'founder'` no usuário autenticado. Esse valor é configurado manualmente em cada ambiente e nunca fica no arquivo de schema.
+
+Após criar sua conta na aplicação (via signup ou pelo painel de Auth do Supabase), execute isso uma vez no SQL Editor, substituindo pelo seu e-mail:
+
+```sql
+UPDATE auth.users
+SET raw_app_meta_data = raw_app_meta_data || '{"role": "founder"}'
+WHERE email = 'seu-email@exemplo.com';
+```
+
+> **Importante:** use seu próprio e-mail para testes locais. Nunca use o e-mail ou as credenciais do owner de produção.
+
+---
+
+## 4. Configurar variáveis de ambiente
 
 ```bash
 cp .env.example .env.local
@@ -123,7 +101,7 @@ As variáveis do SonarCloud (`SONAR_TOKEN` e `SONAR_PROJECT_KEY`) são **opciona
 
 ---
 
-## 4. Instalar e rodar
+## 5. Instalar e rodar
 
 ```bash
 # Instalar dependências
@@ -134,6 +112,18 @@ npm run dev
 ```
 
 A aplicação estará disponível em `http://localhost:3000`.
+
+---
+
+## Evoluindo o schema
+
+O schema do banco é mantido como um **único arquivo** (`supabase/migrations/001_schema.sql`) que sempre reflete o estado atual e completo do banco. Não existem migrations numeradas incrementais.
+
+Quando precisar alterar o schema (adicionar coluna, criar tabela, atualizar policy):
+
+1. Edite `supabase/migrations/001_schema.sql` diretamente
+2. Aplique a mudança específica no seu projeto Supabase via SQL Editor (só o delta — não execute o arquivo completo em um banco já existente)
+3. Faça commit do `001_schema.sql` atualizado — o histórico do git é o changelog
 
 ---
 
