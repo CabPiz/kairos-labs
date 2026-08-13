@@ -1,9 +1,9 @@
 import type React from "react";
 import Link from "next/link";
+import { WaitlistCTAButton } from "@/components/waitlist/WaitlistCTAButton";
 import { useTranslations, useLocale } from "next-intl";
 import { getProducts } from "@/lib/products";
 import type { Product } from "@/lib/products/types";
-import { WaitlistCTAButton } from "@/components/waitlist/WaitlistCTAButton";
 
 const statusStyles: Record<string, React.CSSProperties> = {
   ativo: {
@@ -110,12 +110,14 @@ function ProductCard({ produto, locale, t }: ProductCardProps) {
 
       {/* Ações */}
       <div className="flex flex-col gap-2 mt-1">
-        <WaitlistCTAButton
-          productId={produto.slug}
-          productName={produto.nome}
-          productColor={produto.cor}
-          ctaLabel={cta}
-        />
+        {produto.slug !== "kairos-labs" && (
+          <WaitlistCTAButton
+            productId={produto.slug}
+            productName={produto.nome}
+            productColor={produto.cor}
+            ctaLabel={cta}
+          />
+        )}
         <Link
           href={`/${locale}/${produto.slug}`}
           className="flex items-center justify-center px-4 py-[0.55rem] text-[0.72rem] font-semibold tracking-[0.14em] uppercase text-white/60 border border-white/15 rounded-md no-underline transition-colors hover:text-white hover:border-white/40"

@@ -212,12 +212,14 @@ export default async function ProdutoDetalhe({ params }: Readonly<Props>) {
           </div>
 
           <div className="flex gap-3 flex-wrap justify-center">
-            <WaitlistCTAButton
-              productId={slug}
-              productName={produto.nome}
-              productColor={produto.cor}
-              ctaLabel={cta}
-            />
+            {slug !== "kairos-labs" && (
+              <WaitlistCTAButton
+                productId={slug}
+                productName={produto.nome}
+                productColor={produto.cor}
+                ctaLabel={cta}
+              />
+            )}
             <FeedbackCTAButton
               productId={slug}
               productName={produto.nome}
