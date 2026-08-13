@@ -407,7 +407,12 @@
     "earlyAccess": {
       "eyebrow": "Early Access",
       "title": "Join the Waitlist",
-      "description": "Sign up to be notified at launch and help prioritize development."
+      "description": "Secure your spot and, if you already have ideas, use the button below — your feedback goes straight to the founder and shapes what gets built."
+    },
+    "feedbackCta": {
+      "eyebrow": "Contribute to the Ecosystem",
+      "title": "Your opinion builds the next product",
+      "description": "Tell us what you'd like to see, what's missing, or how we can improve. Every suggestion is read and reviewed by the founder."
     },
     "allProducts": "View All Products"
   },
