@@ -15,14 +15,30 @@ export default async function AdminContactsPage() {
   const t = await getTranslations("admin");
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: contactsData } = await (supabase as any)
+  const db = supabase as any;
+
+  const { data: requestsData } = await db
     .from("contact_requests")
-    .select("*, contact_attachments(*)")
+    .select("*")
     .order("created_at", { ascending: false });
 
-  const contacts = ((contactsData ?? []) as (ContactRequest & { contact_attachments: ContactAttachment[] })[]).map(
-    ({ contact_attachments, ...c }) => ({ ...c, attachments: contact_attachments ?? [] })
-  );
+  const rows = (requestsData ?? []) as ContactRequest[];
+
+  const { data: attachmentsData } = rows.length > 0
+    ? await db
+        .from("contact_attachments")
+        .select("*")
+        .in("contact_request_id", rows.map((r) => r.id))
+    : { data: [] };
+
+  const attachmentsByRequest = ((attachmentsData ?? []) as ContactAttachment[]).reduce<
+    Record<string, ContactAttachment[]>
+  >((acc, att) => {
+    (acc[att.contact_request_id] ??= []).push(att);
+    return acc;
+  }, {});
+
+  const contacts = rows.map((c) => ({ ...c, attachments: attachmentsByRequest[c.id] ?? [] }));
 
   return (
     <main
