@@ -2,6 +2,10 @@ import { createClient } from "@supabase/supabase-js";
 import { config } from "dotenv";
 import { resolve } from "node:path";
 
+// Polyfill para Node.js < 22 (CI usa Node 20 que não tem WebSocket nativo)
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+if (!globalThis.WebSocket) globalThis.WebSocket = require("ws");
+
 config({ path: resolve(process.cwd(), ".env.local") });
 
 const TEST_EMAIL = "contact.kairoslabs@gmail.com";
