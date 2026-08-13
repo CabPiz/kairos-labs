@@ -6,12 +6,16 @@ jest.mock("@/lib/supabase-server", () => ({
   createServerAdminClient: jest.fn(() => mockAdminClient),
 }));
 
+jest.mock("node:crypto", () => ({
+  ...jest.requireActual("node:crypto"),
+  randomUUID: () => "uuid-123",
+}));
+
 import { sendContactAction } from "@/components/contact/contact-action";
 
 const validData = {
   name: "César Pizarro",
   email: "cesar@exemplo.com",
-  // project_type armazenado como chave locale-agnóstica desde a issue #88
   project_type: "web",
   description: "Preciso de um sistema de gestão completo para minha empresa.",
 };
@@ -60,27 +64,33 @@ describe("sendContactAction", () => {
   });
 
   describe("sucesso", () => {
-    it.each([
-      "web",
-      "ai",
-      "consulting",
-      "other",
-    ])("insere no Supabase com tipo de projeto '%s'", async (project_type) => {
-      const result = await sendContactAction({ ...validData, project_type });
+    it.each(["web", "ai", "consulting", "other"])(
+      "insere no Supabase com tipo de projeto '%s'",
+      async (project_type) => {
+        const result = await sendContactAction({ ...validData, project_type });
+        expect(result.status).toBe("success");
+        expect(mockFrom).toHaveBeenCalledWith("contact_requests");
+      }
+    );
+
+    it("retorna o id do registro criado no sucesso", async () => {
+      const result = await sendContactAction(validData);
       expect(result.status).toBe("success");
-      expect(mockFrom).toHaveBeenCalledWith("contact_requests");
+      if (result.status === "success") expect(result.id).toBe("uuid-123");
     });
 
     it("repassa todos os campos ao insert do Supabase", async () => {
       await sendContactAction(validData);
-      expect(mockInsert).toHaveBeenCalledWith({
-        name: validData.name,
-        email: validData.email,
-        project_type: validData.project_type,
-        description: validData.description,
-        phone: null,
-        whatsapp_preferred: false,
-      });
+      expect(mockInsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: validData.name,
+          email: validData.email,
+          project_type: validData.project_type,
+          description: validData.description,
+          phone: null,
+          whatsapp_preferred: false,
+        })
+      );
     });
 
     it("repassa phone e whatsapp_preferred quando fornecidos", async () => {

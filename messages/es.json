@@ -336,8 +336,14 @@
       },
       "whatsapp": {
         "label": "Prefiero ser contactado por WhatsApp"
+      },
+      "attachments": {
+        "label": "Adjuntos",
+        "optional": "(opcional, hasta 5 archivos · PDF, DOCX, TXT, PNG, JPG · máx. 10 MB cada uno)",
+        "add": "Agregar archivo"
       }
     },
+    "uploadError": "No se pudieron enviar los adjuntos. Inténtalo de nuevo.",
     "projectTypes": {
       "web": "Desarrollo Web",
       "ai": "IA y Automatización",
@@ -358,7 +364,9 @@
       "projectTypeRequired": "Selecciona un tipo de proyecto.",
       "descriptionRequired": "La descripción es obligatoria.",
       "descriptionMax": "La descripción debe tener como máximo 500 caracteres.",
-      "phoneInvalid": "Número inválido. Usa código de área + número (mínimo 10 dígitos)."
+      "phoneInvalid": "Número inválido. Usa código de área + número (mínimo 10 dígitos).",
+      "fileType": "Tipo de archivo no permitido. Usa PDF, DOCX, TXT, PNG o JPG.",
+      "fileSize": "Uno o más archivos superan el límite de 10 MB."
     }
   },
   "waitlistModal": {
@@ -443,6 +451,40 @@
     "next": "Siguiente",
     "feedbackSection": "Sugerencias Recibidas ({count})",
     "noFeedback": "Ninguna sugerencia recibida aún.",
+    "contactsSection": "Solicitudes de Contacto",
+    "viewContacts": "Ver todas →",
+    "contacts": {
+      "title": "Solicitudes de Contacto",
+      "noContacts": "Ninguna solicitud recibida aún.",
+      "searchPlaceholder": "Buscar por nombre o email…",
+      "colName": "Nombre",
+      "colEmail": "Email",
+      "colType": "Tipo",
+      "colMessage": "Mensaje",
+      "colDate": "Fecha",
+      "colStatus": "Estado",
+      "colAttachments": "Adjuntos",
+      "status": {
+        "novo": "Nuevo",
+        "visualizado": "Visto",
+        "respondido": "Respondido"
+      },
+      "filter": {
+        "all": "Todos",
+        "novo": "Nuevos",
+        "visualizado": "Vistos",
+        "respondido": "Respondidos"
+      },
+      "drawer": {
+        "message": "Mensaje completo",
+        "attachments": "Adjuntos",
+        "noAttachments": "Sin adjuntos.",
+        "download": "Descargar",
+        "close": "Cerrar",
+        "loadingUrl": "Generando enlace…",
+        "urlError": "Error al generar enlace de descarga."
+      }
+    },
     "login": {
       "backToSite": "← Volver al sitio",
       "accessRestricted": "Acceso restringido al fundador",

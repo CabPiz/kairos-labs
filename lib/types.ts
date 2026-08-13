@@ -56,6 +56,70 @@ export type Database = {
           created_at?: string
         }
       }
+      contact_requests: {
+        Row: {
+          id: string
+          name: string
+          email: string
+          project_type: string
+          description: string
+          phone: string | null
+          whatsapp_preferred: boolean
+          status: 'novo' | 'visualizado' | 'respondido'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          email: string
+          project_type: string
+          description: string
+          phone?: string | null
+          whatsapp_preferred?: boolean
+          status?: 'novo' | 'visualizado' | 'respondido'
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          email?: string
+          project_type?: string
+          description?: string
+          phone?: string | null
+          whatsapp_preferred?: boolean
+          status?: 'novo' | 'visualizado' | 'respondido'
+          created_at?: string
+        }
+      }
+      contact_attachments: {
+        Row: {
+          id: string
+          contact_request_id: string
+          filename: string
+          storage_path: string
+          mime_type: string
+          size_bytes: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          contact_request_id: string
+          filename: string
+          storage_path: string
+          mime_type: string
+          size_bytes: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          contact_request_id?: string
+          filename?: string
+          storage_path?: string
+          mime_type?: string
+          size_bytes?: number
+          created_at?: string
+        }
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>

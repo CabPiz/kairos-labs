@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { createServerAdminClient } from "@/lib/supabase-server";
 import { PROJECT_TYPE_KEYS, isValidEmail, isValidPhone } from "./contact-schema";
@@ -24,7 +25,7 @@ const schema = z.object({
 
 export type ContactActionState =
   | { status: "idle" }
-  | { status: "success" }
+  | { status: "success"; id: string }
   | { status: "error"; message: string };
 
 export interface ContactFormData {
@@ -43,7 +44,7 @@ export interface ContactFormData {
  * (ver padrão documentado em CLAUDE.md › PADRÕES SONAR › Server Actions).
  *
  * @param data - Campos obrigatórios: `name`, `email`, `project_type`, `description`; opcionais: `phone`, `whatsapp_preferred`
- * @returns Estado da operação: idle | success | error
+ * @returns Estado da operação: idle | success (com id do registro criado) | error
  */
 export async function sendContactAction(
   data: ContactFormData
@@ -58,22 +59,22 @@ export async function sendContactAction(
   const { name, email, project_type, description, phone, whatsapp_preferred } = parsed.data;
 
   const supabase = createServerAdminClient();
+  const id = randomUUID();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any)
-    .from("contact_requests")
-    .insert({
-      name,
-      email,
-      project_type,
-      description,
-      phone: phone || null,
-      whatsapp_preferred: whatsapp_preferred ?? false,
-    });
+  const { error } = await (supabase as any).from("contact_requests").insert({
+    id,
+    name,
+    email,
+    project_type,
+    description,
+    phone: phone || null,
+    whatsapp_preferred: whatsapp_preferred ?? false,
+  });
 
   if (error) {
     return { status: "error", message: "Não foi possível enviar a solicitação. Tente novamente." };
   }
 
-  return { status: "success" };
+  return { status: "success", id };
 }

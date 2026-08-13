@@ -336,8 +336,14 @@
       },
       "whatsapp": {
         "label": "Prefiro ser contatado pelo WhatsApp"
+      },
+      "attachments": {
+        "label": "Anexos",
+        "optional": "(opcional, até 5 arquivos · PDF, DOCX, TXT, PNG, JPG · máx. 10 MB cada)",
+        "add": "Adicionar arquivo"
       }
     },
+    "uploadError": "Não foi possível enviar os anexos. Tente novamente.",
     "projectTypes": {
       "web": "Desenvolvimento Web",
       "ai": "IA & Automação",
@@ -358,7 +364,9 @@
       "projectTypeRequired": "Selecione um tipo de projeto.",
       "descriptionRequired": "Descrição é obrigatória.",
       "descriptionMax": "A descrição deve ter no máximo 500 caracteres.",
-      "phoneInvalid": "Número inválido. Use DDD + número (mínimo 10 dígitos)."
+      "phoneInvalid": "Número inválido. Use DDD + número (mínimo 10 dígitos).",
+      "fileType": "Tipo de arquivo não permitido. Use PDF, DOCX, TXT, PNG ou JPG.",
+      "fileSize": "Um ou mais arquivos excedem o limite de 10 MB."
     }
   },
   "waitlistModal": {
@@ -443,6 +451,40 @@
     "next": "Próxima",
     "feedbackSection": "Sugestões Recebidas ({count})",
     "noFeedback": "Nenhuma sugestão recebida ainda.",
+    "contactsSection": "Solicitações de Contato",
+    "viewContacts": "Ver todas →",
+    "contacts": {
+      "title": "Solicitações de Contato",
+      "noContacts": "Nenhuma solicitação recebida ainda.",
+      "searchPlaceholder": "Buscar por nome ou e-mail…",
+      "colName": "Nome",
+      "colEmail": "E-mail",
+      "colType": "Tipo",
+      "colMessage": "Mensagem",
+      "colDate": "Data",
+      "colStatus": "Status",
+      "colAttachments": "Anexos",
+      "status": {
+        "novo": "Novo",
+        "visualizado": "Visualizado",
+        "respondido": "Respondido"
+      },
+      "filter": {
+        "all": "Todos",
+        "novo": "Novos",
+        "visualizado": "Visualizados",
+        "respondido": "Respondidos"
+      },
+      "drawer": {
+        "message": "Mensagem completa",
+        "attachments": "Anexos",
+        "noAttachments": "Nenhum anexo.",
+        "download": "Baixar",
+        "close": "Fechar",
+        "loadingUrl": "Gerando link…",
+        "urlError": "Erro ao gerar link de download."
+      }
+    },
     "login": {
       "backToSite": "← Voltar ao site",
       "accessRestricted": "Acesso restrito ao fundador",

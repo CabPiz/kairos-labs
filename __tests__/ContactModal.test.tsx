@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ContactModal } from "@/components/contact/ContactModal";
 import * as contactAction from "@/components/contact/contact-action";
@@ -97,6 +97,53 @@ describe("ContactModal", () => {
       await userEvent.type(screen.getByLabelText(/descrição breve/i), "Preciso de um sistema de gestão completo.");
       await userEvent.click(screen.getByRole("button", { name: /enviar mensagem/i }));
       expect(await screen.findByText(/erro interno/i)).toBeInTheDocument();
+    });
+  });
+
+  describe("anexos de arquivo", () => {
+    function makeFile(name: string, type: string): File {
+      return new File(["x"], name, { type });
+    }
+
+    function upload(file: File) {
+      const input = document.getElementById("contact-files") as HTMLInputElement;
+      const files = [file];
+      const mockFileList = Object.assign(files, { item: (i: number) => files[i] });
+      Object.defineProperty(input, "files", { value: mockFileList, configurable: true });
+      fireEvent.change(input);
+    }
+
+    it("exibe o botão de adicionar arquivo", () => {
+      renderModal();
+      expect(screen.getByText(/adicionar arquivo/i)).toBeInTheDocument();
+    });
+
+    it("adiciona arquivo válido à lista após seleção", () => {
+      renderModal();
+      upload(makeFile("doc.pdf", "application/pdf"));
+      expect(screen.getByText("doc.pdf")).toBeInTheDocument();
+    });
+
+    it("exibe erro de tipo de arquivo não permitido", () => {
+      renderModal();
+      upload(makeFile("virus.exe", "application/x-msdownload"));
+      expect(screen.getByText(/tipo de arquivo não permitido/i)).toBeInTheDocument();
+    });
+
+    it("não adiciona arquivo acima de 10 MB à lista", () => {
+      renderModal();
+      const bigFile = new File([new ArrayBuffer(11 * 1024 * 1024)], "grande.pdf", { type: "application/pdf" });
+      upload(bigFile);
+      // The file should not be added (either error shown or silently rejected)
+      expect(screen.queryByText("grande.pdf")).not.toBeInTheDocument();
+    });
+
+    it("remove arquivo ao clicar no botão de remoção", () => {
+      renderModal();
+      upload(makeFile("doc.pdf", "application/pdf"));
+      expect(screen.getByText("doc.pdf")).toBeInTheDocument();
+      fireEvent.click(screen.getByRole("button", { name: /remover doc\.pdf/i }));
+      expect(screen.queryByText("doc.pdf")).not.toBeInTheDocument();
     });
   });
 });
