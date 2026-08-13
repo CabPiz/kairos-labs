@@ -48,8 +48,10 @@ export async function runAgent(
             content: JSON.stringify(await executeTool(b.name, b.input)),
           })),
       );
-      messages.push({ role: "assistant", content: response.content });
-      messages.push({ role: "user", content: toolResults });
+      messages.push(
+        { role: "assistant", content: response.content },
+        { role: "user", content: toolResults },
+      );
     }
   }
 

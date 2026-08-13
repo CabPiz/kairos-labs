@@ -29,7 +29,7 @@ export async function extractStructured<T>(
   });
 
   const toolUse = response.content.find((b) => b.type === "tool_use");
-  if (!toolUse || toolUse.type !== "tool_use") {
+  if (toolUse?.type !== "tool_use") {
     throw new Error("LLM não retornou structured output");
   }
   return schema.parse(toolUse.input);
