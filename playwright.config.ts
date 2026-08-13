@@ -5,6 +5,7 @@ config({ path: ".env.local" });
 
 export default defineConfig({
   testDir: "./e2e",
+  globalTeardown: "./e2e/global-teardown.ts",
   timeout: 30_000,
   retries: process.env.CI ? 1 : 0,
   workers: 1,
