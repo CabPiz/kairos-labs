@@ -99,7 +99,7 @@ export default async function AdminPage() {
         <LeadsTable leads={allLeads} />
       </section>
 
-      <section>
+      <section className="mb-12">
         <h2 className="m-0 mb-5 text-[0.72rem] font-bold tracking-[0.22em] uppercase text-white/35">
           {t("feedbackSection", { count: sugestoes.length })}
         </h2>
@@ -108,6 +108,21 @@ export default async function AdminPage() {
           locale={locale}
           noFeedbackText={t("noFeedback")}
         />
+      </section>
+
+      <section>
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="m-0 text-[0.72rem] font-bold tracking-[0.22em] uppercase text-white/35">
+            {t("contactsSection")}
+          </h2>
+          <Link
+            href="/admin/contacts"
+            prefetch={false}
+            className="text-[0.7rem] font-semibold tracking-[0.1em] text-blue-400/70 hover:text-blue-300 no-underline transition-colors"
+          >
+            {t("viewContacts")}
+          </Link>
+        </div>
       </section>
     </main>
   );
