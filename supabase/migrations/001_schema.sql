@@ -40,16 +40,29 @@ CREATE TABLE public.contact_requests (
   description         TEXT                     NOT NULL,
   phone               TEXT,
   whatsapp_preferred  BOOLEAN                  NOT NULL DEFAULT FALSE,
+  status              TEXT                     NOT NULL DEFAULT 'novo' CHECK (status IN ('novo', 'visualizado', 'respondido')),
   created_at          TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Tabela de Anexos de Solicitações de Contato
+CREATE TABLE public.contact_attachments (
+  id                 UUID                     DEFAULT gen_random_uuid() PRIMARY KEY,
+  contact_request_id UUID                     NOT NULL REFERENCES public.contact_requests(id) ON DELETE CASCADE,
+  filename           TEXT                     NOT NULL,
+  storage_path       TEXT                     NOT NULL,
+  mime_type          TEXT                     NOT NULL,
+  size_bytes         BIGINT                   NOT NULL,
+  created_at         TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
 -- =============================================
 -- RLS — Row Level Security
 -- =============================================
 
-ALTER TABLE public.waitlist        ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.feedback        ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.contact_requests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.waitlist            ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.feedback            ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.contact_requests    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.contact_attachments ENABLE ROW LEVEL SECURITY;
 
 -- Acesso de fundador é baseado em app_metadata.role = 'founder'.
 -- Acesso de fundador é verificado via app_metadata.role.
@@ -94,7 +107,7 @@ CREATE POLICY "Fundador pode deletar entradas de feedback"
   ON public.feedback FOR DELETE
   USING (public.is_founder());
 
--- contact_requests: inserção via service_role (Server Action), leitura pelo fundador
+-- contact_requests: inserção via service_role (Server Action), leitura/update pelo fundador
 CREATE POLICY "Acesso exclusivo do fundador às solicitações de contato"
   ON public.contact_requests FOR SELECT
   USING (public.is_founder());
@@ -103,15 +116,25 @@ CREATE POLICY "Fundador pode deletar solicitações de contato"
   ON public.contact_requests FOR DELETE
   USING (public.is_founder());
 
+-- contact_attachments: inserção via service_role (route handler), leitura/exclusão pelo fundador
+CREATE POLICY "Fundador lê anexos de contato"
+  ON public.contact_attachments FOR SELECT
+  USING (public.is_founder());
+
+CREATE POLICY "Fundador pode deletar anexos de contato"
+  ON public.contact_attachments FOR DELETE
+  USING (public.is_founder());
+
 -- =============================================
 -- GRANTS
 -- =============================================
 
-GRANT INSERT ON public.waitlist         TO anon;
-GRANT INSERT ON public.feedback         TO anon;
-GRANT ALL    ON public.waitlist         TO service_role;
-GRANT ALL    ON public.feedback         TO service_role;
-GRANT ALL    ON public.contact_requests TO service_role;
+GRANT INSERT ON public.waitlist            TO anon;
+GRANT INSERT ON public.feedback            TO anon;
+GRANT ALL    ON public.waitlist            TO service_role;
+GRANT ALL    ON public.feedback            TO service_role;
+GRANT ALL    ON public.contact_requests    TO service_role;
+GRANT ALL    ON public.contact_attachments TO service_role;
 
 -- =============================================
 -- FUNÇÕES
@@ -178,3 +201,24 @@ ALTER TABLE public.agent_runs ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "service role only" ON public.agent_runs USING (false);
 
 GRANT ALL ON public.agent_runs TO service_role;
+
+-- =============================================
+-- STORAGE
+-- =============================================
+
+-- Bucket privado para anexos de solicitações de contato
+-- file_size_limit: 10 MB; tipos aceitos: PDF, DOCX, TXT, PNG, JPG
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'contact-attachments',
+  'contact-attachments',
+  false,
+  10485760,
+  ARRAY['application/pdf','application/vnd.openxmlformats-officedocument.wordprocessingml.document','text/plain','image/png','image/jpeg']
+) ON CONFLICT (id) DO NOTHING;
+
+-- service_role gerencia o bucket via route handler (upload, signed URLs, delete)
+CREATE POLICY "service_role gerencia contact-attachments"
+  ON storage.objects FOR ALL TO service_role
+  USING (bucket_id = 'contact-attachments')
+  WITH CHECK (bucket_id = 'contact-attachments');
