@@ -52,8 +52,21 @@ ALTER TABLE public.feedback        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.contact_requests ENABLE ROW LEVEL SECURITY;
 
 -- Acesso de fundador é baseado em app_metadata.role = 'founder'.
+-- Acesso de fundador é verificado via app_metadata.role.
 -- Nunca hardcode emails nas policies — configure o metadata
 -- no painel Supabase ou via SQL (ver CONTRIBUTING.md).
+
+-- Função auxiliar: retorna true se o usuário autenticado tem role 'founder'.
+-- STABLE + SECURITY DEFINER garantem avaliação correta no contexto de RLS.
+CREATE OR REPLACE FUNCTION public.is_founder()
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT (auth.jwt() -> 'app_metadata' ->> 'role') = 'founder';
+$$;
 
 -- waitlist: inserção pública, leitura/exclusão apenas pelo fundador
 CREATE POLICY "Permitir inserção pública na waitlist"
@@ -62,11 +75,11 @@ CREATE POLICY "Permitir inserção pública na waitlist"
 
 CREATE POLICY "Acesso exclusivo do fundador à waitlist"
   ON public.waitlist FOR SELECT
-  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'founder');
+  USING (public.is_founder());
 
 CREATE POLICY "Fundador pode deletar entradas da waitlist"
   ON public.waitlist FOR DELETE
-  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'founder');
+  USING (public.is_founder());
 
 -- feedback: inserção pública, leitura/exclusão apenas pelo fundador
 CREATE POLICY "Permitir inserção pública no feedback"
@@ -75,20 +88,20 @@ CREATE POLICY "Permitir inserção pública no feedback"
 
 CREATE POLICY "Acesso exclusivo do fundador ao feedback"
   ON public.feedback FOR SELECT
-  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'founder');
+  USING (public.is_founder());
 
 CREATE POLICY "Fundador pode deletar entradas de feedback"
   ON public.feedback FOR DELETE
-  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'founder');
+  USING (public.is_founder());
 
 -- contact_requests: inserção via service_role (Server Action), leitura pelo fundador
 CREATE POLICY "Acesso exclusivo do fundador às solicitações de contato"
   ON public.contact_requests FOR SELECT
-  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'founder');
+  USING (public.is_founder());
 
 CREATE POLICY "Fundador pode deletar solicitações de contato"
   ON public.contact_requests FOR DELETE
-  USING ((auth.jwt() -> 'app_metadata' ->> 'role') = 'founder');
+  USING (public.is_founder());
 
 -- =============================================
 -- GRANTS
