@@ -37,7 +37,7 @@ There is a single schema file that represents the complete, final state of the d
 3. Click **Run** (or `Ctrl+Enter`)
 4. You should see **"Success. No rows returned"**
 
-This creates all tables (`waitlist`, `feedback`, `contact_requests`), enables RLS, sets grants, and creates the `get_dashboard_kpis()` function used by the admin dashboard.
+This creates all tables (`waitlist`, `feedback`, `contact_requests`, `contact_attachments`), enables RLS, sets grants, creates the `get_dashboard_kpis()` function, and configures the `contact-attachments` Storage bucket.
 
 **To verify the schema ran correctly**, run these queries in the SQL Editor:
 
@@ -65,7 +65,9 @@ FROM information_schema.routines
 WHERE routine_schema = 'public' AND routine_name = 'get_dashboard_kpis';
 ```
 
-Expected: `waitlist`, `feedback`, and `contact_requests` tables with their columns, correct grants, `rowsecurity = true` on all tables, and `get_dashboard_kpis` with `security_type = DEFINER`.
+Expected: `waitlist`, `feedback`, `contact_requests`, and `contact_attachments` tables with their columns, correct grants, `rowsecurity = true` on all tables, `get_dashboard_kpis` with `security_type = DEFINER`, and a `contact-attachments` bucket (private) in Supabase Storage.
+
+**To verify the Storage bucket was created**, go to **Storage** (left sidebar) in your Supabase project and confirm the `contact-attachments` bucket appears with **Public** set to **false**.
 
 ---
 
