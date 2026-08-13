@@ -6,8 +6,8 @@ jest.mock("@/lib/supabase-server", () => ({
   createServerAdminClient: jest.fn(() => mockAdminClient),
 }));
 
-jest.mock("crypto", () => ({
-  ...jest.requireActual("crypto"),
+jest.mock("node:crypto", () => ({
+  ...jest.requireActual("node:crypto"),
   randomUUID: () => "uuid-123",
 }));
 

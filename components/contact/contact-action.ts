@@ -1,6 +1,6 @@
 "use server";
 
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { createServerAdminClient } from "@/lib/supabase-server";
 import { PROJECT_TYPE_KEYS, isValidEmail, isValidPhone } from "./contact-schema";
