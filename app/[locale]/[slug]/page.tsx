@@ -201,13 +201,13 @@ export default async function ProdutoDetalhe({ params }: Readonly<Props>) {
               className="mb-[0.4rem] text-[0.72rem] font-bold tracking-[0.22em] uppercase"
               style={{ color: produto.cor }}
             >
-              {t("earlyAccess.eyebrow")}
+              {slug === "kairos-labs" ? t("feedbackCta.eyebrow") : t("earlyAccess.eyebrow")}
             </p>
             <h2 className="mb-[0.6rem] font-[var(--font-rajdhani),var(--font-michroma),sans-serif] text-[1.1rem] font-bold tracking-[0.06em] uppercase text-white">
-              {t("earlyAccess.title")}
+              {slug === "kairos-labs" ? t("feedbackCta.title") : t("earlyAccess.title")}
             </h2>
             <p className="text-white/45 text-[0.85rem] leading-[1.6]">
-              {t("earlyAccess.description")}
+              {slug === "kairos-labs" ? t("feedbackCta.description") : t("earlyAccess.description")}
             </p>
           </div>
 

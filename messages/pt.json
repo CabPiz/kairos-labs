@@ -407,7 +407,12 @@
     "earlyAccess": {
       "eyebrow": "Acesso Antecipado",
       "title": "Entrar na Lista de Espera",
-      "description": "Cadastre-se para ser notificado no lançamento e ajudar a priorizar o desenvolvimento."
+      "description": "Garanta sua vaga e, se já tiver ideias, use o botão abaixo — seu feedback chega direto ao fundador e influencia o que será construído."
+    },
+    "feedbackCta": {
+      "eyebrow": "Contribua com o Ecossistema",
+      "title": "Sua opinião constrói o próximo produto",
+      "description": "Conte o que você gostaria de ver, o que falta ou como podemos melhorar. Cada sugestão é lida e analisada pelo fundador."
     },
     "allProducts": "Ver Todos os Produtos"
   },
