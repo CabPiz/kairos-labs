@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "crypto";
 import { z } from "zod";
 import { createServerAdminClient } from "@/lib/supabase-server";
 import { PROJECT_TYPE_KEYS, isValidEmail, isValidPhone } from "./contact-schema";
@@ -58,24 +59,22 @@ export async function sendContactAction(
   const { name, email, project_type, description, phone, whatsapp_preferred } = parsed.data;
 
   const supabase = createServerAdminClient();
+  const id = randomUUID();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: inserted, error } = await (supabase as any)
-    .from("contact_requests")
-    .insert({
-      name,
-      email,
-      project_type,
-      description,
-      phone: phone || null,
-      whatsapp_preferred: whatsapp_preferred ?? false,
-    })
-    .select("id")
-    .single();
+  const { error } = await (supabase as any).from("contact_requests").insert({
+    id,
+    name,
+    email,
+    project_type,
+    description,
+    phone: phone || null,
+    whatsapp_preferred: whatsapp_preferred ?? false,
+  });
 
   if (error) {
     return { status: "error", message: "Não foi possível enviar a solicitação. Tente novamente." };
   }
 
-  return { status: "success", id: (inserted as { id: string }).id };
+  return { status: "success", id };
 }

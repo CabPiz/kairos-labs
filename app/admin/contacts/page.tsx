@@ -11,10 +11,8 @@ type ContactRequest = Database["public"]["Tables"]["contact_requests"]["Row"];
 type ContactAttachment = Database["public"]["Tables"]["contact_attachments"]["Row"];
 
 export default async function AdminContactsPage() {
-  const [supabase, t] = await Promise.all([
-    createServerAdminClient(),
-    getTranslations("admin"),
-  ]);
+  const supabase = createServerAdminClient();
+  const t = await getTranslations("admin");
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: contactsData } = await (supabase as any)

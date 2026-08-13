@@ -1,11 +1,14 @@
-const mockSingle = jest.fn();
-const mockSelect = jest.fn(() => ({ single: mockSingle }));
-const mockInsert = jest.fn(() => ({ select: mockSelect }));
+const mockInsert = jest.fn();
 const mockFrom = jest.fn(() => ({ insert: mockInsert }));
 const mockAdminClient = { from: mockFrom };
 
 jest.mock("@/lib/supabase-server", () => ({
   createServerAdminClient: jest.fn(() => mockAdminClient),
+}));
+
+jest.mock("crypto", () => ({
+  ...jest.requireActual("crypto"),
+  randomUUID: () => "uuid-123",
 }));
 
 import { sendContactAction } from "@/components/contact/contact-action";
@@ -17,12 +20,10 @@ const validData = {
   description: "Preciso de um sistema de gestão completo para minha empresa.",
 };
 
-const SUCCESS_RESULT = { data: { id: "uuid-123" }, error: null };
-
 describe("sendContactAction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockSingle.mockResolvedValue(SUCCESS_RESULT);
+    mockInsert.mockResolvedValue({ error: null });
   });
 
   describe("validação Zod", () => {
@@ -80,14 +81,16 @@ describe("sendContactAction", () => {
 
     it("repassa todos os campos ao insert do Supabase", async () => {
       await sendContactAction(validData);
-      expect(mockInsert).toHaveBeenCalledWith({
-        name: validData.name,
-        email: validData.email,
-        project_type: validData.project_type,
-        description: validData.description,
-        phone: null,
-        whatsapp_preferred: false,
-      });
+      expect(mockInsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: validData.name,
+          email: validData.email,
+          project_type: validData.project_type,
+          description: validData.description,
+          phone: null,
+          whatsapp_preferred: false,
+        })
+      );
     });
 
     it("repassa phone e whatsapp_preferred quando fornecidos", async () => {
@@ -100,7 +103,7 @@ describe("sendContactAction", () => {
 
   describe("erro do Supabase", () => {
     it("retorna error quando Supabase retorna error", async () => {
-      mockSingle.mockResolvedValue({ data: null, error: { code: "23505" } });
+      mockInsert.mockResolvedValue({ error: { code: "23505" } });
       const result = await sendContactAction(validData);
       expect(result.status).toBe("error");
       if (result.status === "error") expect(result.message).toMatch(/não foi possível/i);

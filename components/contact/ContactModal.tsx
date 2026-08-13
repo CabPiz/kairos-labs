@@ -20,7 +20,7 @@ import { ModalErrorBanner } from "@/components/ui/ModalErrorBanner";
 import { sendContactAction, type ContactActionState, type ContactFormData } from "./contact-action";
 import { PROJECT_TYPE_KEYS, isValidEmail, isValidPhone } from "./contact-schema";
 
-const ALLOWED_TYPES = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain", "image/png", "image/jpeg"];
+const ALLOWED_TYPES = new Set(["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain", "image/png", "image/jpeg"]);
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const MAX_FILES = 5;
 
@@ -84,13 +84,13 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
     if (incoming.length === 0) return;
 
     const merged = [...selectedFiles, ...incoming].slice(0, MAX_FILES);
-    const invalid = merged.find((f) => !ALLOWED_TYPES.includes(f.type));
-    if (invalid) {
+    const hasInvalidType = merged.some((f) => !ALLOWED_TYPES.has(f.type));
+    if (hasInvalidType) {
       setFileError(t("validation.fileType"));
       return;
     }
-    const oversized = merged.find((f) => f.size > MAX_FILE_SIZE);
-    if (oversized) {
+    const hasOversized = merged.some((f) => f.size > MAX_FILE_SIZE);
+    if (hasOversized) {
       setFileError(t("validation.fileSize"));
       return;
     }

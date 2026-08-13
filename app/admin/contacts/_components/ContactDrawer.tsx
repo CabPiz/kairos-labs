@@ -20,13 +20,19 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+const STATUS_STYLE: Record<string, { color: string; background: string; border: string }> = {
+  novo: { color: "#60a5fa", background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.3)" },
+  respondido: { color: "#10b981", background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.3)" },
+  visualizado: { color: "#9ca3af", background: "rgba(156,163,175,0.1)", border: "1px solid rgba(156,163,175,0.2)" },
+};
+
 export function ContactDrawer({ contact, onClose }: ContactDrawerProps) {
   const t = useTranslations("admin");
   const [, startTransition] = useTransition();
   const [downloadStates, setDownloadStates] = useState<Record<string, "idle" | "loading" | "error">>({});
 
   useEffect(() => {
-    if (!contact || contact.status !== "novo") return;
+    if (contact?.status !== "novo") return;
     startTransition(async () => {
       await markContactViewed(contact.id);
     });
@@ -58,7 +64,6 @@ export function ContactDrawer({ contact, onClose }: ContactDrawerProps) {
       )}
 
       <aside
-        role="complementary"
         aria-label={t("contacts.drawer.message")}
         className="fixed top-0 right-0 h-full w-full max-w-[480px] z-50 flex flex-col transition-transform duration-300"
         style={{
@@ -88,11 +93,7 @@ export function ContactDrawer({ contact, onClose }: ContactDrawerProps) {
               <div className="flex gap-2 flex-wrap">
                 <span
                   className="text-[0.65rem] font-bold tracking-[0.14em] uppercase rounded-[4px] px-[0.6rem] py-[0.2rem]"
-                  style={{
-                    color: contact.status === "novo" ? "#60a5fa" : contact.status === "respondido" ? "#10b981" : "#9ca3af",
-                    background: contact.status === "novo" ? "rgba(96,165,250,0.1)" : contact.status === "respondido" ? "rgba(16,185,129,0.1)" : "rgba(156,163,175,0.1)",
-                    border: `1px solid ${contact.status === "novo" ? "rgba(96,165,250,0.3)" : contact.status === "respondido" ? "rgba(16,185,129,0.3)" : "rgba(156,163,175,0.2)"}`,
-                  }}
+                  style={STATUS_STYLE[contact.status] ?? STATUS_STYLE.visualizado}
                 >
                   {t(`contacts.status.${contact.status}`)}
                 </span>

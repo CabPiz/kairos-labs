@@ -11,14 +11,12 @@ const ALLOWED_TYPES = new Set([
 const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 const MAX_FILES = 5;
 
-/**
- * Recebe arquivos de anexo de uma solicitação de contato, valida tipo/tamanho,
- * faz upload para o bucket `contact-attachments` e registra os metadados em
- * `contact_attachments`. Chamada pelo ContactModal após `sendContactAction` retornar sucesso.
- *
- * @param request - FormData com campos `contact_request_id` (string) e `files` (File[])
- * @returns 200 com `{ paths: string[] }` ou 400/500 com `{ error: string }`
- */
+function validateFile(file: File): string | null {
+  if (!ALLOWED_TYPES.has(file.type)) return `Tipo não permitido: ${file.name}. Aceitos: PDF, DOCX, TXT, PNG, JPG.`;
+  if (file.size > MAX_SIZE_BYTES) return `${file.name} excede o limite de 10 MB.`;
+  return null;
+}
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   let formData: FormData;
   try {
@@ -33,26 +31,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   const files = formData.getAll("files") as File[];
-  if (files.length === 0) {
-    return NextResponse.json({ paths: [] });
-  }
+  if (files.length === 0) return NextResponse.json({ paths: [] });
   if (files.length > MAX_FILES) {
     return NextResponse.json({ error: `Máximo de ${MAX_FILES} arquivos por envio.` }, { status: 400 });
   }
 
   for (const file of files) {
-    if (!ALLOWED_TYPES.has(file.type)) {
-      return NextResponse.json(
-        { error: `Tipo não permitido: ${file.name}. Aceitos: PDF, DOCX, TXT, PNG, JPG.` },
-        { status: 400 }
-      );
-    }
-    if (file.size > MAX_SIZE_BYTES) {
-      return NextResponse.json(
-        { error: `${file.name} excede o limite de 10 MB.` },
-        { status: 400 }
-      );
-    }
+    const validationError = validateFile(file);
+    if (validationError) return NextResponse.json({ error: validationError }, { status: 400 });
   }
 
   const supabase = createServerAdminClient();
