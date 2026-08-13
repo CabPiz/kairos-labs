@@ -22,65 +22,27 @@ Guide for anyone to clone, set up, and run the project locally.
    - **Project name:** any name (e.g. `kairos-labs`)
    - **Database password:** click **Generate a password** and save it
    - **Region:** Americas (or closest to your users)
-   - **Security:** uncheck **"Automatically expose new tables"** — the migration script sets grants manually
-   - Leave **"Enable automatic RLS"** unchecked — the migration enables RLS explicitly
+   - **Security:** uncheck **"Automatically expose new tables"** — the schema script sets grants manually
+   - Leave **"Enable automatic RLS"** unchecked — the schema enables RLS explicitly
 3. Click **Create new project** and wait ~1 minute for provisioning
 
 ---
 
-## 2. Run the database migrations
+## 2. Run the database schema
 
-Run the migrations **in order** — each one builds on the previous.
-
-### Migration 001 — Initial schema
+There is a single schema file that represents the complete, final state of the database.
 
 1. In your Supabase project, go to **SQL Editor** (left sidebar) → **New query**
-2. Copy the full contents of [`supabase/migrations/001_initial_schema.sql`](./supabase/migrations/001_initial_schema.sql) and paste it
+2. Copy the full contents of [`supabase/migrations/001_schema.sql`](./supabase/migrations/001_schema.sql) and paste it
 3. Click **Run** (or `Ctrl+Enter`)
 4. You should see **"Success. No rows returned"**
 
-This creates the `waitlist` and `feedback` tables, enables RLS on both, and sets the correct grants for `anon` and `service_role`.
+This creates all tables (`waitlist`, `feedback`, `contact_requests`), enables RLS, sets grants, and creates the `get_dashboard_kpis()` function used by the admin dashboard.
 
-### Migration 002 — Dashboard RPC
-
-1. Open a new query in the SQL Editor
-2. Copy the full contents of [`supabase/migrations/002_dashboard_rpc.sql`](./supabase/migrations/002_dashboard_rpc.sql) and paste it
-3. Click **Run**
-4. You should see **"Success. No rows returned"**
-
-This creates the `get_dashboard_kpis()` SECURITY DEFINER function used by the admin dashboard to read data without relying on `BYPASSRLS` (service_role).
-
-### Migration 003 — Contact requests: phone and WhatsApp
-
-1. Open a new query in the SQL Editor
-2. Copy the full contents of [`supabase/migrations/003_contact_requests_phone.sql`](./supabase/migrations/003_contact_requests_phone.sql) and paste it
-3. Click **Run**
-4. You should see **"Success. No rows returned"**
-
-This adds `phone` (optional text) and `whatsapp_preferred` (boolean, default `false`) to the `contact_requests` table, enabling the contact form to capture the preferred return channel.
-
-### Migration 004 — Feedback: source locale
-
-1. Open a new query in the SQL Editor
-2. Copy the full contents of [`supabase/migrations/004_feedback_translation.sql`](./supabase/migrations/004_feedback_translation.sql) and paste it
-3. Click **Run**
-4. You should see **"Success. No rows returned"**
-
-This adds `mensagem_locale` (text) to the `feedback` table to store the original locale of each submitted message. The admin dashboard uses this to translate feedbacks on-demand via the Gemini API when viewing in a different language.
-
-### Migration 005 — Feedback: remove mensagem_traduzida column
-
-1. Open a new query in the SQL Editor
-2. Copy the full contents of [`supabase/migrations/005_drop_mensagem_traduzida.sql`](./supabase/migrations/005_drop_mensagem_traduzida.sql) and paste it
-3. Click **Run**
-4. You should see **"Success. No rows returned"**
-
-This removes the `mensagem_traduzida` column that was added in migration 004. Translations are now generated on-demand in the admin view (not stored in the database).
-
-**To verify all migrations ran correctly**, run these queries in the SQL Editor:
+**To verify the schema ran correctly**, run these queries in the SQL Editor:
 
 ```sql
--- Check columns
+-- Check tables and columns
 SELECT table_name, column_name, data_type, is_nullable
 FROM information_schema.columns
 WHERE table_schema = 'public'
@@ -103,11 +65,27 @@ FROM information_schema.routines
 WHERE routine_schema = 'public' AND routine_name = 'get_dashboard_kpis';
 ```
 
-Expected: `waitlist`, `feedback`, and `contact_requests` tables with their columns (including `phone`, `whatsapp_preferred`, and `mensagem_locale`), correct grants, `rowsecurity = true` on all tables, and `get_dashboard_kpis` with `security_type = DEFINER`.
+Expected: `waitlist`, `feedback`, and `contact_requests` tables with their columns, correct grants, `rowsecurity = true` on all tables, and `get_dashboard_kpis` with `security_type = DEFINER`.
 
 ---
 
-## 3. Configure environment variables
+## 3. Grant yourself founder access (local only)
+
+The `/admin` dashboard is protected by a **role-based RLS policy** — it checks `app_metadata.role = 'founder'` on the authenticated user. This is set manually for each environment and is never stored in the schema file.
+
+After creating your account in the app (sign up or use the Supabase Auth dashboard), run this once in the SQL Editor, replacing the email with yours:
+
+```sql
+UPDATE auth.users
+SET raw_app_meta_data = raw_app_meta_data || '{"role": "founder"}'
+WHERE email = 'your-email@example.com';
+```
+
+> **Important:** use your own email for local testing. Never use the production owner's email or credentials.
+
+---
+
+## 4. Configure environment variables
 
 ```bash
 cp .env.example .env.local
@@ -125,7 +103,7 @@ The SonarCloud variables (`SONAR_TOKEN` and `SONAR_PROJECT_KEY`) are **optional*
 
 ---
 
-## 4. Install and run
+## 5. Install and run
 
 ```bash
 # Install dependencies
@@ -136,6 +114,18 @@ npm run dev
 ```
 
 The application will be available at `http://localhost:3000`.
+
+---
+
+## Evolving the schema
+
+The database schema is maintained as a **single file** (`supabase/migrations/001_schema.sql`) that always reflects the current, complete state of the database. There are no numbered incremental migrations.
+
+When you need to change the schema (add a column, create a table, update a policy):
+
+1. Edit `supabase/migrations/001_schema.sql` directly
+2. Apply the specific change to your Supabase project via the SQL Editor (just the delta — do not re-run the full file on an existing database)
+3. Commit the updated `001_schema.sql` — the git history is the changelog
 
 ---
 

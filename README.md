@@ -93,11 +93,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-> **Database:** the app requires a Supabase project. Run the migration scripts in order in the Supabase SQL Editor:
-> 1. [`supabase/migrations/001_initial_schema.sql`](./supabase/migrations/001_initial_schema.sql) — tables, RLS policies, and grants
-> 2. [`supabase/migrations/002_dashboard_rpc.sql`](./supabase/migrations/002_dashboard_rpc.sql) — `get_dashboard_kpis()` SECURITY DEFINER function
-> 3. [`supabase/migrations/003_contact_requests_phone.sql`](./supabase/migrations/003_contact_requests_phone.sql) — `phone` and `whatsapp_preferred` columns in `contact_requests`
-> 4. [`supabase/migrations/004_feedback_translation.sql`](./supabase/migrations/004_feedback_translation.sql) — `mensagem_locale` and `mensagem_traduzida` columns in `feedback` (auto-translation via Gemini)
+> **Database:** the app requires a Supabase project. In the Supabase SQL Editor, run [`supabase/migrations/001_schema.sql`](./supabase/migrations/001_schema.sql) — this single file creates all tables, enables RLS, sets grants, and creates the `get_dashboard_kpis()` function.
 
 For the full setup guide, test commands, and contribution standards, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 

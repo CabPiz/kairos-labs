@@ -31,8 +31,8 @@ use: {
 **Sintoma:** `sucesso: mensagem válida atinge o Supabase e exibe confirmação` falha em CI com timeout de 15s no locator `getByText(/sugestão enviada/i)`. Os demais 45 testes passam.  
 **Causa:** A Server Action `sendFeedbackAction` inclui colunas novas (`mensagem_locale`, `mensagem_traduzida`) no INSERT. Se a migração SQL correspondente (`supabase/migrations/004_feedback_translation.sql`) não foi aplicada no projeto Supabase, o banco retorna `code: 42703 — column does not exist`. A action retorna `{ status: "error" }` e o modal exibe mensagem de erro — o estado de sucesso nunca é atingido.  
 **Causa raiz vs. hipótese:** O timeout de tradução *não* é a causa — `GOOGLE_AI_API_KEY` não está no job `e2e` do CI, então `translateFeedback` retorna `null` imediatamente.  
-**Correção:** Aplicar a migração SQL no SQL Editor do Supabase antes de rodar os testes E2E em CI.  
-**Padrão a seguir:** Toda nova coluna adicionada ao INSERT de uma Server Action exige migração aplicada no banco antes do deploy/CI. A migração existe em `supabase/migrations/` mas precisa ser executada manualmente no painel do Supabase (SQL Editor → New query → Run).
+**Correção:** Aplicar o schema no SQL Editor do Supabase antes de rodar os testes E2E em CI.  
+**Padrão a seguir:** Toda nova coluna adicionada ao INSERT de uma Server Action exige schema atualizado no banco antes do deploy/CI. O schema unificado está em `supabase/migrations/001_schema.sql` — edite-o diretamente e aplique o delta no painel do Supabase (SQL Editor → New query → Run).
 
 ---
 
