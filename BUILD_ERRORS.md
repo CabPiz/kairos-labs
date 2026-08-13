@@ -36,6 +36,22 @@ use: {
 
 ---
 
+### [CI-003] E2E globalTeardown falha com "native WebSocket not found" em Node.js 20
+
+**Issue de origem:** #120  
+**Sintoma:** `Error: Node.js detected but native WebSocket not found.` no step `e2e` do CI, disparado pela função `globalTeardown` ao chamar `createClient` do `@supabase/supabase-js`.  
+**Causa:** O CI usa Node.js 20, que não possui `WebSocket` nativo (disponível apenas no Node.js 22+). O Supabase SDK inicializa o `RealtimeClient` no construtor do `createClient`, mesmo quando nenhuma subscrição realtime é usada — e falha ao não encontrar `globalThis.WebSocket`.  
+**Correção:** Adicionar polyfill via `require("ws")` antes de chamar `createClient`. O pacote `ws` já é dependência transitiva do projeto.  
+**Padrão a seguir:**
+```ts
+// No início do arquivo que usa createClient em Node.js < 22:
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+if (!globalThis.WebSocket) globalThis.WebSocket = require("ws");
+```
+**Nota:** Não instalar `ws` como dependência direta — ele já está disponível via Playwright ou Supabase SDK como transitiva. Verificar com `ls node_modules/ws` antes de propor instalação.
+
+---
+
 ## [ERR-001] ZodError: Property 'errors' does not exist
 
 **Issue de origem:** #12  
