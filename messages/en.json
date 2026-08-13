@@ -336,8 +336,14 @@
       },
       "whatsapp": {
         "label": "I prefer to be contacted via WhatsApp"
+      },
+      "attachments": {
+        "label": "Attachments",
+        "optional": "(optional, up to 5 files · PDF, DOCX, TXT, PNG, JPG · max. 10 MB each)",
+        "add": "Add file"
       }
     },
+    "uploadError": "Could not upload attachments. Please try again.",
     "projectTypes": {
       "web": "Web Development",
       "ai": "AI & Automation",
@@ -358,7 +364,9 @@
       "projectTypeRequired": "Please select a project type.",
       "descriptionRequired": "Description is required.",
       "descriptionMax": "Description must be at most 500 characters.",
-      "phoneInvalid": "Invalid number. Please include area code (minimum 10 digits)."
+      "phoneInvalid": "Invalid number. Please include area code (minimum 10 digits).",
+      "fileType": "File type not allowed. Use PDF, DOCX, TXT, PNG or JPG.",
+      "fileSize": "One or more files exceed the 10 MB limit."
     }
   },
   "waitlistModal": {
@@ -443,6 +451,40 @@
     "next": "Next",
     "feedbackSection": "Feedback Received ({count})",
     "noFeedback": "No feedback received yet.",
+    "contactsSection": "Contact Requests",
+    "viewContacts": "View all →",
+    "contacts": {
+      "title": "Contact Requests",
+      "noContacts": "No requests received yet.",
+      "searchPlaceholder": "Search by name or email…",
+      "colName": "Name",
+      "colEmail": "Email",
+      "colType": "Type",
+      "colMessage": "Message",
+      "colDate": "Date",
+      "colStatus": "Status",
+      "colAttachments": "Attachments",
+      "status": {
+        "novo": "New",
+        "visualizado": "Viewed",
+        "respondido": "Replied"
+      },
+      "filter": {
+        "all": "All",
+        "novo": "New",
+        "visualizado": "Viewed",
+        "respondido": "Replied"
+      },
+      "drawer": {
+        "message": "Full message",
+        "attachments": "Attachments",
+        "noAttachments": "No attachments.",
+        "download": "Download",
+        "close": "Close",
+        "loadingUrl": "Generating link…",
+        "urlError": "Error generating download link."
+      }
+    },
     "login": {
       "backToSite": "← Back to site",
       "accessRestricted": "Restricted founder access",
