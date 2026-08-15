@@ -3,9 +3,11 @@
 # Saída de comandos (gerado pelo Claude Code para análise)
 saida.log
 
-# Documentos privados — mantidos exclusivamente em CabPiz/diario
+# Documentos privados — mantidos exclusivamente em CabPiz/concentrador
 1.diario_de_aprendizado.md
 docs/business_plan.md
+docs/PRD.md
+docs/architecture.md
 
 # dependencies
 /node_modules
