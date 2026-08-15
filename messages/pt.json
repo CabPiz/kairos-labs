@@ -308,7 +308,22 @@
     }
   },
   "footer": {
-    "copyright": "Kairos Labs © 2026 — INPI Processo Nº 944610498"
+    "copyright": "Kairos Labs © 2026 — INPI Processo Nº 944610498",
+    "privacy": "Política de Privacidade",
+    "terms": "Termos de Uso",
+    "aiPowered": "Desenvolvido com IA"
+  },
+  "legal": {
+    "aiGeneratedContent": "Gerado por IA",
+    "aiGeneratedContentTooltip": "Este conteúdo foi gerado por inteligência artificial e pode conter imprecisões. Revise antes de tomar decisões."
+  },
+  "privacy": {
+    "title": "Política de Privacidade",
+    "lastUpdated": "Última atualização: 15 de agosto de 2026"
+  },
+  "terms": {
+    "title": "Termos de Uso",
+    "lastUpdated": "Última atualização: 15 de agosto de 2026"
   },
   "contactModal": {
     "title": "Vamos conversar sobre seu projeto",
