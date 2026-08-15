@@ -13,20 +13,9 @@
 
 ## What is Kairos Labs?
 
-Kairos Labs is a full-stack web application built to serve two audiences simultaneously:
-
-- **Public visitors** — browse a product showcase and join segmented waitlists for each solution under development.
-- **The founder** — access a private analytics dashboard (`/admin`) to track waitlist growth per product and make data-driven decisions on which solution to build first.
+Kairos Labs is a full-stack web application serving as the institutional portal and demand validation hub for the technology solutions ecosystem — DevPrint, Elucya Talk, Ágora Global, Ascend and Talvrix.
 
 The platform also functions as a **live engineering portfolio**, demonstrating production-grade practices: typed full-stack code, automated testing pipeline, SonarCloud quality gate, and zero-cost infrastructure.
-
----
-
-## Value Proposition
-
-> "Modern software engineering and data-driven decision making: prioritizing the development of solutions where real market demand exists."
-
-The core thesis: before writing a line of product code, validate which product the market actually wants. Kairos Labs is the instrument for that validation.
 
 ---
 
@@ -44,30 +33,6 @@ The core thesis: before writing a line of product code, validate which product t
 | CI/CD | GitHub Actions + Vercel (Hobby Tier) |
 | Quality | SonarCloud (Quality Gate enforced on every PR) |
 | Commits | Husky + lint-staged (ESLint blocks commit on warnings) |
-
----
-
-## Folder Structure
-
-```
-kairos-labs/
-├── app/                    # Next.js App Router — pages and layouts
-│   ├── admin/              # Protected founder dashboard (/admin)
-│   │   └── login/          # Supabase Auth login page
-│   ├── solucoes/           # Public product pages (/solucoes/[slug])
-│   ├── layout.tsx          # Root layout (fonts, metadata)
-│   └── page.tsx            # Landing page (Hero, Products, Sobre, Tecnologia, Contato)
-├── components/             # Shared React components
-│   └── ui/                 # Reusable primitives (modals, banners, charts)
-├── lib/                    # Utilities, Supabase clients, Server Actions
-├── e2e/                    # Playwright E2E specs
-├── __tests__/              # Jest + RTL unit tests
-├── supabase/               # Database migrations and seed scripts
-├── docs/                   # Project documentation
-│   ├── PRD.md              # Product Requirements Document
-│   └── CONTRIBUTING.pt-BR.md
-└── .github/workflows/      # CI/CD pipeline (ci.yml)
-```
 
 ---
 
@@ -96,12 +61,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 > **Database:** the app requires a Supabase project. In the Supabase SQL Editor, run [`supabase/migrations/001_schema.sql`](./supabase/migrations/001_schema.sql) — this single file creates all tables, enables RLS, sets grants, and creates the `get_dashboard_kpis()` function.
 
 For the full setup guide, test commands, and contribution standards, see [CONTRIBUTING.md](./CONTRIBUTING.md).
-
----
-
-## Product Requirements
-
-The full PRD — product vision, feature specs, database schema, and RLS policies — is available at [`docs/PRD.md`](./docs/PRD.md).
 
 ---
 
