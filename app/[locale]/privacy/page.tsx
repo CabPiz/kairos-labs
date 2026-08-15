@@ -80,8 +80,8 @@ function PolicyContent() {
         </p>
         <p>
           <strong style={{ color: "#fff" }}>Contato do Encarregado (DPO):</strong>{" "}
-          <a href="mailto:cab.pizarro@gmail.com" style={{ color: "rgba(147,197,253,0.9)" }}>
-            cab.pizarro@gmail.com
+          <a href="mailto:contact.kairoslabs@gmail.com" style={{ color: "rgba(147,197,253,0.9)" }}>
+            contact.kairoslabs@gmail.com
           </a>
         </p>
         <p>
@@ -165,8 +165,8 @@ function PolicyContent() {
       <Section title="6. Seus Direitos">
         <p>
           Você tem os seguintes direitos sobre seus dados, exercíveis pelo e-mail{" "}
-          <a href="mailto:cab.pizarro@gmail.com" style={{ color: "rgba(147,197,253,0.9)" }}>
-            cab.pizarro@gmail.com
+          <a href="mailto:contact.kairoslabs@gmail.com" style={{ color: "rgba(147,197,253,0.9)" }}>
+            contact.kairoslabs@gmail.com
           </a>
           :
         </p>
