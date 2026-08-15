@@ -70,7 +70,7 @@ Framework completo: `docs/compliance/FRAMEWORK.md`
 **5. Formulários com dados de usuário**
 - Sempre incluir checkbox de aceite (não pré-marcado) com link para `/privacy` e `/terms`
 
-**Contato do DPO (Encarregado de Dados):** cab.pizarro@gmail.com
+**Contato do DPO (Encarregado de Dados):** contact.kairoslabs@gmail.com
 
 ---
 
