@@ -128,8 +128,8 @@ function TermsContent() {
           <li>
             Você tem direito de solicitar revisão humana de qualquer análise de IA que lhe diga
             respeito (LGPD Art. 20 / GDPR Art. 22), pelo e-mail{" "}
-            <a href="mailto:cab.pizarro@gmail.com" style={{ color: "rgba(147,197,253,0.9)" }}>
-              cab.pizarro@gmail.com
+            <a href="mailto:contact.kairoslabs@gmail.com" style={{ color: "rgba(147,197,253,0.9)" }}>
+              contact.kairoslabs@gmail.com
             </a>
             .
           </li>
@@ -206,8 +206,8 @@ function TermsContent() {
         <p>
           Você pode cancelar seu cadastro e solicitar exclusão completa dos seus dados a qualquer
           momento pelo e-mail{" "}
-          <a href="mailto:cab.pizarro@gmail.com" style={{ color: "rgba(147,197,253,0.9)" }}>
-            cab.pizarro@gmail.com
+          <a href="mailto:contact.kairoslabs@gmail.com" style={{ color: "rgba(147,197,253,0.9)" }}>
+            contact.kairoslabs@gmail.com
           </a>
           . A exclusão será processada em até 15 dias.
         </p>
@@ -243,8 +243,8 @@ function TermsContent() {
       <Section title="12. Contato">
         <p>
           Para dúvidas, solicitações ou reclamações:{" "}
-          <a href="mailto:cab.pizarro@gmail.com" style={{ color: "rgba(147,197,253,0.9)" }}>
-            cab.pizarro@gmail.com
+          <a href="mailto:contact.kairoslabs@gmail.com" style={{ color: "rgba(147,197,253,0.9)" }}>
+            contact.kairoslabs@gmail.com
           </a>
         </p>
         <p>Respondemos em até 48 horas úteis.</p>

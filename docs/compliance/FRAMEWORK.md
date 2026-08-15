@@ -2,7 +2,7 @@
 
 **Versão:** 1.0 | **Data:** 2026-08-15  
 **Aplica-se a:** Todos os produtos do ecossistema Kairos Labs (atuais e futuros)  
-**Mantenedor:** Cesar Pizarro (cab.pizarro@gmail.com)
+**Mantenedor:** Cesar Pizarro (contact.kairoslabs@gmail.com)
 
 ---
 
@@ -100,7 +100,7 @@ Use este checklist antes do primeiro usuário real em qualquer produto:
 - [ ] Dados de menores de 18 anos não são coletados sem consentimento parental
 - [ ] Mecanismo de exclusão de dados funcional ("Excluir minha conta")
 - [ ] Mecanismo de exportação de dados funcional ("Baixar meus dados")
-- [ ] E-mail do encarregado de dados (DPO) publicado: cab.pizarro@gmail.com
+- [ ] E-mail do encarregado de dados (DPO) publicado: contact.kairoslabs@gmail.com
 
 ### 4.2 Transparência de IA
 - [ ] Badge "Gerado por IA" em todo output de IA visível ao usuário
@@ -110,7 +110,7 @@ Use este checklist antes do primeiro usuário real em qualquer produto:
 - [ ] Logging de chamadas IA ativo (`tracedLLMCall()`)
 
 ### 4.3 Direitos do Usuário (LGPD Art. 18 / GDPR Cap. III)
-- [ ] Canal de contato para exercer direitos: cab.pizarro@gmail.com
+- [ ] Canal de contato para exercer direitos: contact.kairoslabs@gmail.com
 - [ ] Prazo de resposta definido e comunicado: 15 dias (LGPD) / 30 dias (GDPR)
 - [ ] Processo interno para atender pedidos de: acesso, correção, exclusão, portabilidade
 - [ ] Para decisões automatizadas: processo de revisão humana disponível (LGPD Art. 20 / GDPR Art. 22)
@@ -212,7 +212,7 @@ Lista obrigatória para menção na Política de Privacidade:
 
 Para atender qualquer pedido de usuário (LGPD Art. 18 / GDPR Arts. 15-22):
 
-1. **Recebimento:** cab.pizarro@gmail.com — confirmar recebimento em até 48h
+1. **Recebimento:** contact.kairoslabs@gmail.com — confirmar recebimento em até 48h
 2. **Verificação de identidade:** solicitar e-mail cadastrado + confirmação
 3. **Prazo:** 15 dias (LGPD) / 30 dias (GDPR, extensível a 60 dias em casos complexos)
 4. **Pedidos suportados:**
