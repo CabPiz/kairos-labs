@@ -1,6 +1,8 @@
 const mockInsert = jest.fn();
 const mockFrom = jest.fn(() => ({ insert: mockInsert }));
 const mockAdminClient = { from: mockFrom };
+const mockAfter = jest.fn((cb: () => unknown) => cb());
+const mockNotifyWhatsApp = jest.fn().mockResolvedValue(undefined);
 
 jest.mock("@/lib/supabase-server", () => ({
   createServerAdminClient: jest.fn(() => mockAdminClient),
@@ -9,6 +11,14 @@ jest.mock("@/lib/supabase-server", () => ({
 jest.mock("node:crypto", () => ({
   ...jest.requireActual("node:crypto"),
   randomUUID: () => "uuid-123",
+}));
+
+jest.mock("next/server", () => ({
+  after: (cb: () => unknown) => mockAfter(cb),
+}));
+
+jest.mock("@/lib/notifications/whatsapp", () => ({
+  notifyWhatsApp: (...args: unknown[]) => mockNotifyWhatsApp(...args),
 }));
 
 import { sendContactAction } from "@/components/contact/contact-action";
@@ -24,6 +34,8 @@ describe("sendContactAction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockInsert.mockResolvedValue({ error: null });
+    mockAfter.mockImplementation((cb: () => unknown) => cb());
+    mockNotifyWhatsApp.mockResolvedValue(undefined);
   });
 
   describe("validação Zod", () => {
@@ -107,6 +119,34 @@ describe("sendContactAction", () => {
       const result = await sendContactAction(validData);
       expect(result.status).toBe("error");
       if (result.status === "error") expect(result.message).toMatch(/não foi possível/i);
+    });
+  });
+
+  describe("notificação WhatsApp", () => {
+    it("chama notifyWhatsApp após insert bem-sucedido", async () => {
+      await sendContactAction(validData);
+      expect(mockAfter).toHaveBeenCalled();
+      expect(mockNotifyWhatsApp).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: validData.name,
+          email: validData.email,
+          project_type: validData.project_type,
+          description: validData.description,
+        })
+      );
+    });
+
+    it("inclui timestamp na notificação", async () => {
+      await sendContactAction(validData);
+      expect(mockNotifyWhatsApp).toHaveBeenCalledWith(
+        expect.objectContaining({ timestamp: expect.any(String) })
+      );
+    });
+
+    it("não chama notifyWhatsApp quando Supabase retorna erro", async () => {
+      mockInsert.mockResolvedValue({ error: { code: "23505" } });
+      await sendContactAction(validData);
+      expect(mockNotifyWhatsApp).not.toHaveBeenCalled();
     });
   });
 });
