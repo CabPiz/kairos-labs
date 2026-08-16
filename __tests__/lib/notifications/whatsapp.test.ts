@@ -2,10 +2,8 @@ const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
 const ENV_VARS = {
-  TWILIO_ACCOUNT_SID: "ACtest123",
-  TWILIO_AUTH_TOKEN: "authtoken456",
-  TWILIO_WHATSAPP_FROM: "+14155238886",
-  WHATSAPP_NOTIFY_TO: "+5511999999999",
+  CALLMEBOT_PHONE: "+5511999999999",
+  CALLMEBOT_API_KEY: "testkey123",
 };
 
 import { notifyWhatsApp } from "@/lib/notifications/whatsapp";
@@ -55,38 +53,18 @@ describe("notifyWhatsApp", () => {
       }
     });
 
-    it("chama a URL correta da API Twilio", async () => {
+    it("chama a URL correta da API CallMeBot com phone e apikey", async () => {
       await notifyWhatsApp(validData);
-      expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.twilio.com/2010-04-01/Accounts/ACtest123/Messages.json",
-        expect.any(Object)
-      );
+      const [url] = mockFetch.mock.calls[0] as [string];
+      expect(url).toContain("https://api.callmebot.com/whatsapp.php");
+      expect(url).toContain("phone=+5511999999999");
+      expect(url).toContain("apikey=testkey123");
     });
 
-    it("envia Authorization Basic com credenciais codificadas em base64", async () => {
+    it("usa GET (sem segundo argumento ou sem método POST)", async () => {
       await notifyWhatsApp(validData);
-      const expectedBase64 = Buffer.from("ACtest123:authtoken456").toString("base64");
-      const [, options] = mockFetch.mock.calls[0] as [string, RequestInit];
-      expect((options.headers as Record<string, string>)["Authorization"]).toBe(
-        `Basic ${expectedBase64}`
-      );
-    });
-
-    it("envia método POST com Content-Type correto", async () => {
-      await notifyWhatsApp(validData);
-      const [, options] = mockFetch.mock.calls[0] as [string, RequestInit];
-      expect(options.method).toBe("POST");
-      expect((options.headers as Record<string, string>)["Content-Type"]).toBe(
-        "application/x-www-form-urlencoded"
-      );
-    });
-
-    it("envia From e To com prefixo whatsapp:", async () => {
-      await notifyWhatsApp(validData);
-      const [, options] = mockFetch.mock.calls[0] as [string, RequestInit];
-      const body = new URLSearchParams(options.body as string);
-      expect(body.get("From")).toBe("whatsapp:+14155238886");
-      expect(body.get("To")).toBe("whatsapp:+5511999999999");
+      const callArgs = mockFetch.mock.calls[0] as unknown[];
+      expect(callArgs.length).toBe(1);
     });
 
     it.each([
@@ -96,12 +74,11 @@ describe("notifyWhatsApp", () => {
       ["timestamp", validData.timestamp],
       ["descrição", validData.description],
     ] as const)(
-      "inclui %s na mensagem enviada",
+      "inclui %s na URL codificada",
       async (_, expectedValue) => {
         await notifyWhatsApp(validData);
-        const [, options] = mockFetch.mock.calls[0] as [string, RequestInit];
-        const body = new URLSearchParams(options.body as string);
-        expect(body.get("Body")).toContain(expectedValue);
+        const [url] = mockFetch.mock.calls[0] as [string];
+        expect(url).toContain(encodeURIComponent(expectedValue));
       }
     );
 
