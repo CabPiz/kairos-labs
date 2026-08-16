@@ -1,8 +1,10 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
+import { after } from "next/server";
 import { z } from "zod";
 import { createServerAdminClient } from "@/lib/supabase-server";
+import { notifyWhatsApp } from "@/lib/notifications/whatsapp";
 import { PROJECT_TYPE_KEYS, isValidEmail, isValidPhone } from "./contact-schema";
 
 const schema = z.object({
@@ -75,6 +77,16 @@ export async function sendContactAction(
   if (error) {
     return { status: "error", message: "Não foi possível enviar a solicitação. Tente novamente." };
   }
+
+  after(() =>
+    notifyWhatsApp({
+      name,
+      email,
+      project_type,
+      description,
+      timestamp: new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" }),
+    })
+  );
 
   return { status: "success", id };
 }
