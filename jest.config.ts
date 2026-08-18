@@ -27,6 +27,7 @@ const config: Config = {
     "components/**/*.{ts,tsx}",
     "app/**/*.{ts,tsx}",
     "lib/**/*.{ts,tsx}",
+    "inngest/**/*.{ts,tsx}",
     "!**/*.d.ts",
   ],
 };
