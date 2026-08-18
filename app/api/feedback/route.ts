@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { randomUUID } from "node:crypto";
 import { createServerAdminClient } from "@/lib/supabase-server";
 
 const ALLOWED_MIME_TYPES = new Set([
@@ -116,7 +117,7 @@ export async function POST(req: NextRequest) {
 
   for (const file of files) {
     const ext = file.name.split(".").pop() ?? "bin";
-    const storagePath = `${feedbackRow.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const storagePath = `${feedbackRow.id}/${Date.now()}-${randomUUID().slice(0, 8)}.${ext}`;
     const bytes = await file.arrayBuffer();
 
     const { error: uploadError } = await supabase.storage
