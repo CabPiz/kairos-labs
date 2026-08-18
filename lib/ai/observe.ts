@@ -1,9 +1,16 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-);
+let _supabase: ReturnType<typeof createClient> | null = null;
+
+function getSupabase() {
+  if (!_supabase) {
+    _supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    );
+  }
+  return _supabase;
+}
 
 /** Custo por milhão de tokens (USD) por modelo. */
 const COST_PER_M: Record<string, { input: number; output: number }> = {
@@ -37,7 +44,7 @@ export async function tracedLLMCall<T>(
     const estimatedCostUsd =
       (inputTokens * pricing.input + outputTokens * pricing.output) / 1_000_000;
 
-    await supabase.from("agent_runs").insert({
+    await getSupabase().from("agent_runs").insert({
       agent_name: options.agentName,
       model: options.model,
       input_tokens: inputTokens,
@@ -51,7 +58,7 @@ export async function tracedLLMCall<T>(
 
     return result;
   } catch (err) {
-    await supabase.from("agent_runs").insert({
+    await getSupabase().from("agent_runs").insert({
       agent_name: options.agentName,
       model: options.model,
       latency_ms: Date.now() - start,
