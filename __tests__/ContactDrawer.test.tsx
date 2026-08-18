@@ -4,10 +4,16 @@ import { ContactDrawer } from "@/app/admin/contacts/_components/ContactDrawer";
 
 const mockMarkContactViewed = jest.fn();
 const mockGetAttachmentSignedUrl = jest.fn();
+const mockGetContactAnalysis = jest.fn();
+const mockTriggerContactAnalysis = jest.fn();
+const mockCreateGitHubIssue = jest.fn();
 
 jest.mock("@/app/admin/contacts/actions", () => ({
   markContactViewed: (...args: unknown[]) => mockMarkContactViewed(...args),
   getAttachmentSignedUrl: (...args: unknown[]) => mockGetAttachmentSignedUrl(...args),
+  getContactAnalysis: (...args: unknown[]) => mockGetContactAnalysis(...args),
+  triggerContactAnalysis: (...args: unknown[]) => mockTriggerContactAnalysis(...args),
+  createGitHubIssue: (...args: unknown[]) => mockCreateGitHubIssue(...args),
 }));
 
 const makeContact = (overrides = {}) => ({
@@ -28,6 +34,9 @@ describe("ContactDrawer", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockMarkContactViewed.mockResolvedValue(undefined);
+    mockGetContactAnalysis.mockResolvedValue(null);
+    mockTriggerContactAnalysis.mockResolvedValue(undefined);
+    mockCreateGitHubIssue.mockResolvedValue({ url: "https://github.com/issue/1", number: 1 });
     mockGetAttachmentSignedUrl.mockResolvedValue("https://example.com/signed");
   });
 
