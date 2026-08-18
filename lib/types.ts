@@ -17,6 +17,14 @@ export type FeedbackWithMeta = Database['public']['Tables']['feedback']['Row'] &
   attachment_count: number
 }
 
+type Rel = {
+  foreignKeyName: string
+  columns: string[]
+  isOneToOne?: boolean
+  referencedRelation: string
+  referencedColumns: string[]
+}
+
 export type Database = {
   public: {
     Tables: {
@@ -39,6 +47,7 @@ export type Database = {
           product_id?: ProductId
           created_at?: string
         }
+        Relationships: Rel[]
       }
       feedback: {
         Row: {
@@ -89,6 +98,7 @@ export type Database = {
           analyzed_at?: string | null
           created_at?: string
         }
+        Relationships: Rel[]
       }
       feedback_attachments: {
         Row: {
@@ -118,6 +128,7 @@ export type Database = {
           size_bytes?: number
           created_at?: string
         }
+        Relationships: Rel[]
       }
       feedback_notifications: {
         Row: {
@@ -150,11 +161,13 @@ export type Database = {
           error_message?: string | null
           created_at?: string
         }
+        Relationships: Rel[]
       }
       settings: {
         Row: { key: string; value: unknown; updated_at: string }
         Insert: { key: string; value: unknown; updated_at?: string }
         Update: { key?: string; value?: unknown; updated_at?: string }
+        Relationships: Rel[]
       }
       contact_requests: {
         Row: {
@@ -190,6 +203,7 @@ export type Database = {
           status?: 'novo' | 'visualizado' | 'respondido'
           created_at?: string
         }
+        Relationships: Rel[]
       }
       contact_attachments: {
         Row: {
@@ -219,6 +233,64 @@ export type Database = {
           size_bytes?: number
           created_at?: string
         }
+        Relationships: Rel[]
+      }
+      agent_runs: {
+        Row: {
+          id: string
+          project_id: string
+          session_id: string | null
+          user_id: string | null
+          agent_name: string
+          model: string
+          input_tokens: number | null
+          output_tokens: number | null
+          estimated_cost_usd: number | null
+          latency_ms: number | null
+          tools_called: string[] | null
+          stop_reason: string | null
+          status: 'success' | 'error' | 'timeout' | 'max_iter' | null
+          error_message: string | null
+          metadata: Record<string, unknown>
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          project_id?: string
+          session_id?: string | null
+          user_id?: string | null
+          agent_name: string
+          model: string
+          input_tokens?: number | null
+          output_tokens?: number | null
+          estimated_cost_usd?: number | null
+          latency_ms?: number | null
+          tools_called?: string[] | null
+          stop_reason?: string | null
+          status?: 'success' | 'error' | 'timeout' | 'max_iter' | null
+          error_message?: string | null
+          metadata?: Record<string, unknown>
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          session_id?: string | null
+          user_id?: string | null
+          agent_name?: string
+          model?: string
+          input_tokens?: number | null
+          output_tokens?: number | null
+          estimated_cost_usd?: number | null
+          latency_ms?: number | null
+          tools_called?: string[] | null
+          stop_reason?: string | null
+          status?: 'success' | 'error' | 'timeout' | 'max_iter' | null
+          error_message?: string | null
+          metadata?: Record<string, unknown>
+          created_at?: string
+        }
+        Relationships: Rel[]
       }
     }
     Views: Record<string, never>
