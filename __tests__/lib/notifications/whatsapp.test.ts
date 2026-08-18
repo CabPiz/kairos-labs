@@ -82,6 +82,18 @@ describe("notifyWhatsApp", () => {
       }
     );
 
+    it("inclui telefone na URL quando fornecido", async () => {
+      await notifyWhatsApp({ ...validData, phone: "11999999999" });
+      const [url] = mockFetch.mock.calls[0] as [string];
+      expect(url).toContain(encodeURIComponent("11999999999"));
+    });
+
+    it("omite linha de telefone quando ausente", async () => {
+      await notifyWhatsApp(validData);
+      const [url] = mockFetch.mock.calls[0] as [string];
+      expect(url).not.toContain(encodeURIComponent("Telefone"));
+    });
+
     it("propaga o erro do fetch para ser absorbed pelo after() do Next.js", async () => {
       mockFetch.mockRejectedValue(new Error("network error"));
       await expect(notifyWhatsApp(validData)).rejects.toThrow("network error");

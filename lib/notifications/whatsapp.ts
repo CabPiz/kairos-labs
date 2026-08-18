@@ -4,20 +4,28 @@ export interface WhatsAppContactNotification {
   project_type: string;
   description: string;
   timestamp: string;
+  phone?: string;
 }
 
 function buildMessage(data: WhatsAppContactNotification): string {
-  return [
+  const lines = [
     "📬 Nova solicitação de contato",
     "",
     `👤 Nome: ${data.name}`,
     `📧 E-mail: ${data.email}`,
+  ];
+
+  if (data.phone) lines.push(`📱 Telefone: ${data.phone}`);
+
+  lines.push(
     `🗂️ Projeto: ${data.project_type}`,
     `🕒 Enviado em: ${data.timestamp}`,
     "",
     "💬 Mensagem:",
-    data.description,
-  ].join("\n");
+    data.description
+  );
+
+  return lines.join("\n");
 }
 
 /**
