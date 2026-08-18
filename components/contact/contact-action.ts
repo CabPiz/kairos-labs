@@ -88,6 +88,7 @@ export async function sendContactAction(
         project_type,
         description,
         timestamp: new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" }),
+        phone: phone || undefined,
       }),
     ]);
   });
