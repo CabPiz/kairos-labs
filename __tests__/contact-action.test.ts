@@ -21,6 +21,11 @@ jest.mock("@/lib/notifications/whatsapp", () => ({
   notifyWhatsApp: (...args: unknown[]) => mockNotifyWhatsApp(...args),
 }));
 
+const mockInngestSend = jest.fn().mockResolvedValue(undefined);
+jest.mock("@/inngest/client", () => ({
+  inngest: { send: mockInngestSend },
+}));
+
 import { sendContactAction } from "@/components/contact/contact-action";
 
 const validData = {
@@ -36,6 +41,7 @@ describe("sendContactAction", () => {
     mockInsert.mockResolvedValue({ error: null });
     mockAfter.mockImplementation((cb: () => unknown) => cb());
     mockNotifyWhatsApp.mockResolvedValue(undefined);
+    mockInngestSend.mockResolvedValue(undefined);
   });
 
   describe("validação Zod", () => {
@@ -147,6 +153,22 @@ describe("sendContactAction", () => {
       mockInsert.mockResolvedValue({ error: { code: "23505" } });
       await sendContactAction(validData);
       expect(mockNotifyWhatsApp).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("evento Inngest", () => {
+    it("dispara contact/submitted após insert bem-sucedido", async () => {
+      await sendContactAction(validData);
+      expect(mockInngestSend).toHaveBeenCalledWith({
+        name: "contact/submitted",
+        data: { contactId: "uuid-123" },
+      });
+    });
+
+    it("não dispara evento inngest quando Supabase retorna erro", async () => {
+      mockInsert.mockResolvedValue({ error: { code: "23505" } });
+      await sendContactAction(validData);
+      expect(mockInngestSend).not.toHaveBeenCalled();
     });
   });
 });

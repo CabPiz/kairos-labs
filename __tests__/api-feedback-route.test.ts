@@ -27,6 +27,11 @@ jest.mock("@/lib/supabase-server", () => ({
   createServerAdminClient: jest.fn(() => mockAdminClient),
 }));
 
+const mockInngestSend = jest.fn().mockResolvedValue(undefined);
+jest.mock("@/inngest/client", () => ({
+  inngest: { send: mockInngestSend },
+}));
+
 import { POST } from "@/app/api/feedback/route";
 
 function makeFile(name: string, type: string, sizeBytes = 1024): File {
@@ -62,6 +67,7 @@ describe("POST /api/feedback", () => {
     mockSingle.mockResolvedValue({ data: { id: "fb-uuid-001" }, error: null });
     mockUpload.mockResolvedValue({ error: null });
     mockInsertAttachment.mockResolvedValue({ error: null });
+    mockInngestSend.mockResolvedValue(undefined);
   });
 
   describe("caminhos de erro — GAP-001", () => {
@@ -151,6 +157,26 @@ describe("POST /api/feedback", () => {
       const body = await res.json() as { status: string };
       expect(body.status).toBe("success");
       expect(mockFrom).toHaveBeenCalledWith("feedback");
+    });
+
+    it("dispara evento feedback/submitted via inngest após insert bem-sucedido", async () => {
+      await POST(makeReq({
+        product_id: "devprint",
+        mensagem: "mensagem de feedback válida aqui",
+      }));
+      expect(mockInngestSend).toHaveBeenCalledWith({
+        name: "feedback/submitted",
+        data: { feedbackId: "fb-uuid-001" },
+      });
+    });
+
+    it("não dispara evento inngest quando o insert falha", async () => {
+      mockSingle.mockResolvedValue({ data: null, error: { message: "db error" } });
+      await POST(makeReq({
+        product_id: "devprint",
+        mensagem: "mensagem de feedback válida aqui",
+      }));
+      expect(mockInngestSend).not.toHaveBeenCalled();
     });
 
     it("aceita e-mail em branco (campo opcional)", async () => {
