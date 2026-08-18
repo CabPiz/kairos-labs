@@ -23,7 +23,7 @@ export async function runAgent(
       model: routeModel("analysis"),
       max_tokens: 4096,
       system: systemPrompt,
-      tools,
+      ...(tools.length > 0 ? { tools } : {}),
       messages,
     });
 
