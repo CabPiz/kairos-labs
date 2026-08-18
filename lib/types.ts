@@ -4,6 +4,27 @@
 
 export type ProductId = 'devprint' | 'ai-saas' | 'audio-tech' | 'blockchain'
 
+export interface IssueDraftJson {
+  classification: 'bug' | 'improvement' | 'feature' | 'out-of-scope'
+  title: string
+  body: string
+  labels: string[]
+  milestone?: string
+}
+
+/** Linha de feedback enriquecida com contagem de anexos (retornada pela RPC get_dashboard_kpis) */
+export type FeedbackWithMeta = Database['public']['Tables']['feedback']['Row'] & {
+  attachment_count: number
+}
+
+type Rel = {
+  foreignKeyName: string
+  columns: string[]
+  isOneToOne?: boolean
+  referencedRelation: string
+  referencedColumns: string[]
+}
+
 export type Database = {
   public: {
     Tables: {
@@ -26,6 +47,7 @@ export type Database = {
           product_id?: ProductId
           created_at?: string
         }
+        Relationships: Rel[]
       }
       feedback: {
         Row: {
@@ -35,6 +57,13 @@ export type Database = {
           email: string | null
           mensagem: string
           mensagem_locale: string | null
+          notify_on_completion: boolean
+          notify_email: string | null
+          analysis_status: 'pending' | 'analyzing' | 'done' | 'error' | null
+          issue_draft: IssueDraftJson | null
+          github_issue_number: number | null
+          github_issue_url: string | null
+          analyzed_at: string | null
           created_at: string
         }
         Insert: {
@@ -44,6 +73,13 @@ export type Database = {
           email?: string | null
           mensagem: string
           mensagem_locale?: string | null
+          notify_on_completion?: boolean
+          notify_email?: string | null
+          analysis_status?: 'pending' | 'analyzing' | 'done' | 'error' | null
+          issue_draft?: IssueDraftJson | null
+          github_issue_number?: number | null
+          github_issue_url?: string | null
+          analyzed_at?: string | null
           created_at?: string
         }
         Update: {
@@ -53,8 +89,85 @@ export type Database = {
           email?: string | null
           mensagem?: string
           mensagem_locale?: string | null
+          notify_on_completion?: boolean
+          notify_email?: string | null
+          analysis_status?: 'pending' | 'analyzing' | 'done' | 'error' | null
+          issue_draft?: IssueDraftJson | null
+          github_issue_number?: number | null
+          github_issue_url?: string | null
+          analyzed_at?: string | null
           created_at?: string
         }
+        Relationships: Rel[]
+      }
+      feedback_attachments: {
+        Row: {
+          id: string
+          feedback_id: string
+          filename: string
+          storage_path: string
+          mime_type: string
+          size_bytes: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          feedback_id: string
+          filename: string
+          storage_path: string
+          mime_type: string
+          size_bytes: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          feedback_id?: string
+          filename?: string
+          storage_path?: string
+          mime_type?: string
+          size_bytes?: number
+          created_at?: string
+        }
+        Relationships: Rel[]
+      }
+      feedback_notifications: {
+        Row: {
+          id: string
+          feedback_id: string
+          github_issue_number: number
+          sent_at: string | null
+          status: 'pending' | 'sent' | 'failed'
+          product_launched: boolean
+          error_message: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          feedback_id: string
+          github_issue_number: number
+          sent_at?: string | null
+          status?: 'pending' | 'sent' | 'failed'
+          product_launched?: boolean
+          error_message?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          feedback_id?: string
+          github_issue_number?: number
+          sent_at?: string | null
+          status?: 'pending' | 'sent' | 'failed'
+          product_launched?: boolean
+          error_message?: string | null
+          created_at?: string
+        }
+        Relationships: Rel[]
+      }
+      settings: {
+        Row: { key: string; value: unknown; updated_at: string }
+        Insert: { key: string; value: unknown; updated_at?: string }
+        Update: { key?: string; value?: unknown; updated_at?: string }
+        Relationships: Rel[]
       }
       contact_requests: {
         Row: {
@@ -90,6 +203,7 @@ export type Database = {
           status?: 'novo' | 'visualizado' | 'respondido'
           created_at?: string
         }
+        Relationships: Rel[]
       }
       contact_attachments: {
         Row: {
@@ -119,6 +233,64 @@ export type Database = {
           size_bytes?: number
           created_at?: string
         }
+        Relationships: Rel[]
+      }
+      agent_runs: {
+        Row: {
+          id: string
+          project_id: string
+          session_id: string | null
+          user_id: string | null
+          agent_name: string
+          model: string
+          input_tokens: number | null
+          output_tokens: number | null
+          estimated_cost_usd: number | null
+          latency_ms: number | null
+          tools_called: string[] | null
+          stop_reason: string | null
+          status: 'success' | 'error' | 'timeout' | 'max_iter' | null
+          error_message: string | null
+          metadata: Record<string, unknown>
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          project_id?: string
+          session_id?: string | null
+          user_id?: string | null
+          agent_name: string
+          model: string
+          input_tokens?: number | null
+          output_tokens?: number | null
+          estimated_cost_usd?: number | null
+          latency_ms?: number | null
+          tools_called?: string[] | null
+          stop_reason?: string | null
+          status?: 'success' | 'error' | 'timeout' | 'max_iter' | null
+          error_message?: string | null
+          metadata?: Record<string, unknown>
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          session_id?: string | null
+          user_id?: string | null
+          agent_name?: string
+          model?: string
+          input_tokens?: number | null
+          output_tokens?: number | null
+          estimated_cost_usd?: number | null
+          latency_ms?: number | null
+          tools_called?: string[] | null
+          stop_reason?: string | null
+          status?: 'success' | 'error' | 'timeout' | 'max_iter' | null
+          error_message?: string | null
+          metadata?: Record<string, unknown>
+          created_at?: string
+        }
+        Relationships: Rel[]
       }
     }
     Views: Record<string, never>

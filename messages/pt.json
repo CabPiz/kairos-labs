@@ -415,6 +415,21 @@
     "submitting": "Enviando...",
     "successTitle": "Sugestão enviada!",
     "successMessage": "Obrigado pelo feedback sobre {productName}. Sua sugestão foi recebida e será analisada pelo fundador.",
+    "attachments": {
+      "label": "Anexos",
+      "hint": "(opcional · até 5 arquivos · PDF, DOCX, TXT, PNG, JPG · máx. 10 MB cada)",
+      "add": "Adicionar arquivo",
+      "fileTypeError": "Tipo de arquivo não permitido. Use PDF, DOCX, TXT, PNG ou JPG.",
+      "fileSizeError": "O arquivo excede o limite de 10 MB.",
+      "maxFilesError": "Máximo de 5 arquivos permitidos."
+    },
+    "notify": {
+      "checkboxLabel": "Quero ser avisado quando esta sugestão for implementada",
+      "emailLabel": "E-mail para notificação",
+      "emailPlaceholder": "seu@email.com",
+      "emailHint": "(opcional — use este campo se não preencheu o e-mail acima)",
+      "emailInvalid": "Formato de e-mail inválido."
+    },
     "validation": {
       "emailInvalid": "Formato de e-mail inválido.",
       "messageMin": "A mensagem deve ter pelo menos 10 caracteres."

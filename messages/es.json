@@ -415,6 +415,21 @@
     "submitting": "Enviando...",
     "successTitle": "¡Sugerencia enviada!",
     "successMessage": "Gracias por el feedback sobre {productName}. Tu sugerencia ha sido recibida y será analizada por el fundador.",
+    "attachments": {
+      "label": "Adjuntos",
+      "hint": "(opcional · hasta 5 archivos · PDF, DOCX, TXT, PNG, JPG · máx. 10 MB cada)",
+      "add": "Agregar archivo",
+      "fileTypeError": "Tipo de archivo no permitido. Use PDF, DOCX, TXT, PNG o JPG.",
+      "fileSizeError": "El archivo supera el límite de 10 MB.",
+      "maxFilesError": "Máximo de 5 archivos permitidos."
+    },
+    "notify": {
+      "checkboxLabel": "Quiero ser notificado cuando se implemente esta sugerencia",
+      "emailLabel": "Email para notificación",
+      "emailPlaceholder": "tu@email.com",
+      "emailHint": "(opcional — usa este campo si no completaste el email arriba)",
+      "emailInvalid": "Formato de email inválido."
+    },
     "validation": {
       "emailInvalid": "Formato de email inválido.",
       "messageMin": "El mensaje debe tener al menos 10 caracteres."

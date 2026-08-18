@@ -1,14 +1,7 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
-import * as feedbackAction from "@/components/feedback/feedback-action";
-
-jest.mock("@/components/feedback/feedback-action", () => ({
-  sendFeedbackAction: jest.fn(),
-}));
-
-const mockAction = feedbackAction.sendFeedbackAction as jest.Mock;
 
 const defaultProps = {
   open: true,
@@ -18,14 +11,36 @@ const defaultProps = {
   productColor: "#4a90e2",
 };
 
-function renderModal(props = {}) {
+function renderModal(props: Partial<typeof defaultProps> = {}) {
   return render(<FeedbackModal {...defaultProps} {...props} />);
+}
+
+function mockFetchSuccess() {
+  global.fetch = jest.fn().mockResolvedValue({
+    json: async () => ({ status: "success" }),
+  });
+}
+
+function mockFetchError(message = "Não foi possível enviar.") {
+  global.fetch = jest.fn().mockResolvedValue({
+    json: async () => ({ status: "error", message }),
+  });
+}
+
+function makeFile(name: string, type: string, sizeBytes = 1024): File {
+  const content = new Uint8Array(sizeBytes);
+  return new File([content], name, { type });
 }
 
 describe("FeedbackModal", () => {
   beforeEach(() => {
-    mockAction.mockReset();
-    mockAction.mockResolvedValue({ status: "idle" });
+    global.fetch = jest.fn().mockResolvedValue({
+      json: async () => ({ status: "idle" }),
+    });
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe("renderização inicial", () => {
@@ -51,8 +66,8 @@ describe("FeedbackModal", () => {
   });
 
   describe("estado success", () => {
-    it("exibe painel de sucesso após envio", async () => {
-      mockAction.mockResolvedValueOnce({ status: "success" });
+    it("exibe painel de sucesso após envio bem-sucedido", async () => {
+      mockFetchSuccess();
       renderModal();
       await userEvent.type(
         screen.getByLabelText(/mensagem/i),
@@ -65,8 +80,8 @@ describe("FeedbackModal", () => {
     });
 
     it("botão OK no painel de sucesso chama onOpenChange(false)", async () => {
+      mockFetchSuccess();
       const onOpenChange = jest.fn();
-      mockAction.mockResolvedValueOnce({ status: "success" });
       render(<FeedbackModal {...defaultProps} onOpenChange={onOpenChange} />);
       await userEvent.type(
         screen.getByLabelText(/mensagem/i),
@@ -79,10 +94,39 @@ describe("FeedbackModal", () => {
       await userEvent.click(screen.getByRole("button", { name: /ok/i }));
       expect(onOpenChange).toHaveBeenCalledWith(false);
     });
+
+    it("aceita nome preenchido no submit", async () => {
+      mockFetchSuccess();
+      renderModal();
+      await userEvent.type(screen.getByPlaceholderText(/seu nome/i), "César");
+      await userEvent.type(
+        screen.getByLabelText(/mensagem/i),
+        "mensagem válida com mais de dez caracteres"
+      );
+      await userEvent.click(
+        screen.getByRole("button", { name: /enviar sugestão/i })
+      );
+      expect(await screen.findByText(/sugestão enviada/i)).toBeInTheDocument();
+    });
+  });
+
+  describe("estado error", () => {
+    it("exibe banner de erro quando fetch retorna status error", async () => {
+      mockFetchError("Não foi possível enviar.");
+      renderModal();
+      await userEvent.type(
+        screen.getByLabelText(/mensagem/i),
+        "Esta é uma sugestão válida com mais de dez caracteres"
+      );
+      await userEvent.click(
+        screen.getByRole("button", { name: /enviar sugestão/i })
+      );
+      expect(await screen.findByText(/não foi possível enviar/i)).toBeInTheDocument();
+    });
   });
 
   describe("validação client-side", () => {
-    it("exibe erro de mensagem quando mensagem está vazia ao submeter", async () => {
+    it("exibe erro quando mensagem está vazia ao submeter", async () => {
       renderModal();
       await userEvent.click(
         screen.getByRole("button", { name: /enviar sugestão/i })
@@ -98,44 +142,65 @@ describe("FeedbackModal", () => {
         screen.getByLabelText(/mensagem/i),
         "mensagem válida com mais de dez caracteres"
       );
-      // fireEvent.submit bypassa a constraint validation nativa do jsdom no type="email"
       fireEvent.submit(emailInput.closest("form")!);
       expect(await screen.findByText(/formato de e-mail inválido/i)).toBeInTheDocument();
     });
+  });
 
-    it("aceita nome preenchido no submit", async () => {
-      mockAction.mockResolvedValueOnce({ status: "success" });
+  describe("notificação — campo condicional (GAP-002)", () => {
+    it("campo notify_email não é exibido antes de marcar o checkbox", () => {
       renderModal();
-      await userEvent.type(
-        screen.getByPlaceholderText(/seu nome/i),
-        "César"
-      );
-      await userEvent.type(
-        screen.getByLabelText(/mensagem/i),
-        "mensagem válida com mais de dez caracteres"
-      );
-      await userEvent.click(
-        screen.getByRole("button", { name: /enviar sugestão/i })
-      );
-      expect(await screen.findByText(/sugestão enviada/i)).toBeInTheDocument();
+      expect(screen.queryByLabelText(/e-mail para notificação/i)).not.toBeInTheDocument();
+    });
+
+    it("exibe campo notify_email quando checkbox é marcado", async () => {
+      renderModal();
+      await userEvent.click(screen.getByRole("checkbox"));
+      expect(screen.getByLabelText(/e-mail para notificação/i)).toBeInTheDocument();
+    });
+
+    it("oculta campo notify_email quando checkbox é desmarcado novamente", async () => {
+      renderModal();
+      const checkbox = screen.getByRole("checkbox");
+      await userEvent.click(checkbox);
+      await userEvent.click(checkbox);
+      expect(screen.queryByLabelText(/e-mail para notificação/i)).not.toBeInTheDocument();
     });
   });
 
-  describe("estado error", () => {
-    it("exibe banner de erro quando a action retorna erro", async () => {
-      mockAction.mockResolvedValueOnce({
-        status: "error",
-        message: "Não foi possível enviar a sugestão.",
-      });
+  describe("anexos (GAP-005)", () => {
+    function uploadFiles(files: File[]) {
+      const input = document.querySelector("input[type='file']") as HTMLInputElement;
+      Object.defineProperty(input, "files", { value: files, configurable: true });
+      act(() => { fireEvent.change(input); });
+    }
+
+    it("exibe erro para tipo de arquivo inválido", () => {
       renderModal();
-      await userEvent.type(
-        screen.getByLabelText(/mensagem/i),
-        "Esta é uma sugestão válida com mais de dez caracteres"
-      );
+      uploadFiles([makeFile("virus.exe", "application/x-msdownload")]);
+      expect(screen.getByText(/tipo de arquivo não permitido/i)).toBeInTheDocument();
+    });
+
+    it("exibe erro para arquivo maior que 10 MB", () => {
+      renderModal();
+      uploadFiles([makeFile("grande.pdf", "application/pdf", 11 * 1024 * 1024)]);
+      expect(screen.getByText(/arquivo excede o limite de 10 MB/i)).toBeInTheDocument();
+    });
+
+    it("removeFile remove o arquivo da lista (GAP-005)", async () => {
+      renderModal();
+      uploadFiles([makeFile("doc.pdf", "application/pdf")]);
+      expect(screen.getByText("doc.pdf")).toBeInTheDocument();
       await userEvent.click(
-        screen.getByRole("button", { name: /enviar sugestão/i })
+        screen.getByRole("button", { name: /remover doc\.pdf/i })
       );
-      expect(await screen.findByText(/não foi possível/i)).toBeInTheDocument();
+      expect(screen.queryByText("doc.pdf")).not.toBeInTheDocument();
+    });
+
+    it("aceita arquivo PDF válido e o exibe na lista", () => {
+      renderModal();
+      uploadFiles([makeFile("relatorio.pdf", "application/pdf", 2048)]);
+      expect(screen.getByText("relatorio.pdf")).toBeInTheDocument();
     });
   });
 });
