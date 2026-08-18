@@ -1,13 +1,21 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import { X, Download, Paperclip, Loader2 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { X, Download, Paperclip, Loader2, Sparkles, ExternalLink } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { markContactViewed, getAttachmentSignedUrl } from "../actions";
-import type { Database } from "@/lib/types";
+import {
+  markContactViewed,
+  getAttachmentSignedUrl,
+  triggerContactAnalysis,
+  getContactAnalysis,
+  createGitHubIssue,
+} from "../actions";
+import { AIDisclosureBadge } from "@/components/legal/AIDisclosureBadge";
+import type { Database, IssueDraftJson } from "@/lib/types";
 
 type ContactRequest = Database["public"]["Tables"]["contact_requests"]["Row"];
 type ContactAttachment = Database["public"]["Tables"]["contact_attachments"]["Row"];
+type ContactAnalysisRow = Database["public"]["Tables"]["contact_analysis"]["Row"];
 
 interface ContactDrawerProps {
   readonly contact: (ContactRequest & { attachments: ContactAttachment[] }) | null;
@@ -25,6 +33,348 @@ const STATUS_STYLE: Record<string, { color: string; background: string; border: 
   respondido: { color: "#10b981", background: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.3)" },
   visualizado: { color: "#9ca3af", background: "rgba(156,163,175,0.1)", border: "1px solid rgba(156,163,175,0.2)" },
 };
+
+interface IssueDraftEditorProps {
+  readonly draft: IssueDraftJson;
+  readonly index: number;
+  readonly onChange: (index: number, updated: IssueDraftJson) => void;
+  readonly onCreateIssue: (index: number) => void;
+  readonly creating: boolean;
+  readonly created: boolean;
+  readonly issueUrl: string | null;
+}
+
+function IssueDraftEditor({
+  draft,
+  index,
+  onChange,
+  onCreateIssue,
+  creating,
+  created,
+  issueUrl,
+}: IssueDraftEditorProps) {
+  const t = useTranslations("admin.contacts.drawer.analysis");
+  const [reviewed, setReviewed] = useState(false);
+
+  function handleTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    onChange(index, { ...draft, title: e.target.value });
+  }
+
+  function handleBodyChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    onChange(index, { ...draft, body: e.target.value });
+  }
+
+  function handleCreate() {
+    if (!reviewed) return;
+    onCreateIssue(index);
+  }
+
+  return (
+    <div
+      style={{
+        background: "rgba(255,255,255,0.03)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: "8px",
+        padding: "0.875rem",
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.625rem",
+      }}
+    >
+      <div>
+        <label
+          htmlFor={`draft-title-${index}`}
+          className="text-[0.65rem] font-bold tracking-[0.15em] uppercase text-white/30"
+        >
+          {t("titleLabel")}
+        </label>
+        <input
+          id={`draft-title-${index}`}
+          type="text"
+          value={draft.title}
+          onChange={handleTitleChange}
+          disabled={created}
+          className="w-full mt-1 bg-transparent text-white/80 text-xs border border-white/[0.1] rounded-[4px] px-2 py-1.5 outline-none focus:border-blue-400/40 disabled:opacity-50"
+        />
+      </div>
+
+      <div>
+        <label
+          htmlFor={`draft-body-${index}`}
+          className="text-[0.65rem] font-bold tracking-[0.15em] uppercase text-white/30"
+        >
+          {t("bodyLabel")}
+        </label>
+        <textarea
+          id={`draft-body-${index}`}
+          rows={4}
+          value={draft.body}
+          onChange={handleBodyChange}
+          disabled={created}
+          className="w-full mt-1 bg-transparent text-white/80 text-xs border border-white/[0.1] rounded-[4px] px-2 py-1.5 outline-none focus:border-blue-400/40 disabled:opacity-50 resize-none"
+        />
+      </div>
+
+      {draft.labels.length > 0 && (
+        <div>
+          <p className="text-[0.65rem] font-bold tracking-[0.15em] uppercase text-white/30 mb-1">
+            {t("labelsLabel")}
+          </p>
+          <div className="flex flex-wrap gap-1">
+            {draft.labels.map((label) => (
+              <span
+                key={label}
+                className="text-[0.6rem] px-1.5 py-0.5 rounded-[3px] bg-white/[0.06] text-white/50 border border-white/[0.08]"
+              >
+                {label}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!created && (
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={reviewed}
+            onChange={(e) => setReviewed(e.target.checked)}
+            className="w-3.5 h-3.5 accent-blue-400"
+          />
+          <span className="text-[0.65rem] text-white/40">{t("reviewPrompt")}</span>
+        </label>
+      )}
+
+      {created && issueUrl ? (
+        <a
+          href={issueUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 text-[0.65rem] font-bold text-emerald-400 tracking-[0.08em]"
+        >
+          <ExternalLink size={11} />
+          {t("issueCreated")}
+        </a>
+      ) : (
+        <button
+          type="button"
+          onClick={handleCreate}
+          disabled={!reviewed || creating}
+          className="flex items-center gap-1.5 text-[0.65rem] font-bold tracking-[0.1em] uppercase text-blue-400/80 hover:text-blue-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors w-fit"
+        >
+          {creating ? <Loader2 size={11} className="animate-spin" /> : <ExternalLink size={11} />}
+          {creating ? t("creating") : t("createIssue")}
+        </button>
+      )}
+    </div>
+  );
+}
+
+interface AnalysisPanelProps {
+  readonly contactId: string;
+  readonly onContactRespondido: () => void;
+}
+
+function AnalysisPanel({ contactId, onContactRespondido }: AnalysisPanelProps) {
+  const t = useTranslations("admin.contacts.drawer.analysis");
+  const [, startTransition] = useTransition();
+  const [analysis, setAnalysis] = useState<ContactAnalysisRow | null>(null);
+  const [triggering, setTriggering] = useState(false);
+  const [drafts, setDrafts] = useState<IssueDraftJson[]>([]);
+  const [creatingIndex, setCreatingIndex] = useState<number | null>(null);
+  const [createdIndices, setCreatedIndices] = useState<Set<number>>(new Set());
+  const [issueUrls, setIssueUrls] = useState<Record<number, string>>({});
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const stopPolling = useCallback(() => {
+    if (pollingRef.current) {
+      clearInterval(pollingRef.current);
+      pollingRef.current = null;
+    }
+  }, []);
+
+  const loadAnalysis = useCallback(() => {
+    startTransition(async () => {
+      const result = await getContactAnalysis(contactId);
+      setAnalysis(result);
+      if (result) {
+        setDrafts(result.draft_issues as IssueDraftJson[]);
+      }
+      if (result?.status === "done" || result?.status === "error") {
+        stopPolling();
+      }
+    });
+  }, [contactId, stopPolling]);
+
+  useEffect(() => {
+    loadAnalysis();
+  }, [loadAnalysis]);
+
+  useEffect(() => {
+    return () => stopPolling();
+  }, [stopPolling]);
+
+  function startPolling() {
+    stopPolling();
+    pollingRef.current = setInterval(loadAnalysis, 3000);
+  }
+
+  function handleTrigger() {
+    setTriggering(true);
+    startTransition(async () => {
+      await triggerContactAnalysis(contactId);
+      setTriggering(false);
+      setAnalysis((prev) => prev ? { ...prev, status: "pending" } : { contact_request_id: contactId, status: "pending" } as ContactAnalysisRow);
+      startPolling();
+    });
+  }
+
+  function handleDraftChange(index: number, updated: IssueDraftJson) {
+    setDrafts((prev) => prev.map((d, i) => (i === index ? updated : d)));
+  }
+
+  function handleCreateIssue(index: number) {
+    const draft = drafts[index];
+    if (!draft) return;
+    setCreatingIndex(index);
+    startTransition(async () => {
+      try {
+        const result = await createGitHubIssue(contactId, {
+          title: draft.title,
+          body: draft.body,
+          labels: draft.labels,
+        });
+        setIssueUrls((prev) => ({ ...prev, [index]: result.url }));
+        setCreatedIndices((prev) => new Set([...prev, index]));
+        onContactRespondido();
+      } finally {
+        setCreatingIndex(null);
+      }
+    });
+  }
+
+  const isAnalyzing = analysis?.status === "pending" || analysis?.status === "analyzing";
+  const isDone = analysis?.status === "done";
+  const isError = analysis?.status === "error";
+  const hasAnalysis = analysis !== null;
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <p className="text-[0.68rem] font-bold tracking-[0.18em] uppercase text-white/30 flex items-center gap-2">
+          <Sparkles size={11} />
+          Análise IA
+        </p>
+        <AIDisclosureBadge variant="inline" />
+      </div>
+
+      {(!hasAnalysis || isError) && (
+        <button
+          type="button"
+          onClick={handleTrigger}
+          disabled={triggering || isAnalyzing}
+          className="flex items-center gap-2 text-[0.7rem] font-bold tracking-[0.1em] uppercase text-blue-400 hover:text-blue-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors w-fit border border-blue-400/30 hover:border-blue-400/60 rounded-[6px] px-3 py-1.5"
+        >
+          {triggering ? <Loader2 size={12} className="animate-spin" /> : <Sparkles size={12} />}
+          {isError ? t("retrigger") : t("trigger")}
+        </button>
+      )}
+
+      {isAnalyzing && (
+        <div className="flex items-center gap-2 text-[0.7rem] text-white/40">
+          <Loader2 size={12} className="animate-spin text-blue-400" />
+          {t("analyzing")}
+        </div>
+      )}
+
+      {isError && analysis.error_message && (
+        <p className="text-[0.65rem] text-red-400/80">
+          {t("errorLabel")}: {analysis.error_message}
+        </p>
+      )}
+
+      {isDone && (
+        <div className="flex flex-col gap-5">
+          <div>
+            <p className="text-[0.65rem] font-bold tracking-[0.15em] uppercase text-white/30 mb-1.5">
+              {t("problema")}
+            </p>
+            <p className="text-white/70 text-xs leading-relaxed">{analysis.problema}</p>
+          </div>
+
+          <div>
+            <p className="text-[0.65rem] font-bold tracking-[0.15em] uppercase text-white/30 mb-1.5">
+              {t("solucao")}
+            </p>
+            <p className="text-[0.65rem] text-blue-300/70 mb-1">
+              {t("typeLabel")}:{" "}
+              {analysis.solucao_tipo === "novo_produto" ? t("novo_produto") : t("aprimoramento")}
+            </p>
+            <p className="text-white/80 text-xs font-semibold mb-1">{analysis.solucao_titulo}</p>
+            <p className="text-white/60 text-xs leading-relaxed">{analysis.solucao_descricao}</p>
+          </div>
+
+          {Array.isArray(analysis.nichos) && analysis.nichos.length > 0 && (
+            <div>
+              <p className="text-[0.65rem] font-bold tracking-[0.15em] uppercase text-white/30 mb-2">
+                {t("nichos")}
+              </p>
+              <ul className="flex flex-col gap-2">
+                {(analysis.nichos as { publico: string; justificativa: string }[]).map((n) => (
+                  <li
+                    key={n.publico}
+                    className="bg-white/[0.03] border border-white/[0.07] rounded-[6px] px-3 py-2"
+                  >
+                    <p className="text-white/80 text-xs font-semibold">{n.publico}</p>
+                    <p className="text-white/40 text-[0.65rem] leading-snug mt-0.5">{n.justificativa}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {drafts.length > 0 && (
+            <div>
+              <p className="text-[0.65rem] font-bold tracking-[0.15em] uppercase text-white/30 mb-2">
+                {t("drafts")}
+              </p>
+              <div className="flex flex-col gap-3">
+                {drafts.map((draft, i) => (
+                  <IssueDraftEditor
+                    key={i}
+                    draft={draft}
+                    index={i}
+                    onChange={handleDraftChange}
+                    onCreateIssue={handleCreateIssue}
+                    creating={creatingIndex === i}
+                    created={createdIndices.has(i)}
+                    issueUrl={issueUrls[i] ?? null}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {Array.isArray(analysis.attachments_used) && analysis.attachments_used.length > 0 && (
+            <div>
+              <p className="text-[0.65rem] font-bold tracking-[0.15em] uppercase text-white/30 mb-1.5">
+                {t("attachmentsUsed")}
+              </p>
+              <ul className="flex flex-col gap-0.5">
+                {(analysis.attachments_used as string[]).map((name) => (
+                  <li key={name} className="text-[0.65rem] text-white/40 flex items-center gap-1.5">
+                    <Paperclip size={9} />
+                    {name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function ContactDrawer({ contact, onClose }: ContactDrawerProps) {
   const t = useTranslations("admin");
@@ -170,6 +520,15 @@ export function ContactDrawer({ contact, onClose }: ContactDrawerProps) {
                     })}
                   </ul>
                 )}
+              </div>
+
+              <div className="border-t border-white/[0.06] pt-5">
+                <AnalysisPanel
+                  contactId={contact.id}
+                  onContactRespondido={() => {
+                    // optimistic: contact_request será marcado 'respondido' pela action
+                  }}
+                />
               </div>
 
               <p className="text-white/20 text-[0.65rem] mt-auto">
