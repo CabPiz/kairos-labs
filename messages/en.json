@@ -415,6 +415,21 @@
     "submitting": "Sending...",
     "successTitle": "Suggestion sent!",
     "successMessage": "Thank you for the feedback on {productName}. Your suggestion has been received and will be reviewed by the founder.",
+    "attachments": {
+      "label": "Attachments",
+      "hint": "(optional · up to 5 files · PDF, DOCX, TXT, PNG, JPG · max 10 MB each)",
+      "add": "Add file",
+      "fileTypeError": "File type not allowed. Use PDF, DOCX, TXT, PNG or JPG.",
+      "fileSizeError": "File exceeds the 10 MB limit.",
+      "maxFilesError": "Maximum of 5 files allowed."
+    },
+    "notify": {
+      "checkboxLabel": "Notify me when this suggestion is implemented",
+      "emailLabel": "Notification email",
+      "emailPlaceholder": "your@email.com",
+      "emailHint": "(optional — use this if you didn't fill in the email above)",
+      "emailInvalid": "Invalid email format."
+    },
     "validation": {
       "emailInvalid": "Invalid email format.",
       "messageMin": "Message must be at least 10 characters."

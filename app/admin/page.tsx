@@ -2,8 +2,8 @@ export const dynamic = "force-dynamic";
 
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
-import { createServerSupabaseClient } from "@/lib/supabase-server";
-import type { Database } from "@/lib/types";
+import { createServerSupabaseClient, createServerAdminClient } from "@/lib/supabase-server";
+import type { Database, FeedbackWithMeta } from "@/lib/types";
 import { getMostDemandedProduct } from "@/lib/admin/analytics";
 import { KPICard } from "@/components/admin/KPICard";
 import { DemandChart } from "@/components/admin/DemandChart";
@@ -12,12 +12,10 @@ import { AdminLanguageSwitcher } from "@/components/admin/AdminLanguageSwitcher"
 import { FeedbackList } from "@/components/admin/FeedbackList";
 
 type WaitlistRow = Database["public"]["Tables"]["waitlist"]["Row"];
-type FeedbackRow = Database["public"]["Tables"]["feedback"]["Row"];
 
 interface DashboardKpis {
   all_leads: WaitlistRow[];
   recent_count: number;
-  all_feedback: FeedbackRow[];
 }
 
 export default async function AdminPage() {
@@ -29,11 +27,15 @@ export default async function AdminPage() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data } = await (supabase as any).rpc("get_dashboard_kpis");
-  const kpis = (data ?? { all_leads: [], recent_count: 0, all_feedback: [] }) as DashboardKpis;
+  const kpis = (data ?? { all_leads: [], recent_count: 0 }) as DashboardKpis;
 
   const allLeads: WaitlistRow[] = kpis.all_leads ?? [];
   const recentCount: number = kpis.recent_count ?? 0;
-  const sugestoes: FeedbackRow[] = kpis.all_feedback ?? [];
+
+  const adminClient = createServerAdminClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: feedbackData } = await (adminClient as any).rpc("get_feedback_with_meta");
+  const sugestoes: FeedbackWithMeta[] = (feedbackData ?? []) as FeedbackWithMeta[];
 
   const topProduct = getMostDemandedProduct(allLeads);
 

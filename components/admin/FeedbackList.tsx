@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { productNames } from "@/lib/product-names";
-import type { Database } from "@/lib/types";
-
-type FeedbackRow = Database["public"]["Tables"]["feedback"]["Row"];
+import { Paperclip, Bell, GitBranch, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import type { FeedbackWithMeta } from "@/lib/types";
+import { FeedbackDrawer } from "@/components/admin/FeedbackDrawer";
 
 interface FeedbackListProps {
-  readonly feedbacks: FeedbackRow[];
+  readonly feedbacks: FeedbackWithMeta[];
   readonly locale: string;
   readonly noFeedbackText: string;
 }
@@ -29,14 +29,21 @@ async function translateText(text: string, targetLocale: string): Promise<string
   }
 }
 
+function StatusIcon({ status }: { readonly status: string | null }) {
+  if (status === "done") return <CheckCircle2 size={12} className="text-green-400/70" aria-label="Analisado" />;
+  if (status === "analyzing") return <Loader2 size={12} className="animate-spin text-blue-400/70" aria-label="Analisando" />;
+  if (status === "error") return <AlertCircle size={12} className="text-red-400/70" aria-label="Erro na análise" />;
+  return null;
+}
+
 /**
  * Lista de feedbacks com tradução on-demand via Google Translate no browser.
- * Feedbacks cujo locale de origem já é o locale atual não são enviados para tradução.
- * Feedbacks com locale desconhecido (null) são assumidos como "pt".
+ * Cada card abre o FeedbackDrawer ao ser clicado.
  */
 export function FeedbackList({ feedbacks, locale, noFeedbackText }: FeedbackListProps) {
   const [translations, setTranslations] = useState<Map<string, string>>(new Map());
   const [isTranslating, setIsTranslating] = useState(false);
+  const [selectedFeedback, setSelectedFeedback] = useState<FeedbackWithMeta | null>(null);
 
   useEffect(() => {
     const toTranslate = feedbacks.filter(
@@ -63,46 +70,71 @@ export function FeedbackList({ feedbacks, locale, noFeedbackText }: FeedbackList
   }
 
   return (
-    <div className="flex flex-col gap-4 max-w-[860px]">
-      {feedbacks.map((s) => {
-        const needsTranslation = (s.mensagem_locale ?? "pt") !== locale;
-        const displayText = translations.get(s.id) ?? s.mensagem;
-        const pending = isTranslating && needsTranslation && !translations.has(s.id);
+    <>
+      <div className="flex flex-col gap-4 max-w-[860px]">
+        {feedbacks.map((s) => {
+          const needsTranslation = (s.mensagem_locale ?? "pt") !== locale;
+          const displayText = translations.get(s.id) ?? s.mensagem;
+          const pending = isTranslating && needsTranslation && !translations.has(s.id);
 
-        return (
-          <div
-            key={s.id}
-            className="bg-white/[0.03] border border-[rgba(59,130,246,0.14)] rounded-[10px] px-6 py-5"
-          >
-            <div className="flex items-center gap-3 mb-3 flex-wrap">
-              <span className="text-[0.68rem] font-bold tracking-[0.14em] uppercase text-[#d4a017] bg-[rgba(212,160,23,0.12)] border border-[rgba(212,160,23,0.3)] rounded-[4px] px-[0.6rem] py-[0.2rem]">
-                {productNames[s.product_id] ?? s.product_id}
-              </span>
-              <span className="text-white/30 text-[0.78rem]">
-                {new Date(s.created_at).toLocaleString(locale)}
-              </span>
-              {s.mensagem_locale && s.mensagem_locale !== locale && (
-                <span className="text-[0.65rem] font-semibold tracking-[0.1em] uppercase text-white/30 border border-white/[0.1] rounded-[3px] px-[0.45rem] py-[0.15rem]">
-                  {s.mensagem_locale.toUpperCase()}
-                </span>
-              )}
-              {s.nome && (
-                <span className="text-white/55 text-[0.78rem]">{s.nome}</span>
-              )}
-              {s.email && (
-                <span className="text-white/40 text-[0.78rem]">{s.email}</span>
-              )}
-            </div>
-            <p
-              className={`m-0 text-[0.88rem] leading-[1.7] whitespace-pre-wrap transition-opacity duration-300 ${
-                pending ? "opacity-40 text-white/70" : "text-white/70"
-              }`}
+          return (
+            <button
+              key={s.id}
+              type="button"
+              onClick={() => setSelectedFeedback(s)}
+              className="w-full text-left bg-white/[0.03] border border-[rgba(59,130,246,0.14)] rounded-[10px] px-6 py-5 hover:border-[rgba(59,130,246,0.3)] hover:bg-white/[0.05] transition-colors cursor-pointer"
             >
-              {displayText}
-            </p>
-          </div>
-        );
-      })}
-    </div>
+              <div className="flex items-center gap-3 mb-3 flex-wrap">
+                <span className="text-[0.68rem] font-bold tracking-[0.14em] uppercase text-[#d4a017] bg-[rgba(212,160,23,0.12)] border border-[rgba(212,160,23,0.3)] rounded-[4px] px-[0.6rem] py-[0.2rem]">
+                  {productNames[s.product_id] ?? s.product_id}
+                </span>
+                <span className="text-white/30 text-[0.78rem]">
+                  {new Date(s.created_at).toLocaleString(locale)}
+                </span>
+                {s.mensagem_locale && s.mensagem_locale !== locale && (
+                  <span className="text-[0.65rem] font-semibold tracking-[0.1em] uppercase text-white/30 border border-white/[0.1] rounded-[3px] px-[0.45rem] py-[0.15rem]">
+                    {s.mensagem_locale.toUpperCase()}
+                  </span>
+                )}
+                {s.nome && (
+                  <span className="text-white/55 text-[0.78rem]">{s.nome}</span>
+                )}
+                {s.email && (
+                  <span className="text-white/40 text-[0.78rem]">{s.email}</span>
+                )}
+                {s.attachment_count > 0 && (
+                  <span className="flex items-center gap-1 text-[0.68rem] text-white/40">
+                    <Paperclip size={11} aria-hidden />
+                    {s.attachment_count}
+                  </span>
+                )}
+                {s.notify_on_completion && (
+                  <Bell size={12} className="text-blue-400/60" aria-label="Notificação ativa" />
+                )}
+                <StatusIcon status={s.analysis_status} />
+                {s.github_issue_number !== null && (
+                  <span className="flex items-center gap-1 text-[0.68rem] text-green-400/70">
+                    <GitBranch size={11} aria-hidden />
+                    #{s.github_issue_number}
+                  </span>
+                )}
+              </div>
+              <p
+                className={`m-0 text-[0.88rem] leading-[1.7] whitespace-pre-wrap line-clamp-3 transition-opacity duration-300 ${
+                  pending ? "opacity-40 text-white/70" : "text-white/70"
+                }`}
+              >
+                {displayText}
+              </p>
+            </button>
+          );
+        })}
+      </div>
+
+      <FeedbackDrawer
+        feedback={selectedFeedback}
+        onClose={() => setSelectedFeedback(null)}
+      />
+    </>
   );
 }

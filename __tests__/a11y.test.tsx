@@ -7,17 +7,12 @@ import { WaitlistCTAButton } from "@/components/waitlist/WaitlistCTAButton";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { FeedbackCTAButton } from "@/components/feedback/FeedbackCTAButton";
 import * as waitlistAction from "@/components/waitlist/waitlist-action";
-import * as feedbackAction from "@/components/feedback/feedback-action";
 
 jest.mock("@/components/waitlist/waitlist-action", () => ({
   joinWaitlistAction: jest.fn(),
 }));
-jest.mock("@/components/feedback/feedback-action", () => ({
-  sendFeedbackAction: jest.fn(),
-}));
 
 const mockWaitlist = waitlistAction.joinWaitlistAction as jest.Mock;
-const mockFeedback = feedbackAction.sendFeedbackAction as jest.Mock;
 
 const waitlistProps = {
   open: true,
@@ -108,7 +103,11 @@ describe("WaitlistModal — navegação por teclado", () => {
 // FeedbackModal — axe
 // ─────────────────────────────────────────────────────────────
 describe("FeedbackModal — acessibilidade (axe)", () => {
-  beforeEach(() => mockFeedback.mockReset());
+  beforeEach(() => {
+    global.fetch = jest.fn().mockResolvedValue({
+      json: async () => ({ status: "idle" }),
+    });
+  });
 
   it("não tem violações no estado idle", async () => {
     const { container } = render(<FeedbackModal {...feedbackProps} />);
@@ -116,7 +115,9 @@ describe("FeedbackModal — acessibilidade (axe)", () => {
   });
 
   it("não tem violações no estado success", async () => {
-    mockFeedback.mockResolvedValueOnce({ status: "success" });
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      json: async () => ({ status: "success" }),
+    });
     const { container } = render(<FeedbackModal {...feedbackProps} />);
     await userEvent.type(
       screen.getByLabelText(/mensagem/i),
