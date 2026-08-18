@@ -1,3 +1,5 @@
+const mockAfter = jest.fn((cb: () => unknown) => cb());
+
 jest.mock("next/server", () => ({
   NextRequest: jest.fn(),
   NextResponse: {
@@ -6,6 +8,7 @@ jest.mock("next/server", () => ({
       json: async () => body,
     }),
   },
+  after: (cb: () => unknown) => mockAfter(cb),
 }));
 
 const mockSingle = jest.fn();
