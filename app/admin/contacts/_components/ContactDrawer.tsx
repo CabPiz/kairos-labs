@@ -341,7 +341,7 @@ function AnalysisPanel({ contactId, onContactRespondido }: AnalysisPanelProps) {
               <div className="flex flex-col gap-3">
                 {drafts.map((draft, i) => (
                   <IssueDraftEditor
-                    key={i}
+                    key={draft.title}
                     draft={draft}
                     index={i}
                     onChange={handleDraftChange}
