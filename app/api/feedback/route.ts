@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
 import { createServerAdminClient } from "@/lib/supabase-server";
+import { inngest } from "@/inngest/client";
 
 const ALLOWED_MIME_TYPES = new Set([
   "application/pdf",
@@ -140,6 +141,8 @@ export async function POST(req: NextRequest) {
       size_bytes: file.size,
     });
   }
+
+  await inngest.send({ name: "feedback/submitted", data: { feedbackId: feedbackRow.id as string } });
 
   return NextResponse.json({ status: "success" });
 }

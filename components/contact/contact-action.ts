@@ -5,6 +5,7 @@ import { after } from "next/server";
 import { z } from "zod";
 import { createServerAdminClient } from "@/lib/supabase-server";
 import { notifyWhatsApp } from "@/lib/notifications/whatsapp";
+import { inngest } from "@/inngest/client";
 import { PROJECT_TYPE_KEYS, isValidEmail, isValidPhone } from "./contact-schema";
 
 const schema = z.object({
@@ -78,15 +79,18 @@ export async function sendContactAction(
     return { status: "error", message: "Não foi possível enviar a solicitação. Tente novamente." };
   }
 
-  after(() =>
-    notifyWhatsApp({
-      name,
-      email,
-      project_type,
-      description,
-      timestamp: new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" }),
-    })
-  );
+  after(async () => {
+    await Promise.all([
+      inngest.send({ name: "contact/submitted", data: { contactId: id } }),
+      notifyWhatsApp({
+        name,
+        email,
+        project_type,
+        description,
+        timestamp: new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" }),
+      }),
+    ]);
+  });
 
   return { status: "success", id };
 }
