@@ -118,20 +118,60 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
       const result = await sendContactAction(data);
 
       if (result.status === "success" && selectedFiles.length > 0) {
-        const formData = new FormData();
-        formData.append("contact_request_id", result.id);
-        for (const file of selectedFiles) {
-          formData.append("files", file);
-        }
         try {
-          const res = await fetch("/api/contact-attachments", { method: "POST", body: formData });
-          if (!res.ok) {
-            const body = (await res.json()) as { error?: string };
+          const presignResults = await Promise.all(
+            selectedFiles.map(async (file) => {
+              const res = await fetch("/api/contact-attachments/presign", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  contact_request_id: result.id,
+                  filename: file.name,
+                  mime_type: file.type,
+                  size: file.size,
+                }),
+              });
+              if (!res.ok) {
+                const body = (await res.json()) as { error?: string };
+                throw new Error(body.error ?? t("uploadError"));
+              }
+              return res.json() as Promise<{ signed_url: string; token: string; path: string }>;
+            })
+          );
+
+          await Promise.all(
+            selectedFiles.map((file, i) =>
+              fetch(presignResults[i].signed_url, {
+                method: "PUT",
+                headers: { "Content-Type": file.type },
+                body: file,
+              }).then((res) => {
+                if (!res.ok) throw new Error(t("uploadError"));
+              })
+            )
+          );
+
+          const confirmRes = await fetch("/api/contact-attachments/confirm", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contact_request_id: result.id,
+              files: presignResults.map((r, i) => ({
+                path: r.path,
+                filename: selectedFiles[i].name,
+                size: selectedFiles[i].size,
+                mime_type: selectedFiles[i].type,
+              })),
+            }),
+          });
+          if (!confirmRes.ok) {
+            const body = (await confirmRes.json()) as { error?: string };
             setActionState({ status: "error", message: body.error ?? t("uploadError") });
             return;
           }
-        } catch {
-          setActionState({ status: "error", message: t("uploadError") });
+        } catch (err) {
+          const message = err instanceof Error ? err.message : t("uploadError");
+          setActionState({ status: "error", message });
           return;
         }
       }

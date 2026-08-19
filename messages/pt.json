@@ -417,10 +417,10 @@
     "successMessage": "Obrigado pelo feedback sobre {productName}. Sua sugestão foi recebida e será analisada pelo fundador.",
     "attachments": {
       "label": "Anexos",
-      "hint": "(opcional · até 5 arquivos · PDF, DOCX, TXT, PNG, JPG · máx. 10 MB cada)",
+      "hint": "(opcional · até 5 arquivos · PDF, DOCX, TXT, PNG, JPG · máx. 4 MB cada)",
       "add": "Adicionar arquivo",
       "fileTypeError": "Tipo de arquivo não permitido. Use PDF, DOCX, TXT, PNG ou JPG.",
-      "fileSizeError": "O arquivo excede o limite de 10 MB.",
+      "fileSizeError": "O arquivo excede o limite de 4 MB.",
       "maxFilesError": "Máximo de 5 arquivos permitidos."
     },
     "notify": {

@@ -39,6 +39,29 @@ test.describe("Fluxo de Contato — Modal Formulário de Contato", () => {
     await expect(page.getByText(/descrição é obrigatória/i)).toBeVisible({ timeout: 5_000 });
   });
 
+  test("sucesso: formulário com anexo faz upload direto e exibe confirmação", async ({ page }) => {
+    await openContactModal(page);
+
+    await page.locator("#contact-name").fill("César Pizarro");
+    await page.locator("#contact-email").fill("cesar@exemplo.com");
+    await page.locator("#contact-project-type").selectOption("Consultoria Técnica");
+    await page.locator("#contact-description").fill(
+      "Teste de upload direto via presigned URL para arquivo de até 10 MB."
+    );
+
+    await page.locator("#contact-files").setInputFiles({
+      name: "teste-anexo.txt",
+      mimeType: "text/plain",
+      buffer: Buffer.from("conteúdo de teste para upload direto"),
+    });
+
+    await page.getByRole("button", { name: /enviar mensagem/i }).click();
+
+    await expect(
+      page.getByText(/mensagem enviada/i)
+    ).toBeVisible({ timeout: 20_000 });
+  });
+
   test("fecha e reseta o formulário ao clicar em Fechar após sucesso", async ({ page }) => {
     await openContactModal(page);
 

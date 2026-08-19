@@ -417,10 +417,10 @@
     "successMessage": "Thank you for the feedback on {productName}. Your suggestion has been received and will be reviewed by the founder.",
     "attachments": {
       "label": "Attachments",
-      "hint": "(optional · up to 5 files · PDF, DOCX, TXT, PNG, JPG · max 10 MB each)",
+      "hint": "(optional · up to 5 files · PDF, DOCX, TXT, PNG, JPG · max 4 MB each)",
       "add": "Add file",
       "fileTypeError": "File type not allowed. Use PDF, DOCX, TXT, PNG or JPG.",
-      "fileSizeError": "File exceeds the 10 MB limit.",
+      "fileSizeError": "File exceeds the 4 MB limit.",
       "maxFilesError": "Maximum of 5 files allowed."
     },
     "notify": {

@@ -146,4 +146,120 @@ describe("ContactModal", () => {
       expect(screen.queryByText("doc.pdf")).not.toBeInTheDocument();
     });
   });
+
+  describe("reset ao fechar o modal", () => {
+    it("limpa arquivos selecionados ao fechar o modal", () => {
+      renderModal();
+      const input = document.getElementById("contact-files") as HTMLInputElement;
+      const files = [new File(["x"], "doc.pdf", { type: "application/pdf" })];
+      const mockFileList = Object.assign(files, { item: (i: number) => files[i] });
+      Object.defineProperty(input, "files", { value: mockFileList, configurable: true });
+      fireEvent.change(input);
+      expect(screen.getByText("doc.pdf")).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole("button", { name: /close/i }));
+
+      expect(screen.queryByText("doc.pdf")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("fluxo de upload de anexo no submit", () => {
+    const originalFetch = global.fetch;
+
+    afterEach(() => {
+      global.fetch = originalFetch;
+    });
+
+    function mockFetch(responses: Array<{ ok: boolean; json?: Record<string, unknown> }>) {
+      let callIndex = 0;
+      global.fetch = jest.fn().mockImplementation(() => {
+        const response = responses[callIndex++] ?? { ok: true };
+        return Promise.resolve({
+          ok: response.ok,
+          json: async () => response.json ?? {},
+        });
+      }) as typeof fetch;
+    }
+
+    function makeUploadFile(name: string, type: string): File {
+      return new File(["x"], name, { type });
+    }
+
+    async function submitWithFile(file: File) {
+      renderModal();
+      await userEvent.type(screen.getByLabelText(/nome/i), "César");
+      await userEvent.type(screen.getByLabelText(/e-mail/i), "cesar@exemplo.com");
+      await userEvent.type(screen.getByLabelText(/descrição breve/i), "Descrição de teste.");
+      const input = document.getElementById("contact-files") as HTMLInputElement;
+      const files = [file];
+      const mockFileList = Object.assign(files, { item: (i: number) => files[i] });
+      Object.defineProperty(input, "files", { value: mockFileList, configurable: true });
+      fireEvent.change(input);
+      await userEvent.click(screen.getByRole("button", { name: /enviar mensagem/i }));
+    }
+
+    it("conclui com sucesso quando presign, PUT e confirm respondem ok", async () => {
+      mockAction.mockResolvedValueOnce({ status: "success", id: "contact-uuid" });
+      mockFetch([
+        { ok: true, json: { signed_url: "https://storage.example.com/upload", token: "tok", path: "contact-uuid/file.pdf" } },
+        { ok: true },
+        { ok: true, json: { ok: true } },
+      ]);
+      await submitWithFile(makeUploadFile("doc.pdf", "application/pdf"));
+      expect(await screen.findByText(/mensagem enviada/i)).toBeInTheDocument();
+    });
+
+    it("exibe erro quando presign retorna status não-ok com body de erro", async () => {
+      mockAction.mockResolvedValueOnce({ status: "success", id: "contact-uuid" });
+      mockFetch([{ ok: false, json: { error: "Falha no presign." } }]);
+      await submitWithFile(makeUploadFile("doc.pdf", "application/pdf"));
+      expect(await screen.findByText(/falha no presign/i)).toBeInTheDocument();
+    });
+
+    it("exibe uploadError quando presign falha sem body de erro", async () => {
+      mockAction.mockResolvedValueOnce({ status: "success", id: "contact-uuid" });
+      mockFetch([{ ok: false, json: {} }]);
+      await submitWithFile(makeUploadFile("doc.pdf", "application/pdf"));
+      expect(await screen.findByText(/não foi possível enviar os anexos/i)).toBeInTheDocument();
+    });
+
+    it("exibe erro quando PUT direto ao Supabase retorna status não-ok", async () => {
+      mockAction.mockResolvedValueOnce({ status: "success", id: "contact-uuid" });
+      mockFetch([
+        { ok: true, json: { signed_url: "https://storage.example.com/upload", token: "tok", path: "contact-uuid/file.pdf" } },
+        { ok: false },
+      ]);
+      await submitWithFile(makeUploadFile("doc.pdf", "application/pdf"));
+      expect(await screen.findByText(/não foi possível enviar os anexos/i)).toBeInTheDocument();
+    });
+
+    it("exibe erro quando confirm retorna status não-ok com body de erro", async () => {
+      mockAction.mockResolvedValueOnce({ status: "success", id: "contact-uuid" });
+      mockFetch([
+        { ok: true, json: { signed_url: "https://storage.example.com/upload", token: "tok", path: "contact-uuid/file.pdf" } },
+        { ok: true },
+        { ok: false, json: { error: "Falha no confirm." } },
+      ]);
+      await submitWithFile(makeUploadFile("doc.pdf", "application/pdf"));
+      expect(await screen.findByText(/falha no confirm/i)).toBeInTheDocument();
+    });
+
+    it("exibe uploadError quando confirm falha sem body de erro", async () => {
+      mockAction.mockResolvedValueOnce({ status: "success", id: "contact-uuid" });
+      mockFetch([
+        { ok: true, json: { signed_url: "https://storage.example.com/upload", token: "tok", path: "contact-uuid/file.pdf" } },
+        { ok: true },
+        { ok: false, json: {} },
+      ]);
+      await submitWithFile(makeUploadFile("doc.pdf", "application/pdf"));
+      expect(await screen.findByText(/não foi possível enviar os anexos/i)).toBeInTheDocument();
+    });
+
+    it("exibe uploadError quando fetch lança exceção não-Error", async () => {
+      mockAction.mockResolvedValueOnce({ status: "success", id: "contact-uuid" });
+      global.fetch = jest.fn().mockRejectedValue("network-string-error") as typeof fetch;
+      await submitWithFile(makeUploadFile("doc.pdf", "application/pdf"));
+      expect(await screen.findByText(/não foi possível enviar os anexos/i)).toBeInTheDocument();
+    });
+  });
 });
