@@ -156,6 +156,12 @@ export const analyzeContact = inngest.createFunction(
       { event: "contact/submitted" },
       { event: "contact/analyze.requested" },
     ],
+    onFailure: async ({ event, error }) => {
+      // Chamado após esgotar todas as retentativas — garante que o status nunca fica preso em "analyzing"
+      const originalEvent = event.data.event as { data: { contactId: string } };
+      const contactId = originalEvent.data.contactId;
+      await saveAnalysisError(contactId, error.message);
+    },
   },
   async ({ event, step }) => {
     const { contactId } = event.data as { contactId: string };
