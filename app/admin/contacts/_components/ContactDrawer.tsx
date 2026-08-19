@@ -222,10 +222,23 @@ function AnalysisPanel({ contactId, onContactRespondido }: AnalysisPanelProps) {
   function handleTrigger() {
     setTriggering(true);
     startTransition(async () => {
-      await triggerContactAnalysis(contactId);
-      setTriggering(false);
-      setAnalysis((prev) => prev ? { ...prev, status: "pending" } : { contact_request_id: contactId, status: "pending" } as ContactAnalysisRow);
-      startPolling();
+      try {
+        await triggerContactAnalysis(contactId);
+        setAnalysis((prev) =>
+          prev
+            ? { ...prev, status: "pending" }
+            : ({ contact_request_id: contactId, status: "pending" } as ContactAnalysisRow),
+        );
+        startPolling();
+      } catch (err) {
+        setAnalysis((prev) => ({
+          ...(prev ?? { contact_request_id: contactId }),
+          status: "error",
+          error_message: err instanceof Error ? err.message : "Erro ao iniciar análise",
+        } as ContactAnalysisRow));
+      } finally {
+        setTriggering(false);
+      }
     });
   }
 

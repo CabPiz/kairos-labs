@@ -53,7 +53,20 @@ export async function triggerContactAnalysis(contactId: string): Promise<void> {
     .from("contact_analysis")
     .upsert({ contact_request_id: contactId, status: "pending" }, { onConflict: "contact_request_id" });
 
-  await inngest.send({ name: "contact/analyze.requested", data: { contactId } });
+  try {
+    await inngest.send({ name: "contact/analyze.requested", data: { contactId } });
+  } catch (err) {
+    // Se o enfileiramento falhar, marca imediatamente como erro para não deixar o registro preso em "pending"
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any)
+      .from("contact_analysis")
+      .update({
+        status: "error",
+        error_message: err instanceof Error ? err.message : "Erro ao enfileirar análise",
+      })
+      .eq("contact_request_id", contactId);
+    throw err;
+  }
 }
 
 /**
