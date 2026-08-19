@@ -21,7 +21,7 @@ import { sendContactAction, type ContactActionState, type ContactFormData } from
 import { PROJECT_TYPE_KEYS, isValidEmail, isValidPhone } from "./contact-schema";
 
 const ALLOWED_TYPES = new Set(["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "text/plain", "image/png", "image/jpeg"]);
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_FILE_SIZE = 4 * 1024 * 1024;
 const MAX_FILES = 5;
 
 interface ContactModalProps {
