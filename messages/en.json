@@ -354,7 +354,7 @@
       },
       "attachments": {
         "label": "Attachments",
-        "optional": "(optional, up to 5 files · PDF, DOCX, TXT, PNG, JPG · max. 4 MB each)",
+        "optional": "(optional, up to 5 files · PDF, DOCX, TXT, PNG, JPG · max. 10 MB each)",
         "add": "Add file"
       }
     },
@@ -381,7 +381,7 @@
       "descriptionMax": "Description must be at most 500 characters.",
       "phoneInvalid": "Invalid number. Please include area code (minimum 10 digits).",
       "fileType": "File type not allowed. Use PDF, DOCX, TXT, PNG or JPG.",
-      "fileSize": "One or more files exceed the 4 MB limit."
+      "fileSize": "One or more files exceed the 10 MB limit."
     }
   },
   "waitlistModal": {

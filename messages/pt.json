@@ -354,7 +354,7 @@
       },
       "attachments": {
         "label": "Anexos",
-        "optional": "(opcional, até 5 arquivos · PDF, DOCX, TXT, PNG, JPG · máx. 4 MB cada)",
+        "optional": "(opcional, até 5 arquivos · PDF, DOCX, TXT, PNG, JPG · máx. 10 MB cada)",
         "add": "Adicionar arquivo"
       }
     },
@@ -381,7 +381,7 @@
       "descriptionMax": "A descrição deve ter no máximo 500 caracteres.",
       "phoneInvalid": "Número inválido. Use DDD + número (mínimo 10 dígitos).",
       "fileType": "Tipo de arquivo não permitido. Use PDF, DOCX, TXT, PNG ou JPG.",
-      "fileSize": "Um ou mais arquivos excedem o limite de 4 MB."
+      "fileSize": "Um ou mais arquivos excedem o limite de 10 MB."
     }
   },
   "waitlistModal": {
