@@ -98,6 +98,38 @@ describe("triggerContactAnalysis", () => {
       expect.objectContaining({ name: "contact/analyze.requested", data: { contactId: "c-1" } }),
     );
   });
+
+  it("atualiza status para error e relança quando inngest.send falha", async () => {
+    const mockEq = jest.fn().mockResolvedValue({ error: null });
+    const mockUpdate = jest.fn().mockReturnValue({ eq: mockEq });
+    const mockUpsert = jest.fn().mockResolvedValue({ error: null });
+    mockFrom.mockReturnValue({ upsert: mockUpsert, update: mockUpdate });
+
+    const sendError = new Error("Inngest indisponível");
+    mockInngestSend.mockRejectedValue(sendError);
+
+    await expect(triggerContactAnalysis("c-2")).rejects.toThrow("Inngest indisponível");
+
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ status: "error", error_message: "Inngest indisponível" }),
+    );
+    expect(mockEq).toHaveBeenCalledWith("contact_request_id", "c-2");
+  });
+
+  it("usa mensagem genérica quando o erro não é instância de Error", async () => {
+    const mockEq = jest.fn().mockResolvedValue({ error: null });
+    const mockUpdate = jest.fn().mockReturnValue({ eq: mockEq });
+    const mockUpsert = jest.fn().mockResolvedValue({ error: null });
+    mockFrom.mockReturnValue({ upsert: mockUpsert, update: mockUpdate });
+
+    mockInngestSend.mockRejectedValue("string-error");
+
+    await expect(triggerContactAnalysis("c-3")).rejects.toBe("string-error");
+
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ status: "error", error_message: "Erro ao enfileirar análise" }),
+    );
+  });
 });
 
 // ─── getContactAnalysis ────────────────────────────────────────────────────
