@@ -86,10 +86,10 @@ describe("POST /api/contact-attachments", () => {
     expect(res.status).toBe(400);
   });
 
-  it("retorna 400 quando arquivo excede 10 MB", async () => {
+  it("retorna 400 quando arquivo excede 4 MB", async () => {
     const res = await POST(makeReq({
       contact_request_id: "uuid-123",
-      files: makeFile("grande.pdf", "application/pdf", 11 * 1024 * 1024),
+      files: makeFile("grande.pdf", "application/pdf", 5 * 1024 * 1024),
     }));
     expect(res.status).toBe(400);
   });

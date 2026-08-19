@@ -181,10 +181,10 @@ describe("FeedbackModal", () => {
       expect(screen.getByText(/tipo de arquivo não permitido/i)).toBeInTheDocument();
     });
 
-    it("exibe erro para arquivo maior que 10 MB", () => {
+    it("exibe erro para arquivo maior que 4 MB", () => {
       renderModal();
-      uploadFiles([makeFile("grande.pdf", "application/pdf", 11 * 1024 * 1024)]);
-      expect(screen.getByText(/arquivo excede o limite de 10 MB/i)).toBeInTheDocument();
+      uploadFiles([makeFile("grande.pdf", "application/pdf", 5 * 1024 * 1024)]);
+      expect(screen.getByText(/arquivo excede o limite de 4 MB/i)).toBeInTheDocument();
     });
 
     it("removeFile remove o arquivo da lista (GAP-005)", async () => {

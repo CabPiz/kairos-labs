@@ -8,7 +8,7 @@ const ALLOWED_TYPES = new Set([
   "image/png",
   "image/jpeg",
 ]);
-const MAX_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
+const MAX_SIZE_BYTES = 4 * 1024 * 1024; // 4 MB — limite do payload serverless Vercel
 const MAX_FILES = 5;
 
 function validateFile(file: File): string | null {
