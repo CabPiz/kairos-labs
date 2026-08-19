@@ -5,11 +5,16 @@
 export type ProductId = 'devprint' | 'ai-saas' | 'audio-tech' | 'blockchain'
 
 export interface IssueDraftJson {
-  classification: 'bug' | 'improvement' | 'feature' | 'out-of-scope'
+  classification?: 'bug' | 'improvement' | 'feature' | 'out-of-scope'
   title: string
   body: string
   labels: string[]
   milestone?: string
+}
+
+export interface NichoJson {
+  publico: string
+  justificativa: string
 }
 
 /** Linha de feedback enriquecida com contagem de anexos (retornada pela RPC get_dashboard_kpis) */
@@ -231,6 +236,57 @@ export type Database = {
           storage_path?: string
           mime_type?: string
           size_bytes?: number
+          created_at?: string
+        }
+        Relationships: Rel[]
+      }
+      contact_analysis: {
+        Row: {
+          id: string
+          contact_request_id: string
+          status: 'pending' | 'analyzing' | 'done' | 'error'
+          problema: string | null
+          solucao_tipo: 'novo_produto' | 'aprimoramento' | null
+          solucao_titulo: string | null
+          solucao_descricao: string | null
+          nichos: NichoJson[]
+          draft_issues: IssueDraftJson[]
+          attachments_used: string[]
+          github_issue_url: string | null
+          github_issue_number: number | null
+          error_message: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          contact_request_id: string
+          status?: 'pending' | 'analyzing' | 'done' | 'error'
+          problema?: string | null
+          solucao_tipo?: 'novo_produto' | 'aprimoramento' | null
+          solucao_titulo?: string | null
+          solucao_descricao?: string | null
+          nichos?: NichoJson[]
+          draft_issues?: IssueDraftJson[]
+          attachments_used?: string[]
+          github_issue_url?: string | null
+          github_issue_number?: number | null
+          error_message?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          contact_request_id?: string
+          status?: 'pending' | 'analyzing' | 'done' | 'error'
+          problema?: string | null
+          solucao_tipo?: 'novo_produto' | 'aprimoramento' | null
+          solucao_titulo?: string | null
+          solucao_descricao?: string | null
+          nichos?: NichoJson[]
+          draft_issues?: IssueDraftJson[]
+          attachments_used?: string[]
+          github_issue_url?: string | null
+          github_issue_number?: number | null
+          error_message?: string | null
           created_at?: string
         }
         Relationships: Rel[]

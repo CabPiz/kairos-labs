@@ -93,6 +93,26 @@ CREATE TABLE public.contact_attachments (
   created_at         TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
+-- Tabela de análises agênticas de solicitações de contato.
+-- Cada contact_request tem no máximo uma análise (UNIQUE).
+CREATE TABLE public.contact_analysis (
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  contact_request_id  UUID NOT NULL UNIQUE REFERENCES public.contact_requests(id) ON DELETE CASCADE,
+  status              TEXT NOT NULL DEFAULT 'pending'
+                        CHECK (status IN ('pending','analyzing','done','error')),
+  problema            TEXT,
+  solucao_tipo        TEXT CHECK (solucao_tipo IN ('novo_produto','aprimoramento')),
+  solucao_titulo      TEXT,
+  solucao_descricao   TEXT,
+  nichos              JSONB NOT NULL DEFAULT '[]',
+  draft_issues        JSONB NOT NULL DEFAULT '[]',
+  attachments_used    JSONB NOT NULL DEFAULT '[]',
+  github_issue_url    TEXT,
+  github_issue_number INT,
+  error_message       TEXT,
+  created_at          TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Tabela de registros de execução de agentes IA.
 -- RLS bloqueia todo acesso por JWT; apenas service_role (BYPASSRLS) pode escrever.
 -- Leitura para o admin via #126 deve usar service_role ou RPC SECURITY DEFINER.
@@ -126,6 +146,7 @@ ALTER TABLE public.feedback_notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.settings              ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.contact_requests      ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.contact_attachments   ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.contact_analysis      ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.agent_runs            ENABLE ROW LEVEL SECURITY;
 
 -- Acesso de fundador é baseado em app_metadata.role = 'founder'.
@@ -197,6 +218,14 @@ CREATE POLICY "Fundador pode deletar anexos de contato"
   ON public.contact_attachments FOR DELETE
   USING (public.is_founder());
 
+-- contact_analysis: escrita via service_role; leitura pelo fundador autenticado
+CREATE POLICY "owner read contact_analysis"
+  ON public.contact_analysis FOR SELECT TO authenticated USING (true);
+CREATE POLICY "service role insert contact_analysis"
+  ON public.contact_analysis FOR INSERT TO service_role WITH CHECK (true);
+CREATE POLICY "service role update contact_analysis"
+  ON public.contact_analysis FOR UPDATE TO service_role USING (true);
+
 -- agent_runs: bloqueia acesso via JWT; service_role contorna via BYPASSRLS
 CREATE POLICY "service role only" ON public.agent_runs USING (false);
 
@@ -213,6 +242,8 @@ GRANT ALL    ON public.feedback_notifications TO service_role;
 GRANT ALL    ON public.settings              TO service_role;
 GRANT ALL    ON public.contact_requests      TO service_role;
 GRANT ALL    ON public.contact_attachments   TO service_role;
+GRANT ALL    ON public.contact_analysis      TO service_role;
+GRANT SELECT ON public.contact_analysis      TO authenticated;
 GRANT ALL    ON public.agent_runs            TO service_role;
 
 -- =============================================

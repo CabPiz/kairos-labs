@@ -1,13 +1,9 @@
 const mockFrom = jest.fn();
-const mockAdminClient = { from: mockFrom };
+const mockStorage = { from: jest.fn() };
+const mockAdminClient = { from: mockFrom, storage: mockStorage };
 
 jest.mock("@/lib/supabase-server", () => ({
   createServerAdminClient: jest.fn(() => mockAdminClient),
-}));
-
-const mockRunAgent = jest.fn();
-jest.mock("@/lib/ai/agent", () => ({
-  runAgent: (...args: unknown[]) => mockRunAgent(...args),
 }));
 
 const mockExtractStructured = jest.fn();
@@ -15,9 +11,9 @@ jest.mock("@/lib/ai/structured", () => ({
   extractStructured: (...args: unknown[]) => mockExtractStructured(...args),
 }));
 
-const mockSanitizeInput = jest.fn((s: string) => s);
-jest.mock("@/lib/ai/guardrails", () => ({
-  sanitizeInput: (s: string) => mockSanitizeInput(s),
+const mockExtractAttachmentContent = jest.fn();
+jest.mock("@/lib/ai/attachment-extractor", () => ({
+  extractAttachmentContent: (...args: unknown[]) => mockExtractAttachmentContent(...args),
 }));
 
 const mockTracedLLMCall = jest.fn();
@@ -31,38 +27,75 @@ jest.mock("@/inngest/client", () => ({
   },
 }));
 
-import { fetchContactFromDB, saveContactAnalysis, analyzeContact } from "@/inngest/functions/analyze-contact";
+import {
+  fetchContactWithAttachments,
+  extractAllAttachments,
+  upsertAnalyzingStatus,
+  saveAnalysisResult,
+  saveAnalysisError,
+  analyzeContact,
+} from "@/inngest/functions/analyze-contact";
 
-const contactRow = { id: "c-1", description: "Quero contratar o serviço", name: "João", project_type: "web" };
-const contactAnalysis = { intencao: "compra" as const, urgencia: "alta" as const, resumo: "Lead qualificado" };
+const contactRow = {
+  id: "c-1",
+  name: "Ana",
+  email: "ana@test.com",
+  project_type: "web",
+  description: "Preciso de um sistema de gestão",
+  phone: null,
+  whatsapp_preferred: false,
+  status: "novo",
+  created_at: "2026-01-01T00:00:00Z",
+};
 
-function setupFetchMock() {
-  mockFrom.mockReturnValueOnce({
-    select: jest.fn().mockReturnValue({
-      eq: jest.fn().mockReturnValue({
-        single: jest.fn().mockResolvedValue({ data: contactRow, error: null }),
-      }),
-    }),
-  });
-}
+const attachmentRow = {
+  id: "att-1",
+  contact_request_id: "c-1",
+  filename: "proposta.pdf",
+  storage_path: "c-1/proposta.pdf",
+  mime_type: "application/pdf",
+  size_bytes: 1024,
+  created_at: "2026-01-01T00:00:00Z",
+};
 
-function setupSaveMock() {
-  mockFrom.mockReturnValueOnce({
-    insert: jest.fn().mockResolvedValue({ error: null }),
-  });
-}
+const analysis = {
+  problema: "Empresa sem sistema de gestão",
+  solucao_tipo: "novo_produto" as const,
+  solucao_titulo: "SaaS de Gestão",
+  solucao_descricao: "Plataforma para gestão de pequenas empresas",
+  nichos: [
+    { publico: "MEIs", justificativa: "Alta demanda" },
+    { publico: "Freelancers", justificativa: "Necessidade de organização" },
+  ],
+  draft_issues: [{ title: "feat: módulo de finanças", body: "Descrição", labels: ["type: feature"] }],
+};
 
-describe("fetchContactFromDB", () => {
+// ─── fetchContactWithAttachments ───────────────────────────────────────────
+
+describe("fetchContactWithAttachments", () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it("retorna os dados do contato quando encontrado", async () => {
-    setupFetchMock();
-    const result = await fetchContactFromDB("c-1");
-    expect(result).toEqual(contactRow);
-    expect(mockFrom).toHaveBeenCalledWith("contact_requests");
+  it("retorna contato e anexos quando encontrados", async () => {
+    mockFrom
+      .mockReturnValueOnce({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue({ data: contactRow, error: null }),
+          }),
+        }),
+      })
+      .mockReturnValueOnce({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockResolvedValue({ data: [attachmentRow] }),
+        }),
+      });
+
+    const result = await fetchContactWithAttachments("c-1");
+    expect(result.contact).toEqual(contactRow);
+    expect(result.attachments).toEqual([attachmentRow]);
   });
 
-  it("lança erro quando o contato não é encontrado", async () => {
+  it("lança erro quando contato não encontrado", async () => {
     mockFrom.mockReturnValue({
       select: jest.fn().mockReturnValue({
         eq: jest.fn().mockReturnValue({
@@ -71,36 +104,141 @@ describe("fetchContactFromDB", () => {
       }),
     });
 
-    await expect(fetchContactFromDB("inexistente")).rejects.toThrow("Contato não encontrado");
+    await expect(fetchContactWithAttachments("inexistente")).rejects.toThrow("Contato não encontrado");
+  });
+
+  it("retorna array vazio de anexos quando não há anexos", async () => {
+    mockFrom
+      .mockReturnValueOnce({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue({ data: contactRow, error: null }),
+          }),
+        }),
+      })
+      .mockReturnValueOnce({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockResolvedValue({ data: null }),
+        }),
+      });
+
+    const result = await fetchContactWithAttachments("c-1");
+    expect(result.attachments).toEqual([]);
   });
 });
 
-describe("saveContactAnalysis", () => {
+// ─── extractAllAttachments ─────────────────────────────────────────────────
+
+describe("extractAllAttachments", () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it("insere na tabela contact_analysis com os campos corretos", async () => {
-    const mockInsert = jest.fn().mockResolvedValue({ error: null });
-    mockFrom.mockReturnValue({ insert: mockInsert });
-
-    await saveContactAnalysis("c-1", contactAnalysis);
-
-    expect(mockFrom).toHaveBeenCalledWith("contact_analysis");
-    expect(mockInsert).toHaveBeenCalledWith({
-      contact_request_id: "c-1",
-      intencao: "compra",
-      urgencia: "alta",
-      resumo: "Lead qualificado",
+  it("gera signed URL e extrai conteúdo de cada anexo", async () => {
+    mockStorage.from.mockReturnValue({
+      createSignedUrl: jest.fn().mockResolvedValue({ data: { signedUrl: "https://signed.url" }, error: null }),
     });
+    mockExtractAttachmentContent.mockResolvedValue({ filename: "proposta.pdf", content: "texto do pdf" });
+
+    const result = await extractAllAttachments([attachmentRow]);
+    expect(result).toHaveLength(1);
+    expect(result[0].content).toBe("texto do pdf");
   });
 
-  it("lança erro quando o insert falha", async () => {
-    mockFrom.mockReturnValue({
-      insert: jest.fn().mockResolvedValue({ error: { message: "db error" } }),
+  it("retorna mensagem de erro quando signed URL falha", async () => {
+    mockStorage.from.mockReturnValue({
+      createSignedUrl: jest.fn().mockResolvedValue({ data: null, error: { message: "forbidden" } }),
     });
 
-    await expect(saveContactAnalysis("c-1", contactAnalysis)).rejects.toThrow("Erro ao salvar análise de contato");
+    const result = await extractAllAttachments([attachmentRow]);
+    expect(result[0].content).toContain("Erro ao obter URL");
+  });
+
+  it("retorna mensagem de erro quando extractAttachmentContent lança", async () => {
+    mockStorage.from.mockReturnValue({
+      createSignedUrl: jest.fn().mockResolvedValue({ data: { signedUrl: "https://signed.url" }, error: null }),
+    });
+    mockExtractAttachmentContent.mockRejectedValue(new Error("falha"));
+
+    const result = await extractAllAttachments([attachmentRow]);
+    expect(result[0].content).toContain("Erro ao processar");
+  });
+
+  it("retorna array vazio quando não há anexos", async () => {
+    const result = await extractAllAttachments([]);
+    expect(result).toEqual([]);
   });
 });
+
+// ─── upsertAnalyzingStatus ─────────────────────────────────────────────────
+
+describe("upsertAnalyzingStatus", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("faz upsert com status analyzing", async () => {
+    const mockUpsert = jest.fn().mockResolvedValue({ error: null });
+    mockFrom.mockReturnValue({ upsert: mockUpsert });
+
+    await upsertAnalyzingStatus("c-1");
+    expect(mockFrom).toHaveBeenCalledWith("contact_analysis");
+    expect(mockUpsert).toHaveBeenCalledWith(
+      expect.objectContaining({ contact_request_id: "c-1", status: "analyzing" }),
+      expect.any(Object),
+    );
+  });
+});
+
+// ─── saveAnalysisResult ────────────────────────────────────────────────────
+
+describe("saveAnalysisResult", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("atualiza contact_analysis com os campos corretos", async () => {
+    const mockUpdate = jest.fn().mockReturnValue({
+      eq: jest.fn().mockResolvedValue({ error: null }),
+    });
+    mockFrom.mockReturnValue({ update: mockUpdate });
+
+    await saveAnalysisResult("c-1", analysis, ["proposta.pdf"]);
+
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: "done",
+        problema: analysis.problema,
+        nichos: analysis.nichos,
+        draft_issues: analysis.draft_issues,
+        attachments_used: ["proposta.pdf"],
+      }),
+    );
+  });
+
+  it("lança erro quando update falha", async () => {
+    mockFrom.mockReturnValue({
+      update: jest.fn().mockReturnValue({
+        eq: jest.fn().mockResolvedValue({ error: { message: "db error" } }),
+      }),
+    });
+
+    await expect(saveAnalysisResult("c-1", analysis, [])).rejects.toThrow("Erro ao salvar análise");
+  });
+});
+
+// ─── saveAnalysisError ─────────────────────────────────────────────────────
+
+describe("saveAnalysisError", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("atualiza status para error com mensagem", async () => {
+    const mockEq = jest.fn().mockResolvedValue({ error: null });
+    const mockUpdate = jest.fn().mockReturnValue({ eq: mockEq });
+    mockFrom.mockReturnValue({ update: mockUpdate });
+
+    await saveAnalysisError("c-1", "algo falhou");
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ status: "error", error_message: "algo falhou" }),
+    );
+  });
+});
+
+// ─── analyzeContact — handler ──────────────────────────────────────────────
 
 describe("analyzeContact — handler", () => {
   let step: { run: jest.Mock };
@@ -116,55 +254,121 @@ describe("analyzeContact — handler", () => {
         return result;
       },
     );
-    mockRunAgent.mockResolvedValue({
-      text: "texto de análise",
-      usage: { inputTokens: 10, outputTokens: 20 },
+    mockExtractStructured.mockResolvedValue(analysis);
+
+    // fetch-contact
+    mockFrom
+      .mockReturnValueOnce({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue({ data: contactRow, error: null }),
+          }),
+        }),
+      })
+      .mockReturnValueOnce({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockResolvedValue({ data: [], error: null }),
+        }),
+      });
+
+    // upsert-analyzing
+    mockFrom.mockReturnValueOnce({ upsert: jest.fn().mockResolvedValue({ error: null }) });
+
+    // save-analysis
+    mockFrom.mockReturnValueOnce({
+      update: jest.fn().mockReturnValue({ eq: jest.fn().mockResolvedValue({ error: null }) }),
     });
-    mockExtractStructured.mockResolvedValue(contactAnalysis);
+
+    // extract-attachments — sem signed URLs (array vazio)
+    mockStorage.from.mockReturnValue({ createSignedUrl: jest.fn() });
   });
 
   async function runHandler() {
-    setupFetchMock();
-    setupSaveMock();
     await (analyzeContact as unknown as (args: unknown) => Promise<void>)({
       event: { data: { contactId: "c-1" } },
       step,
     });
   }
 
-  it("executa os três steps na ordem correta", async () => {
+  it("executa os cinco steps na ordem correta", async () => {
     await runHandler();
-    expect(step.run).toHaveBeenCalledTimes(3);
-    expect(step.run).toHaveBeenNthCalledWith(1, "fetch-contact", expect.any(Function));
-    expect(step.run).toHaveBeenNthCalledWith(2, "run-contact-agent", expect.any(Function));
-    expect(step.run).toHaveBeenNthCalledWith(3, "save-analysis", expect.any(Function));
-  });
-
-  it("sanitiza a descrição do contato antes de chamar o agente", async () => {
-    await runHandler();
-    expect(mockSanitizeInput).toHaveBeenCalledWith(contactRow.description);
+    const names = step.run.mock.calls.map((c: unknown[]) => c[0]);
+    expect(names).toEqual([
+      "fetch-contact",
+      "extract-attachments",
+      "upsert-analyzing",
+      "run-product-agent",
+      "save-analysis",
+    ]);
   });
 
   it("chama tracedLLMCall com agentName correto", async () => {
     await runHandler();
     expect(mockTracedLLMCall).toHaveBeenCalledWith(
-      expect.objectContaining({ agentName: "contact-analyzer" }),
+      expect.objectContaining({ agentName: "contact-product-analyzer" }),
       expect.any(Function),
     );
   });
 
-  it("passa o resultado da análise para saveContactAnalysis", async () => {
-    setupFetchMock();
-    const mockInsert = jest.fn().mockResolvedValue({ error: null });
-    mockFrom.mockReturnValueOnce({ insert: mockInsert });
+  it("chama extractStructured com o schema de análise", async () => {
+    await runHandler();
+    expect(mockExtractStructured).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.anything(),
+      "ContactAnalysis",
+    );
+  });
+
+  it("inclui contexto de anexos no prompt quando há arquivos extraídos", async () => {
+    jest.clearAllMocks();
+
+    const extractedAttachments = [{ filename: "proposta.pdf", content: "conteúdo extraído" }];
+
+    // "extract-attachments" retorna diretamente para exercitar as lambdas 184 e 209
+    step = {
+      run: jest.fn().mockImplementation((name: string, fn: () => unknown) => {
+        if (name === "extract-attachments") return Promise.resolve(extractedAttachments);
+        return fn();
+      }),
+    };
+    mockTracedLLMCall.mockImplementation(
+      async (_opts: unknown, fn: () => Promise<{ result: unknown }>) => {
+        const { result } = await fn();
+        return result;
+      },
+    );
+    mockExtractStructured.mockResolvedValue(analysis);
+
+    // fetch-contact
+    mockFrom
+      .mockReturnValueOnce({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue({ data: contactRow, error: null }),
+          }),
+        }),
+      })
+      .mockReturnValueOnce({
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockResolvedValue({ data: [], error: null }),
+        }),
+      });
+
+    mockFrom.mockReturnValueOnce({ upsert: jest.fn().mockResolvedValue({ error: null }) });
+    mockFrom.mockReturnValueOnce({
+      update: jest.fn().mockReturnValue({ eq: jest.fn().mockResolvedValue({ error: null }) }),
+    });
 
     await (analyzeContact as unknown as (args: unknown) => Promise<void>)({
       event: { data: { contactId: "c-1" } },
       step,
     });
 
-    expect(mockInsert).toHaveBeenCalledWith(
-      expect.objectContaining({ contact_request_id: "c-1" }),
+    // lambdas das linhas 184 e 209 exercitadas: prompt deve conter o arquivo extraído
+    expect(mockExtractStructured).toHaveBeenCalledWith(
+      expect.stringContaining("proposta.pdf"),
+      expect.anything(),
+      "ContactAnalysis",
     );
   });
 });

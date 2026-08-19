@@ -26,18 +26,42 @@ describe("FeedbackAnalysisSchema", () => {
 describe("ContactAnalysisSchema", () => {
   it("valida dados corretos", () => {
     const result = ContactAnalysisSchema.safeParse({
-      intencao: "compra",
-      urgencia: "alta",
-      resumo: "Quer assinar agora",
+      problema: "Empresa sem sistema de gestão",
+      solucao_tipo: "novo_produto",
+      solucao_titulo: "SaaS de Gestão",
+      solucao_descricao: "Plataforma para pequenas empresas",
+      nichos: [
+        { publico: "MEIs", justificativa: "Alta demanda" },
+        { publico: "Freelancers", justificativa: "Organização" },
+      ],
+      draft_issues: [{ title: "feat: módulo", body: "Descrição", labels: ["type: feature"] }],
     });
     expect(result.success).toBe(true);
   });
 
-  it("rejeita urgencia inválida", () => {
+  it("rejeita quando nichos tem menos de 2 entradas", () => {
     const result = ContactAnalysisSchema.safeParse({
-      intencao: "suporte",
-      urgencia: "urgente",
-      resumo: "x",
+      problema: "Problema",
+      solucao_tipo: "novo_produto",
+      solucao_titulo: "Título",
+      solucao_descricao: "Descrição",
+      nichos: [{ publico: "Apenas um", justificativa: "j" }],
+      draft_issues: [{ title: "t", body: "b", labels: [] }],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejeita solucao_tipo inválido", () => {
+    const result = ContactAnalysisSchema.safeParse({
+      problema: "x",
+      solucao_tipo: "indefinido",
+      solucao_titulo: "x",
+      solucao_descricao: "x",
+      nichos: [
+        { publico: "A", justificativa: "a" },
+        { publico: "B", justificativa: "b" },
+      ],
+      draft_issues: [{ title: "t", body: "b", labels: [] }],
     });
     expect(result.success).toBe(false);
   });

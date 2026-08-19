@@ -512,7 +512,28 @@
         "download": "Descargar",
         "close": "Cerrar",
         "loadingUrl": "Generando enlace…",
-        "urlError": "Error al generar enlace de descarga."
+        "urlError": "Error al generar enlace de descarga.",
+        "analysis": {
+          "trigger": "Analizar con IA",
+          "retrigger": "Re-analizar",
+          "analyzing": "Analizando…",
+          "problema": "Problema identificado",
+          "solucao": "Solución sugerida",
+          "nichos": "Nichos de mercado",
+          "drafts": "Borradores de issues",
+          "attachmentsUsed": "Archivos usados en el análisis",
+          "createIssue": "Crear issue en GitHub",
+          "creating": "Creando…",
+          "issueCreated": "Issue creada",
+          "reviewPrompt": "Revisa y edita antes de confirmar",
+          "errorLabel": "Error en el análisis",
+          "titleLabel": "Título",
+          "bodyLabel": "Cuerpo",
+          "labelsLabel": "Etiquetas",
+          "typeLabel": "Tipo de solución",
+          "novo_produto": "Nuevo producto",
+          "aprimoramento": "Mejora de producto existente"
+        }
       }
     },
     "login": {
