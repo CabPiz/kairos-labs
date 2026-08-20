@@ -110,6 +110,7 @@ CREATE TABLE public.contact_analysis (
   github_issue_url    TEXT,
   github_issue_number INT,
   error_message       TEXT,
+  current_step        TEXT,
   created_at          TIMESTAMPTZ DEFAULT NOW()
 );
 
