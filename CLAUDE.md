@@ -5,6 +5,21 @@ Repositório: `CabPiz/kairos-labs` | Owner: `CabPiz` | Project Board: nº **3**
 
 ---
 
+## 🚀 ABERTURA DE ISSUE — Execução Automática
+
+Um hook detecta quando você envia apenas um número (`166`, `#166`) ou `issue #N` e executa `gh issue view N` automaticamente. O resultado aparece como `additionalContext` nesta mensagem.
+
+**Ao receber esse contexto injetado, execute FASE 0 IMEDIATAMENTE — sem pedir confirmação:**
+1. `cd concentrador && git pull origin main`
+2. Ler `_protocol/FASES.md`
+3. `git checkout main && git pull origin main` (kairos-labs)
+4. `git checkout -b [tipo]/[N]-[desc-curta]`
+5. Labels + card In Progress (autônomo)
+
+→ FASE 1 (proposta técnica) é a única pausa obrigatória após FASE 0.
+
+---
+
 ## ⚙️ Config do Projeto
 
 | Campo | Valor |

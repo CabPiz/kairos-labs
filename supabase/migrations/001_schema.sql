@@ -323,6 +323,34 @@ $$;
 
 GRANT EXECUTE ON FUNCTION public.get_feedback_with_meta() TO service_role, authenticated;
 
+-- Tabela de logs de execução do pipeline de análise de contatos.
+-- Registra início, sucesso e erro de cada step do Inngest para diagnóstico em produção.
+CREATE TABLE public.pipeline_logs (
+  id                 UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
+  contact_request_id UUID        NOT NULL REFERENCES public.contact_requests(id) ON DELETE CASCADE,
+  step_name          TEXT        NOT NULL,
+  status             TEXT        NOT NULL CHECK (status IN ('start', 'success', 'error')),
+  message            TEXT,
+  metadata           JSONB       DEFAULT '{}',
+  duration_ms        INT,
+  created_at         TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_pipeline_logs_contact
+  ON public.pipeline_logs(contact_request_id, created_at DESC);
+
+ALTER TABLE public.pipeline_logs ENABLE ROW LEVEL SECURITY;
+
+-- Escrita exclusiva via service_role (Inngest); leitura pelo fundador autenticado
+CREATE POLICY "service role insert pipeline_logs"
+  ON public.pipeline_logs FOR INSERT TO service_role WITH CHECK (true);
+
+CREATE POLICY "owner read pipeline_logs"
+  ON public.pipeline_logs FOR SELECT TO authenticated USING (true);
+
+GRANT ALL    ON public.pipeline_logs TO service_role;
+GRANT SELECT ON public.pipeline_logs TO authenticated;
+
 -- =============================================
 -- STORAGE
 -- =============================================

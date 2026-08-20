@@ -6,6 +6,10 @@ jest.mock("@/lib/supabase-server", () => ({
   createServerAdminClient: jest.fn(() => mockAdminClient),
 }));
 
+jest.mock("@/lib/ai/pipeline-logger", () => ({
+  logPipelineEvent: jest.fn().mockResolvedValue(undefined),
+}));
+
 const mockExtractStructured = jest.fn();
 jest.mock("@/lib/ai/structured", () => ({
   extractStructured: (...args: unknown[]) => mockExtractStructured(...args),

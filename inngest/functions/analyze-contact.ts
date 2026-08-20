@@ -4,6 +4,7 @@ import { extractStructured } from "@/lib/ai/structured";
 import { extractAttachmentContent } from "@/lib/ai/attachment-extractor";
 import { ContactAnalysisSchema, type ContactAnalysis } from "@/lib/ai/schemas/contact-analysis";
 import { createServerAdminClient } from "@/lib/supabase-server";
+import { logPipelineEvent } from "@/lib/ai/pipeline-logger";
 import type { Database } from "@/lib/types";
 
 type ContactRow = Database["public"]["Tables"]["contact_requests"]["Row"];
@@ -177,6 +178,10 @@ export const analyzeContact = inngest.createFunction(
       // Chamado após esgotar todas as retentativas — garante que o status nunca fica preso em "analyzing"
       const originalEvent = event.data.event as { data: { contactId: string } };
       const contactId = originalEvent.data.contactId;
+      await logPipelineEvent(contactId, "pipeline-error", "error", {
+        message: error.message,
+        metadata: { errorName: error.name },
+      });
       await saveAnalysisError(contactId, error.message);
     },
   },
@@ -184,24 +189,45 @@ export const analyzeContact = inngest.createFunction(
     const { contactId } = event.data as { contactId: string };
 
     const { contact, attachments } = await step.run("fetch-contact", async () => {
+      const t0 = Date.now();
+      await logPipelineEvent(contactId, "fetch-contact", "start");
       await updateCurrentStep(contactId, "fetch-contact");
-      return fetchContactWithAttachments(contactId);
+      const result = await fetchContactWithAttachments(contactId);
+      await logPipelineEvent(contactId, "fetch-contact", "success", {
+        durationMs: Date.now() - t0,
+        metadata: { attachmentCount: result.attachments.length },
+      });
+      return result;
     });
 
     const extracted = await step.run("extract-attachments", async () => {
+      const t0 = Date.now();
+      await logPipelineEvent(contactId, "extract-attachments", "start", {
+        metadata: { attachmentCount: attachments.length },
+      });
       await updateCurrentStep(contactId, "extract-attachments");
-      return extractAllAttachments(attachments);
+      const result = await extractAllAttachments(attachments);
+      await logPipelineEvent(contactId, "extract-attachments", "success", {
+        durationMs: Date.now() - t0,
+      });
+      return result;
     });
 
     await step.run("upsert-analyzing", async () => {
+      await logPipelineEvent(contactId, "upsert-analyzing", "start");
       await upsertAnalyzingStatus(contactId);
+      await logPipelineEvent(contactId, "upsert-analyzing", "success");
     });
 
     const analysis = await step.run("run-product-agent", async () => {
-      return tracedLLMCall(
+      const t0 = Date.now();
+      await logPipelineEvent(contactId, "run-product-agent", "start", {
+        metadata: { model: "claude-haiku-4-5-20251001", attachmentCount: attachments.length },
+      });
+      const result = await tracedLLMCall(
         {
           agentName: "contact-product-analyzer",
-          model: "claude-sonnet-4-5",
+          model: "claude-haiku-4-5-20251001",
           metadata: { contactId, attachmentCount: attachments.length },
         },
         async () => {
@@ -216,24 +242,33 @@ Descrição: ${contact.description}
 
 ${extracted.length > 0 ? `Conteúdo dos anexos:\n${attachmentContext}` : "Sem anexos."}`;
 
-          const result = await extractStructured(
+          const llmResult = await extractStructured(
             `${SYSTEM_PROMPT}\n\n${userMessage}`,
             ContactAnalysisSchema,
             "ContactAnalysis",
           );
 
-          return { result, inputTokens: 0, outputTokens: 0 };
+          return { result: llmResult, inputTokens: 0, outputTokens: 0 };
         },
       );
+      await logPipelineEvent(contactId, "run-product-agent", "success", {
+        durationMs: Date.now() - t0,
+      });
+      return result;
     });
 
     await step.run("save-analysis", async () => {
+      const t0 = Date.now();
+      await logPipelineEvent(contactId, "save-analysis", "start");
       await updateCurrentStep(contactId, "save-analysis");
       await saveAnalysisResult(
         contactId,
         analysis,
         extracted.map((a) => a.filename),
       );
+      await logPipelineEvent(contactId, "save-analysis", "success", {
+        durationMs: Date.now() - t0,
+      });
     });
   },
 );
