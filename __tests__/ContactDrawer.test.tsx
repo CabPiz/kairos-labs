@@ -151,4 +151,15 @@ describe("ContactDrawer", () => {
     render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
     expect(screen.getByTestId("ai-badge")).toBeInTheDocument();
   });
+
+  it("não exibe crash quando getContactAnalysis lança durante loadAnalysis", async () => {
+    mockGetContactAnalysis.mockRejectedValue(new Error("Falha de rede"));
+
+    const { container } = render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+
+    await waitFor(() => expect(mockGetContactAnalysis).toHaveBeenCalled());
+    // A UI não deve crashar — o botão de trigger ainda deve estar presente
+    expect(container.querySelector("aside")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /analisar com ia/i })).toBeInTheDocument();
+  });
 });
