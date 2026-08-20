@@ -228,6 +228,7 @@ ${extracted.length > 0 ? `Conteúdo dos anexos:\n${attachmentContext}` : "Sem an
     });
 
     await step.run("save-analysis", async () => {
+      await updateCurrentStep(contactId, "save-analysis");
       await saveAnalysisResult(
         contactId,
         analysis,

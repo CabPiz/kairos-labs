@@ -186,7 +186,8 @@ interface PipelineStepsProps {
 }
 
 function PipelineSteps({ currentStep, t }: PipelineStepsProps) {
-  const activeIndex = PIPELINE_STEPS.findIndex((s) => s === currentStep);
+  const foundIndex = PIPELINE_STEPS.findIndex((s) => s === currentStep);
+  const activeIndex = foundIndex === -1 ? 0 : foundIndex;
 
   return (
     <div className="flex flex-col gap-2">

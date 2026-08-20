@@ -245,6 +245,7 @@ export type Database = {
           id: string
           contact_request_id: string
           status: 'pending' | 'analyzing' | 'done' | 'error'
+          current_step: string | null
           problema: string | null
           solucao_tipo: 'novo_produto' | 'aprimoramento' | null
           solucao_titulo: string | null
@@ -255,13 +256,13 @@ export type Database = {
           github_issue_url: string | null
           github_issue_number: number | null
           error_message: string | null
-          current_step: string | null
           created_at: string
         }
         Insert: {
           id?: string
           contact_request_id: string
           status?: 'pending' | 'analyzing' | 'done' | 'error'
+          current_step?: string | null
           problema?: string | null
           solucao_tipo?: 'novo_produto' | 'aprimoramento' | null
           solucao_titulo?: string | null
@@ -272,13 +273,13 @@ export type Database = {
           github_issue_url?: string | null
           github_issue_number?: number | null
           error_message?: string | null
-          current_step?: string | null
           created_at?: string
         }
         Update: {
           id?: string
           contact_request_id?: string
           status?: 'pending' | 'analyzing' | 'done' | 'error'
+          current_step?: string | null
           problema?: string | null
           solucao_tipo?: 'novo_produto' | 'aprimoramento' | null
           solucao_titulo?: string | null
@@ -289,7 +290,6 @@ export type Database = {
           github_issue_url?: string | null
           github_issue_number?: number | null
           error_message?: string | null
-          current_step?: string | null
           created_at?: string
         }
         Relationships: Rel[]
