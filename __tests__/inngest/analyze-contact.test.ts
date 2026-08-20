@@ -284,7 +284,12 @@ describe("analyzeContact — handler", () => {
     // upsert-analyzing
     mockFrom.mockReturnValueOnce({ upsert: jest.fn().mockResolvedValue({ error: null }) });
 
-    // save-analysis
+    // updateCurrentStep("save-analysis")
+    mockFrom.mockReturnValueOnce({
+      update: jest.fn().mockReturnValue({ eq: jest.fn().mockResolvedValue({ error: null }) }),
+    });
+
+    // saveAnalysisResult
     mockFrom.mockReturnValueOnce({
       update: jest.fn().mockReturnValue({ eq: jest.fn().mockResolvedValue({ error: null }) }),
     });
@@ -373,6 +378,11 @@ describe("analyzeContact — handler", () => {
     // "extract-attachments" é bypassado pelo step mock — updateCurrentStep não é chamado
 
     mockFrom.mockReturnValueOnce({ upsert: jest.fn().mockResolvedValue({ error: null }) });
+    // updateCurrentStep("save-analysis")
+    mockFrom.mockReturnValueOnce({
+      update: jest.fn().mockReturnValue({ eq: jest.fn().mockResolvedValue({ error: null }) }),
+    });
+    // saveAnalysisResult
     mockFrom.mockReturnValueOnce({
       update: jest.fn().mockReturnValue({ eq: jest.fn().mockResolvedValue({ error: null }) }),
     });
