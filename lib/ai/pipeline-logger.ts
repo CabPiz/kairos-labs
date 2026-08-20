@@ -1,6 +1,7 @@
 import { createServerAdminClient } from "@/lib/supabase-server";
 
 export type PipelineStep =
+  | "trigger"
   | "fetch-contact"
   | "extract-attachments"
   | "upsert-analyzing"

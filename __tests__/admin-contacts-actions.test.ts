@@ -16,6 +16,10 @@ jest.mock("@/inngest/client", () => ({
   inngest: { send: (...args: unknown[]) => mockInngestSend(...args) },
 }));
 
+jest.mock("@/lib/ai/pipeline-logger", () => ({
+  logPipelineEvent: jest.fn().mockResolvedValue(undefined),
+}));
+
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
 

@@ -2,6 +2,7 @@
 
 import { createServerAdminClient } from "@/lib/supabase-server";
 import { inngest } from "@/inngest/client";
+import { logPipelineEvent } from "@/lib/ai/pipeline-logger";
 import type { Database } from "@/lib/types";
 
 type ContactAnalysisRow = Database["public"]["Tables"]["contact_analysis"]["Row"];
@@ -46,6 +47,8 @@ export async function getAttachmentSignedUrl(storagePath: string): Promise<strin
  * @param contactId - UUID da solicitação de contato
  */
 export async function triggerContactAnalysis(contactId: string): Promise<void> {
+  await logPipelineEvent(contactId, "trigger", "start");
+
   const supabase = createServerAdminClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -58,15 +61,14 @@ export async function triggerContactAnalysis(contactId: string): Promise<void> {
 
   try {
     await inngest.send({ name: "contact/analyze.requested", data: { contactId } });
+    await logPipelineEvent(contactId, "trigger", "success");
   } catch (err) {
-    // Se o enfileiramento falhar, marca imediatamente como erro para não deixar o registro preso em "pending"
+    const errMsg = err instanceof Error ? err.message : "Erro ao enfileirar análise";
+    await logPipelineEvent(contactId, "trigger", "error", { message: errMsg });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (supabase as any)
       .from("contact_analysis")
-      .update({
-        status: "error",
-        error_message: err instanceof Error ? err.message : "Erro ao enfileirar análise",
-      })
+      .update({ status: "error", error_message: errMsg })
       .eq("contact_request_id", contactId);
     throw err;
   }
