@@ -315,7 +315,7 @@ describe("AnalysisPanel — via ContactDrawer", () => {
       current_step: "run-product-agent",
     });
     render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
-    await waitFor(() => expect(screen.getByText("(~90s)")).toBeInTheDocument());
+    expect(await screen.findByText("(~90s)")).toBeInTheDocument();
   });
 
   it("usa countdown default do run-product-agent quando getAnalysisEstimate lança", async () => {
@@ -326,7 +326,7 @@ describe("AnalysisPanel — via ContactDrawer", () => {
       current_step: "run-product-agent",
     });
     render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
-    await waitFor(() => expect(screen.getByText("(~45s)")).toBeInTheDocument());
+    expect(await screen.findByText("(~45s)")).toBeInTheDocument();
   });
 });
 
