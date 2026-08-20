@@ -245,6 +245,7 @@ export type Database = {
           id: string
           contact_request_id: string
           status: 'pending' | 'analyzing' | 'done' | 'error'
+          current_step: string | null
           problema: string | null
           solucao_tipo: 'novo_produto' | 'aprimoramento' | null
           solucao_titulo: string | null
@@ -261,6 +262,7 @@ export type Database = {
           id?: string
           contact_request_id: string
           status?: 'pending' | 'analyzing' | 'done' | 'error'
+          current_step?: string | null
           problema?: string | null
           solucao_tipo?: 'novo_produto' | 'aprimoramento' | null
           solucao_titulo?: string | null
@@ -277,6 +279,7 @@ export type Database = {
           id?: string
           contact_request_id?: string
           status?: 'pending' | 'analyzing' | 'done' | 'error'
+          current_step?: string | null
           problema?: string | null
           solucao_tipo?: 'novo_produto' | 'aprimoramento' | null
           solucao_titulo?: string | null
