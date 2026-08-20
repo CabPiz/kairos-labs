@@ -93,14 +93,31 @@ export async function extractAllAttachments(
 }
 
 /**
+ * Atualiza o passo atual do pipeline na linha existente de contact_analysis.
+ * No-op se a linha ainda não existir (path de submissão automática).
+ */
+export async function updateCurrentStep(contactId: string, step: string): Promise<void> {
+  const supabase = createServerAdminClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (supabase as any)
+    .from("contact_analysis")
+    .update({ current_step: step })
+    .eq("contact_request_id", contactId);
+}
+
+/**
  * Cria ou atualiza o registro de análise com status 'analyzing'.
+ * Define current_step como 'run-product-agent' (próximo passo após este).
  */
 export async function upsertAnalyzingStatus(contactId: string): Promise<void> {
   const supabase = createServerAdminClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (supabase as any)
     .from("contact_analysis")
-    .upsert({ contact_request_id: contactId, status: "analyzing" }, { onConflict: "contact_request_id" });
+    .upsert(
+      { contact_request_id: contactId, status: "analyzing", current_step: "run-product-agent" },
+      { onConflict: "contact_request_id" },
+    );
 }
 
 /**
@@ -167,10 +184,12 @@ export const analyzeContact = inngest.createFunction(
     const { contactId } = event.data as { contactId: string };
 
     const { contact, attachments } = await step.run("fetch-contact", async () => {
+      await updateCurrentStep(contactId, "fetch-contact");
       return fetchContactWithAttachments(contactId);
     });
 
     const extracted = await step.run("extract-attachments", async () => {
+      await updateCurrentStep(contactId, "extract-attachments");
       return extractAllAttachments(attachments);
     });
 
@@ -209,6 +228,7 @@ ${extracted.length > 0 ? `Conteúdo dos anexos:\n${attachmentContext}` : "Sem an
     });
 
     await step.run("save-analysis", async () => {
+      await updateCurrentStep(contactId, "save-analysis");
       await saveAnalysisResult(
         contactId,
         analysis,
