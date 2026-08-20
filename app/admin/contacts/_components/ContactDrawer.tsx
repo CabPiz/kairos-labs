@@ -234,11 +234,12 @@ function AnalysisPanel({ contactId, onContactRespondido }: AnalysisPanelProps) {
             : ({ contact_request_id: contactId, status: "pending" } as ContactAnalysisRow),
         );
         startPolling();
-      } catch (err) {
+      } catch {
+        // Em produção Next.js sanitiza err.message em Server Actions — mensagem fixa evita vazar internals.
         setAnalysis((prev) => ({
           ...(prev ?? { contact_request_id: contactId }),
           status: "error",
-          error_message: err instanceof Error ? err.message : "Erro ao iniciar análise",
+          error_message: "Erro ao iniciar análise",
         } as ContactAnalysisRow));
       } finally {
         setTriggering(false);
