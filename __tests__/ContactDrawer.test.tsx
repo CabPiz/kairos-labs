@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { act, render, screen, fireEvent, waitFor } from "@testing-library/react";
 
 jest.mock("@/components/legal/AIDisclosureBadge", () => ({
   AIDisclosureBadge: () => <span data-testid="ai-badge" />,
@@ -423,5 +423,105 @@ describe("IssueDraftEditor — via ContactDrawer com análise concluída", () =>
     render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
     await waitFor(() => expect(screen.getByDisplayValue("feat: módulo de finanças")).toBeInTheDocument());
     expect(screen.getByDisplayValue("feat: módulo de clientes")).toBeInTheDocument();
+  });
+});
+
+// ─── AnalysisPanel — timeout, slow warning e cancelamento ────────────────────
+
+describe("AnalysisPanel — timeout, slow warning e cancelamento", () => {
+  const analyzingContact = {
+    ...analysisDone,
+    status: "analyzing" as const,
+    current_step: "fetch-contact",
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useFakeTimers();
+    mockMarkContactViewed.mockResolvedValue(undefined);
+    mockGetContactAnalysis.mockResolvedValue(null);
+    mockTriggerContactAnalysis.mockResolvedValue(undefined);
+    mockCreateGitHubIssue.mockResolvedValue({ url: "https://github.com/issue/1", number: 1 });
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it("exibe estimativa de tempo na etapa ativa (fetch-contact → ~10s)", async () => {
+    mockGetContactAnalysis.mockResolvedValue(analyzingContact);
+    render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+    await waitFor(() => expect(screen.getByText(/buscando dados do contato/i)).toBeInTheDocument());
+    expect(screen.getByText("(~10s)")).toBeInTheDocument();
+  });
+
+  it("não exibe estimativa em etapas já concluídas", async () => {
+    mockGetContactAnalysis.mockResolvedValue({ ...analyzingContact, current_step: "run-product-agent" });
+    render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+    await waitFor(() => expect(screen.getByText(/executando análise ia/i)).toBeInTheDocument());
+    expect(screen.queryByText("(~10s)")).not.toBeInTheDocument();
+    expect(screen.queryByText("(~20s)")).not.toBeInTheDocument();
+    expect(screen.getByText("(~45s)")).toBeInTheDocument();
+  });
+
+  it("não exibe slow warning imediatamente ao iniciar análise", async () => {
+    mockGetContactAnalysis.mockResolvedValue(analyzingContact);
+    render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+    await waitFor(() => expect(screen.getByText(/buscando dados do contato/i)).toBeInTheDocument());
+    expect(screen.queryByText(/isso está demorando/i)).not.toBeInTheDocument();
+  });
+
+  it("exibe slow warning após 2× o tempo esperado da etapa ativa", async () => {
+    mockGetContactAnalysis.mockResolvedValue(analyzingContact);
+    render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+    await waitFor(() => expect(screen.getByText(/buscando dados do contato/i)).toBeInTheDocument());
+    act(() => {
+      jest.advanceTimersByTime(21000);
+    });
+    await waitFor(() => expect(screen.getByText(/isso está demorando/i)).toBeInTheDocument());
+  });
+
+  it("transita para estado de erro após atingir o timeout máximo da etapa", async () => {
+    mockGetContactAnalysis.mockResolvedValue(analyzingContact);
+    render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+    await waitFor(() => expect(screen.getByText(/buscando dados do contato/i)).toBeInTheDocument());
+    act(() => {
+      jest.advanceTimersByTime(61000);
+    });
+    await waitFor(() => expect(screen.getByRole("button", { name: /reanalisar/i })).toBeInTheDocument());
+    expect(screen.getByText(/tempo limite excedido/i)).toBeInTheDocument();
+  });
+
+  it("exibe botão 'Cancelar análise' durante status=analyzing", async () => {
+    mockGetContactAnalysis.mockResolvedValue(analyzingContact);
+    render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+    await waitFor(() => expect(screen.getByRole("button", { name: /cancelar análise/i })).toBeInTheDocument());
+  });
+
+  it("não exibe botão 'Cancelar análise' quando não há análise em andamento", () => {
+    mockGetContactAnalysis.mockResolvedValue(null);
+    render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+    expect(screen.queryByRole("button", { name: /cancelar análise/i })).not.toBeInTheDocument();
+  });
+
+  it("clicar em 'Cancelar análise' reseta para estado inicial com botão de trigger", async () => {
+    mockGetContactAnalysis.mockResolvedValue(analyzingContact);
+    render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+    await waitFor(() => expect(screen.getByRole("button", { name: /cancelar análise/i })).toBeInTheDocument());
+    fireEvent.click(screen.getByRole("button", { name: /cancelar análise/i }));
+    await waitFor(() => expect(screen.getByRole("button", { name: /analisar com ia/i })).toBeInTheDocument());
+    expect(screen.queryByRole("button", { name: /cancelar análise/i })).not.toBeInTheDocument();
+  });
+
+  it("cancelar análise oculta o slow warning mesmo que ele já estivesse visível", async () => {
+    mockGetContactAnalysis.mockResolvedValue(analyzingContact);
+    render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+    await waitFor(() => expect(screen.getByText(/buscando dados do contato/i)).toBeInTheDocument());
+    act(() => {
+      jest.advanceTimersByTime(21000);
+    });
+    await waitFor(() => expect(screen.getByText(/isso está demorando/i)).toBeInTheDocument());
+    fireEvent.click(screen.getByRole("button", { name: /cancelar análise/i }));
+    await waitFor(() => expect(screen.queryByText(/isso está demorando/i)).not.toBeInTheDocument());
   });
 });

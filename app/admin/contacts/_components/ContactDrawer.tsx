@@ -179,13 +179,21 @@ const PIPELINE_STEPS = [
 
 type StepKey = (typeof PIPELINE_STEPS)[number];
 
+const STEP_ESTIMATES: Record<StepKey, { expected: number; max: number }> = {
+  "fetch-contact":       { expected: 10, max: 60  },
+  "extract-attachments": { expected: 20, max: 60  },
+  "run-product-agent":   { expected: 45, max: 120 },
+  "save-analysis":       { expected: 10, max: 60  },
+};
+
 interface PipelineStepsProps {
   readonly currentStep: string | null;
+  readonly isSlow: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly t: (key: string) => any;
 }
 
-function PipelineSteps({ currentStep, t }: PipelineStepsProps) {
+function PipelineSteps({ currentStep, isSlow, t }: PipelineStepsProps) {
   const foundIndex = PIPELINE_STEPS.findIndex((s) => s === currentStep);
   const activeIndex = foundIndex === -1 ? 0 : foundIndex;
 
@@ -194,6 +202,7 @@ function PipelineSteps({ currentStep, t }: PipelineStepsProps) {
       {PIPELINE_STEPS.map((step, i) => {
         const isDone = activeIndex > i;
         const isActive = activeIndex === i;
+        const estimates = STEP_ESTIMATES[step];
 
         return (
           <div key={step} className="flex items-center gap-2.5">
@@ -231,10 +240,20 @@ function PipelineSteps({ currentStep, t }: PipelineStepsProps) {
               }}
             >
               {t(`steps.${step as StepKey}`)}
+              {isActive && (
+                <span style={{ color: "rgba(255,255,255,0.3)", marginLeft: "0.25rem" }}>
+                  (~{estimates.expected}s)
+                </span>
+              )}
             </span>
           </div>
         );
       })}
+      {isSlow && (
+        <p className="text-[0.62rem] leading-snug" style={{ color: "rgba(251,191,36,0.75)" }}>
+          {t("slow")}
+        </p>
+      )}
     </div>
   );
 }
@@ -253,7 +272,9 @@ function AnalysisPanel({ contactId, onContactRespondido }: AnalysisPanelProps) {
   const [creatingIndex, setCreatingIndex] = useState<number | null>(null);
   const [createdIndices, setCreatedIndices] = useState<Set<number>>(new Set());
   const [issueUrls, setIssueUrls] = useState<Record<number, string>>({});
+  const [isSlow, setIsSlow] = useState(false);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const stepStartedAtRef = useRef<number>(0);
 
   const stopPolling = useCallback(() => {
     if (pollingRef.current) {
@@ -287,9 +308,47 @@ function AnalysisPanel({ contactId, onContactRespondido }: AnalysisPanelProps) {
     return () => stopPolling();
   }, [stopPolling]);
 
+  const isAnalyzing = analysis?.status === "pending" || analysis?.status === "analyzing";
+
+  useEffect(() => {
+    if (!isAnalyzing) return;
+
+    stepStartedAtRef.current = Date.now();
+
+    const currentStep = analysis?.current_step as StepKey | undefined;
+    const estimates = currentStep ? STEP_ESTIMATES[currentStep] : null;
+
+    const interval = setInterval(() => {
+      const elapsed = (Date.now() - stepStartedAtRef.current) / 1000;
+
+      if (estimates && elapsed > estimates.max) {
+        clearInterval(interval);
+        stopPolling();
+        setAnalysis((prev) => ({
+          ...(prev ?? { contact_request_id: contactId }),
+          status: "error",
+          error_message: t("timeout"),
+        } as ContactAnalysisRow));
+      } else if (estimates && elapsed > estimates.expected * 2) {
+        setIsSlow(true);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+      setIsSlow(false);
+    };
+  }, [isAnalyzing, analysis?.current_step, contactId, stopPolling, t]);
+
   function startPolling() {
     stopPolling();
     pollingRef.current = setInterval(loadAnalysis, 3000);
+  }
+
+  function handleCancel() {
+    stopPolling();
+    setAnalysis(null);
+    setIsSlow(false);
   }
 
   function handleTrigger() {
@@ -340,7 +399,6 @@ function AnalysisPanel({ contactId, onContactRespondido }: AnalysisPanelProps) {
     });
   }
 
-  const isAnalyzing = analysis?.status === "pending" || analysis?.status === "analyzing";
   const isDone = analysis?.status === "done";
   const isError = analysis?.status === "error";
   const hasAnalysis = analysis !== null;
@@ -368,7 +426,16 @@ function AnalysisPanel({ contactId, onContactRespondido }: AnalysisPanelProps) {
       )}
 
       {isAnalyzing && (
-        <PipelineSteps currentStep={analysis?.current_step ?? null} t={t} />
+        <>
+          <PipelineSteps currentStep={analysis?.current_step ?? null} isSlow={isSlow} t={t} />
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="text-[0.62rem] text-white/30 hover:text-white/60 transition-colors w-fit underline underline-offset-2"
+          >
+            {t("cancel")}
+          </button>
+        </>
       )}
 
       {isError && analysis.error_message && (

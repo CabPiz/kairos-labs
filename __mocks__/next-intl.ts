@@ -13,22 +13,32 @@ function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
   }, obj);
 }
 
-export const useTranslations = (namespace?: string) => {
-  const t = (key: string, params?: Record<string, string>): string => {
-    const fullPath = namespace ? `${namespace}.${key}` : key;
-    const value = getNestedValue(ptMessages, fullPath);
-    const str = typeof value === "string" ? value : key;
-    if (!params) return str;
-    return Object.entries(params).reduce(
-      (acc, [k, v]) => acc.replace(`{${k}}`, v),
-      str
-    );
-  };
-  t.raw = (key: string): unknown => {
-    const fullPath = namespace ? `${namespace}.${key}` : key;
-    return getNestedValue(ptMessages, fullPath);
-  };
-  return t;
+type TFunction = ((key: string, params?: Record<string, string>) => string) & {
+  raw: (key: string) => unknown;
+};
+
+const tCache = new Map<string, TFunction>();
+
+export const useTranslations = (namespace?: string): TFunction => {
+  const cacheKey = namespace ?? "";
+  if (!tCache.has(cacheKey)) {
+    const t = (key: string, params?: Record<string, string>): string => {
+      const fullPath = namespace ? `${namespace}.${key}` : key;
+      const value = getNestedValue(ptMessages, fullPath);
+      const str = typeof value === "string" ? value : key;
+      if (!params) return str;
+      return Object.entries(params).reduce(
+        (acc, [k, v]) => acc.replace(`{${k}}`, v),
+        str
+      );
+    };
+    t.raw = (key: string): unknown => {
+      const fullPath = namespace ? `${namespace}.${key}` : key;
+      return getNestedValue(ptMessages, fullPath);
+    };
+    tCache.set(cacheKey, t);
+  }
+  return tCache.get(cacheKey)!;
 };
 
 export const useLocale = () => "pt";
