@@ -1,6 +1,6 @@
 "use server";
 
-import { createServerAdminClient } from "@/lib/supabase-server";
+import { createServerAdminClient, createServerSupabaseClient } from "@/lib/supabase-server";
 import { inngest } from "@/inngest/client";
 import { logPipelineEvent } from "@/lib/ai/pipeline-logger";
 import type { Database } from "@/lib/types";
@@ -47,6 +47,13 @@ export async function getAttachmentSignedUrl(storagePath: string): Promise<strin
  * @param contactId - UUID da solicitação de contato
  */
 export async function triggerContactAnalysis(contactId: string): Promise<void> {
+  // O middleware não redireciona Server Actions (Next-Action header) — auth aqui.
+  const authClient = await createServerSupabaseClient();
+  const {
+    data: { user },
+  } = await authClient.auth.getUser();
+  if (!user) throw new Error("Sessão expirada. Faça login novamente.");
+
   await logPipelineEvent(contactId, "trigger", "start");
 
   const supabase = createServerAdminClient();

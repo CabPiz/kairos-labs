@@ -7,10 +7,6 @@ const mockAdminClient = {
   storage: { from: mockStorageFrom },
 };
 
-jest.mock("@/lib/supabase-server", () => ({
-  createServerAdminClient: jest.fn(() => mockAdminClient),
-}));
-
 const mockInngestSend = jest.fn();
 jest.mock("@/inngest/client", () => ({
   inngest: { send: (...args: unknown[]) => mockInngestSend(...args) },
@@ -18,6 +14,14 @@ jest.mock("@/inngest/client", () => ({
 
 jest.mock("@/lib/ai/pipeline-logger", () => ({
   logPipelineEvent: jest.fn().mockResolvedValue(undefined),
+}));
+
+const mockGetUserAnon = jest.fn();
+jest.mock("@/lib/supabase-server", () => ({
+  createServerAdminClient: jest.fn(() => mockAdminClient),
+  createServerSupabaseClient: jest.fn(() =>
+    Promise.resolve({ auth: { getUser: mockGetUserAnon } })
+  ),
 }));
 
 const mockFetch = jest.fn();
@@ -84,7 +88,15 @@ describe("getAttachmentSignedUrl", () => {
 // ─── triggerContactAnalysis ────────────────────────────────────────────────
 
 describe("triggerContactAnalysis", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetUserAnon.mockResolvedValue({ data: { user: { id: "founder-1" } } });
+  });
+
+  it("lança erro quando sessão está expirada (getUser retorna null)", async () => {
+    mockGetUserAnon.mockResolvedValue({ data: { user: null } });
+    await expect(triggerContactAnalysis("c-auth")).rejects.toThrow("Sessão expirada");
+  });
 
   it("faz upsert com status pending e envia evento Inngest", async () => {
     const mockUpsert = jest.fn().mockResolvedValue({ error: null });

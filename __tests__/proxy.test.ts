@@ -22,8 +22,12 @@ jest.mock("@supabase/ssr", () => ({
   })),
 }));
 
-function makeRequest(pathname: string): NextRequest {
+function makeRequest(
+  pathname: string,
+  { headerHas = () => false, method = "GET" }: { headerHas?: (name: string) => boolean; method?: string } = {}
+): NextRequest {
   return {
+    method,
     nextUrl: {
       pathname,
       clone() {
@@ -32,7 +36,7 @@ function makeRequest(pathname: string): NextRequest {
       },
     },
     cookies: { getAll: () => [], get: () => undefined },
-    headers: { get: () => null },
+    headers: { get: () => null, has: headerHas },
   } as unknown as NextRequest;
 }
 
@@ -100,6 +104,18 @@ describe("proxy", () => {
     } as unknown as import("next/server").NextRequest;
     await proxy(req);
     expect(mockRedirect).not.toHaveBeenCalled();
+  });
+
+  it("não redireciona Server Action (Next-Action header) mesmo sem sessão", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const { proxy } = await import("@/proxy");
+    const req = makeRequest("/admin/contacts", {
+      method: "POST",
+      headerHas: (name) => name === "next-action",
+    });
+    const result = await proxy(req);
+    expect(mockRedirect).not.toHaveBeenCalled();
+    expect(result).toBe(mockNextResponse);
   });
 
   it("exporta config com matcher cobrindo rotas de app (admin + locale), excluindo api/_next/assets", async () => {

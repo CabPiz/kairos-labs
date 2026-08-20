@@ -66,6 +66,11 @@ export async function proxy(request: NextRequest) {
   const isLoginPage = pathname === "/admin/login";
 
   if (!user && !isLoginPage) {
+    // Server Actions (POST com Next-Action header) não podem ser redirecionadas —
+    // o cliente Next.js trata o redirect como erro. A action verifica auth internamente.
+    if (request.headers.has("next-action")) {
+      return supabaseResponse;
+    }
     const url = request.nextUrl.clone();
     url.pathname = "/admin/login";
     return NextResponse.redirect(url);
