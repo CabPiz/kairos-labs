@@ -17,6 +17,8 @@ function getSupabase(): SupabaseClient<Database> {
 const COST_PER_M: Record<string, { input: number; output: number }> = {
   "claude-sonnet-4-5": { input: 3, output: 15 },
   "claude-haiku-4-5-20251001": { input: 0.25, output: 1.25 },
+  "gemini-2.0-flash": { input: 0.1, output: 0.4 },
+  "gemini-2.0-flash-lite": { input: 0.075, output: 0.3 },
 };
 
 export interface RunOptions {

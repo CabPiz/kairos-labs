@@ -1,5 +1,11 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { google } from "@ai-sdk/google";
 
+// Gemini — usado em extractStructured e no pipeline de contatos
+export const analysisModel = google("gemini-2.0-flash");
+export const fastModel = google("gemini-2.0-flash-lite");
+
+// Anthropic — mantido para agent.ts, /api/agent e /api/admin/analyze-feedback
 export const anthropic = new Anthropic();
 
 type ModelTier = "fast" | "balanced";
@@ -9,10 +15,6 @@ export const MODELS: Record<ModelTier, string> = {
   balanced: "claude-sonnet-4-5",
 };
 
-/**
- * Roteia para o modelo adequado conforme a complexidade da tarefa.
- * "classification" → haiku (rápido, barato); "analysis" → sonnet (mais capaz).
- */
 export function routeModel(taskType: "classification" | "analysis"): string {
   return MODELS[taskType === "classification" ? "fast" : "balanced"];
 }

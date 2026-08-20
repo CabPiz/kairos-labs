@@ -65,7 +65,7 @@ export const analyzeFeedback = inngest.createFunction(
             feedbackAgentTools,
             executeFeedbackTool,
           );
-          const result = await extractStructured(text, FeedbackAnalysisSchema, "FeedbackAnalysis");
+          const result = await extractStructured(text, FeedbackAnalysisSchema);
           return { result, inputTokens: usage.inputTokens, outputTokens: usage.outputTokens };
         },
       );

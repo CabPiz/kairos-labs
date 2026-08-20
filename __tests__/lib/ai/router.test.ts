@@ -5,6 +5,10 @@ jest.mock("@anthropic-ai/sdk", () => ({
   default: jest.fn().mockImplementation(() => ({})),
 }));
 
+jest.mock("@ai-sdk/google", () => ({
+  google: jest.fn().mockReturnValue({}),
+}));
+
 describe("routeModel", () => {
   it.each([
     ["classification", "fast"],

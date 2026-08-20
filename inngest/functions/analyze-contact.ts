@@ -222,12 +222,13 @@ export const analyzeContact = inngest.createFunction(
     const analysis = await step.run("run-product-agent", async () => {
       const t0 = Date.now();
       await logPipelineEvent(contactId, "run-product-agent", "start", {
-        metadata: { model: "claude-haiku-4-5-20251001", attachmentCount: attachments.length },
+        metadata: { model: "gemini-2.0-flash", attachmentCount: attachments.length },
       });
+      try {
       const result = await tracedLLMCall(
         {
           agentName: "contact-product-analyzer",
-          model: "claude-haiku-4-5-20251001",
+          model: "gemini-2.0-flash",
           metadata: { contactId, attachmentCount: attachments.length },
         },
         async () => {
@@ -245,7 +246,6 @@ ${extracted.length > 0 ? `Conteúdo dos anexos:\n${attachmentContext}` : "Sem an
           const llmResult = await extractStructured(
             `${SYSTEM_PROMPT}\n\n${userMessage}`,
             ContactAnalysisSchema,
-            "ContactAnalysis",
           );
 
           return { result: llmResult, inputTokens: 0, outputTokens: 0 };
@@ -255,6 +255,12 @@ ${extracted.length > 0 ? `Conteúdo dos anexos:\n${attachmentContext}` : "Sem an
         durationMs: Date.now() - t0,
       });
       return result;
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        await logPipelineEvent(contactId, "run-product-agent", "error", { message: msg });
+        await saveAnalysisError(contactId, msg);
+        throw err;
+      }
     });
 
     await step.run("save-analysis", async () => {
