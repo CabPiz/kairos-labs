@@ -256,6 +256,11 @@ describe("analyzeContact — handler", () => {
     );
     mockExtractStructured.mockResolvedValue(analysis);
 
+    // updateCurrentStep("fetch-contact")
+    mockFrom.mockReturnValueOnce({
+      update: jest.fn().mockReturnValue({ eq: jest.fn().mockResolvedValue({ error: null }) }),
+    });
+
     // fetch-contact
     mockFrom
       .mockReturnValueOnce({
@@ -270,6 +275,11 @@ describe("analyzeContact — handler", () => {
           eq: jest.fn().mockResolvedValue({ data: [], error: null }),
         }),
       });
+
+    // updateCurrentStep("extract-attachments")
+    mockFrom.mockReturnValueOnce({
+      update: jest.fn().mockReturnValue({ eq: jest.fn().mockResolvedValue({ error: null }) }),
+    });
 
     // upsert-analyzing
     mockFrom.mockReturnValueOnce({ upsert: jest.fn().mockResolvedValue({ error: null }) });
@@ -321,6 +331,7 @@ describe("analyzeContact — handler", () => {
 
   it("inclui contexto de anexos no prompt quando há arquivos extraídos", async () => {
     jest.clearAllMocks();
+    mockFrom.mockReset(); // limpa a fila de mockReturnValueOnce do beforeEach
 
     const extractedAttachments = [{ filename: "proposta.pdf", content: "conteúdo extraído" }];
 
@@ -339,6 +350,11 @@ describe("analyzeContact — handler", () => {
     );
     mockExtractStructured.mockResolvedValue(analysis);
 
+    // updateCurrentStep("fetch-contact")
+    mockFrom.mockReturnValueOnce({
+      update: jest.fn().mockReturnValue({ eq: jest.fn().mockResolvedValue({ error: null }) }),
+    });
+
     // fetch-contact
     mockFrom
       .mockReturnValueOnce({
@@ -353,6 +369,8 @@ describe("analyzeContact — handler", () => {
           eq: jest.fn().mockResolvedValue({ data: [], error: null }),
         }),
       });
+
+    // "extract-attachments" é bypassado pelo step mock — updateCurrentStep não é chamado
 
     mockFrom.mockReturnValueOnce({ upsert: jest.fn().mockResolvedValue({ error: null }) });
     mockFrom.mockReturnValueOnce({

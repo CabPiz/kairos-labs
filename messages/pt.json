@@ -517,6 +517,12 @@
           "trigger": "Analisar com IA",
           "retrigger": "Reanalisar",
           "analyzing": "Analisando…",
+          "steps": {
+            "fetch-contact": "Buscando dados do contato…",
+            "extract-attachments": "Processando anexos…",
+            "run-product-agent": "Executando análise IA…",
+            "save-analysis": "Salvando resultados…"
+          },
           "problema": "Problema identificado",
           "solucao": "Solução sugerida",
           "nichos": "Nichos de mercado",

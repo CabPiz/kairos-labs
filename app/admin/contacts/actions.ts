@@ -51,7 +51,10 @@ export async function triggerContactAnalysis(contactId: string): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (supabase as any)
     .from("contact_analysis")
-    .upsert({ contact_request_id: contactId, status: "pending" }, { onConflict: "contact_request_id" });
+    .upsert(
+      { contact_request_id: contactId, status: "pending", current_step: "fetch-contact" },
+      { onConflict: "contact_request_id" },
+    );
 
   try {
     await inngest.send({ name: "contact/analyze.requested", data: { contactId } });
