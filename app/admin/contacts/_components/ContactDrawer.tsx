@@ -9,6 +9,7 @@ import {
   triggerContactAnalysis,
   getContactAnalysis,
   createGitHubIssue,
+  getAnalysisEstimate,
 } from "../actions";
 import { AIDisclosureBadge } from "@/components/legal/AIDisclosureBadge";
 import type { Database, IssueDraftJson } from "@/lib/types";
@@ -191,13 +192,14 @@ interface PipelineStepsProps {
   readonly isSlow: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   readonly t: (key: string) => any;
+  readonly stepEstimates: Record<StepKey, { expected: number; max: number }>;
 }
 
-function PipelineSteps({ currentStep, isSlow, t }: PipelineStepsProps) {
+function PipelineSteps({ currentStep, isSlow, t, stepEstimates }: PipelineStepsProps) {
   const foundIndex = PIPELINE_STEPS.findIndex((s) => s === currentStep);
   const activeIndex = foundIndex === -1 ? 0 : foundIndex;
   const activeStep = PIPELINE_STEPS[activeIndex];
-  const initialCountdown = STEP_ESTIMATES[activeStep].expected;
+  const initialCountdown = stepEstimates[activeStep].expected;
 
   const [countdown, setCountdown] = useState(initialCountdown);
 
@@ -283,8 +285,20 @@ function AnalysisPanel({ contactId, onContactRespondido }: AnalysisPanelProps) {
   const [createdIndices, setCreatedIndices] = useState<Set<number>>(new Set());
   const [issueUrls, setIssueUrls] = useState<Record<number, string>>({});
   const [isSlow, setIsSlow] = useState(false);
+  const [stepEstimates, setStepEstimates] = useState(STEP_ESTIMATES);
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const stepStartedAtRef = useRef<number>(0);
+
+  useEffect(() => {
+    getAnalysisEstimate(contactId)
+      .then(({ expected, max }) => {
+        setStepEstimates((prev) => ({
+          ...prev,
+          "run-product-agent": { expected, max },
+        }));
+      })
+      .catch(() => {});
+  }, [contactId]);
 
   const stopPolling = useCallback(() => {
     if (pollingRef.current) {
@@ -326,7 +340,7 @@ function AnalysisPanel({ contactId, onContactRespondido }: AnalysisPanelProps) {
     stepStartedAtRef.current = Date.now();
 
     const currentStep = analysis?.current_step as StepKey | undefined;
-    const estimates = currentStep ? STEP_ESTIMATES[currentStep] : null;
+    const estimates = currentStep ? stepEstimates[currentStep] : null;
 
     const interval = setInterval(() => {
       const elapsed = (Date.now() - stepStartedAtRef.current) / 1000;
@@ -348,7 +362,7 @@ function AnalysisPanel({ contactId, onContactRespondido }: AnalysisPanelProps) {
       clearInterval(interval);
       setIsSlow(false);
     };
-  }, [isAnalyzing, analysis?.current_step, contactId, stopPolling, t]);
+  }, [isAnalyzing, analysis?.current_step, contactId, stopPolling, t, stepEstimates]);
 
   function startPolling() {
     stopPolling();
@@ -437,7 +451,7 @@ function AnalysisPanel({ contactId, onContactRespondido }: AnalysisPanelProps) {
 
       {isAnalyzing && (
         <>
-          <PipelineSteps key={analysis?.current_step ?? "pending"} currentStep={analysis?.current_step ?? null} isSlow={isSlow} t={t} />
+          <PipelineSteps key={`${analysis?.current_step ?? "pending"}-${stepEstimates["run-product-agent"].expected}`} currentStep={analysis?.current_step ?? null} isSlow={isSlow} t={t} stepEstimates={stepEstimates} />
           <button
             type="button"
             onClick={handleCancel}

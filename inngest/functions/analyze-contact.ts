@@ -225,11 +225,12 @@ export const analyzeContact = inngest.createFunction(
         metadata: { model: "gemini-3.6-flash", attachmentCount: attachments.length },
       });
       try {
+      const totalSizeBytes = attachments.reduce((sum, a) => sum + (a.size_bytes ?? 0), 0);
       const result = await tracedLLMCall(
         {
           agentName: "contact-product-analyzer",
           model: "gemini-3.6-flash",
-          metadata: { contactId, attachmentCount: attachments.length },
+          metadata: { contactId, attachmentCount: attachments.length, total_size_bytes: totalSizeBytes },
         },
         async () => {
           const attachmentContext = extracted

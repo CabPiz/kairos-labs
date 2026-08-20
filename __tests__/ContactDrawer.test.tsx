@@ -19,6 +19,7 @@ const mockGetAttachmentSignedUrl = jest.fn();
 const mockTriggerContactAnalysis = jest.fn();
 const mockGetContactAnalysis = jest.fn();
 const mockCreateGitHubIssue = jest.fn();
+const mockGetAnalysisEstimate = jest.fn();
 
 jest.mock("@/app/admin/contacts/actions", () => ({
   markContactViewed: (...args: unknown[]) => mockMarkContactViewed(...args),
@@ -26,6 +27,7 @@ jest.mock("@/app/admin/contacts/actions", () => ({
   triggerContactAnalysis: (...args: unknown[]) => mockTriggerContactAnalysis(...args),
   getContactAnalysis: (...args: unknown[]) => mockGetContactAnalysis(...args),
   createGitHubIssue: (...args: unknown[]) => mockCreateGitHubIssue(...args),
+  getAnalysisEstimate: (...args: unknown[]) => mockGetAnalysisEstimate(...args),
 }));
 
 import { ContactDrawer } from "@/app/admin/contacts/_components/ContactDrawer";
@@ -80,6 +82,7 @@ describe("ContactDrawer", () => {
     mockMarkContactViewed.mockResolvedValue(undefined);
     mockGetContactAnalysis.mockResolvedValue(null);
     mockTriggerContactAnalysis.mockResolvedValue(undefined);
+    mockGetAnalysisEstimate.mockResolvedValue({ expected: 45, max: 120 });
   });
 
   afterEach(() => {
@@ -302,6 +305,28 @@ describe("AnalysisPanel — via ContactDrawer", () => {
     render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
     await waitFor(() => screen.getByText(/buscando dados do contato/i));
     expect(screen.queryByRole("button", { name: /analisar com ia/i })).not.toBeInTheDocument();
+  });
+
+  it("exibe countdown dinâmico do run-product-agent quando getAnalysisEstimate retorna estimate", async () => {
+    mockGetAnalysisEstimate.mockResolvedValue({ expected: 90, max: 225 });
+    mockGetContactAnalysis.mockResolvedValue({
+      ...analysisDone,
+      status: "analyzing",
+      current_step: "run-product-agent",
+    });
+    render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+    expect(await screen.findByText("(~90s)")).toBeInTheDocument();
+  });
+
+  it("usa countdown default do run-product-agent quando getAnalysisEstimate lança", async () => {
+    mockGetAnalysisEstimate.mockRejectedValue(new Error("falha de rede"));
+    mockGetContactAnalysis.mockResolvedValue({
+      ...analysisDone,
+      status: "analyzing",
+      current_step: "run-product-agent",
+    });
+    render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+    expect(await screen.findByText("(~45s)")).toBeInTheDocument();
   });
 });
 
