@@ -196,13 +196,23 @@ interface PipelineStepsProps {
 function PipelineSteps({ currentStep, isSlow, t }: PipelineStepsProps) {
   const foundIndex = PIPELINE_STEPS.findIndex((s) => s === currentStep);
   const activeIndex = foundIndex === -1 ? 0 : foundIndex;
+  const activeStep = PIPELINE_STEPS[activeIndex];
+  const initialCountdown = STEP_ESTIMATES[activeStep].expected;
+
+  const [countdown, setCountdown] = useState(initialCountdown);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCountdown((prev) => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <div className="flex flex-col gap-2">
       {PIPELINE_STEPS.map((step, i) => {
         const isDone = activeIndex > i;
         const isActive = activeIndex === i;
-        const estimates = STEP_ESTIMATES[step];
 
         return (
           <div key={step} className="flex items-center gap-2.5">
@@ -242,7 +252,7 @@ function PipelineSteps({ currentStep, isSlow, t }: PipelineStepsProps) {
               {t(`steps.${step as StepKey}`)}
               {isActive && (
                 <span style={{ color: "rgba(255,255,255,0.3)", marginLeft: "0.25rem" }}>
-                  (~{estimates.expected}s)
+                  {countdown === 0 ? `(${t("waiting")})` : `(~${countdown}s)`}
                 </span>
               )}
             </span>
@@ -427,7 +437,7 @@ function AnalysisPanel({ contactId, onContactRespondido }: AnalysisPanelProps) {
 
       {isAnalyzing && (
         <>
-          <PipelineSteps currentStep={analysis?.current_step ?? null} isSlow={isSlow} t={t} />
+          <PipelineSteps key={analysis?.current_step ?? "pending"} currentStep={analysis?.current_step ?? null} isSlow={isSlow} t={t} />
           <button
             type="button"
             onClick={handleCancel}

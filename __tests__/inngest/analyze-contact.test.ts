@@ -334,7 +334,6 @@ describe("analyzeContact — handler", () => {
     expect(mockExtractStructured).toHaveBeenCalledWith(
       expect.any(String),
       expect.anything(),
-      "ContactAnalysis",
     );
   });
 
@@ -400,7 +399,6 @@ describe("analyzeContact — handler", () => {
     expect(mockExtractStructured).toHaveBeenCalledWith(
       expect.stringContaining("proposta.pdf"),
       expect.anything(),
-      "ContactAnalysis",
     );
   });
 });
