@@ -222,13 +222,13 @@ export const analyzeContact = inngest.createFunction(
     const analysis = await step.run("run-product-agent", async () => {
       const t0 = Date.now();
       await logPipelineEvent(contactId, "run-product-agent", "start", {
-        metadata: { model: "gemini-2.0-flash", attachmentCount: attachments.length },
+        metadata: { model: "gemini-3.6-flash", attachmentCount: attachments.length },
       });
       try {
       const result = await tracedLLMCall(
         {
           agentName: "contact-product-analyzer",
-          model: "gemini-2.0-flash",
+          model: "gemini-3.6-flash",
           metadata: { contactId, attachmentCount: attachments.length },
         },
         async () => {

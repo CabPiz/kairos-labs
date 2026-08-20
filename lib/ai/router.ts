@@ -2,8 +2,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import { google } from "@ai-sdk/google";
 
 // Gemini — usado em extractStructured e no pipeline de contatos
-export const analysisModel = google("gemini-2.0-flash");
-export const fastModel = google("gemini-2.0-flash-lite");
+export const analysisModel = google("gemini-3.6-flash");
+export const fastModel = google("gemini-3.6-flash");
 
 // Anthropic — mantido para agent.ts, /api/agent e /api/admin/analyze-feedback
 export const anthropic = new Anthropic();
