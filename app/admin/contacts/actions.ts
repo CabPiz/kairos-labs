@@ -7,6 +7,71 @@ import type { Database } from "@/lib/types";
 
 type ContactAnalysisRow = Database["public"]["Tables"]["contact_analysis"]["Row"];
 
+export interface AnalysisEstimate {
+  expected: number;
+  max: number;
+}
+
+function computeMedian(values: number[]): number {
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+}
+
+export async function getAnalysisEstimate(contactId: string): Promise<AnalysisEstimate> {
+  const supabase = createServerAdminClient();
+  const CAP = 180;
+  const FLOOR = 30;
+
+  const [{ data: attachments }, { data: runs }] = await Promise.all([
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase as any)
+      .from("contact_attachments")
+      .select("size_bytes")
+      .eq("contact_request_id", contactId),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase as any)
+      .from("agent_runs")
+      .select("latency_ms, metadata")
+      .eq("agent_name", "contact-product-analyzer")
+      .eq("status", "success")
+      .not("latency_ms", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(20),
+  ]);
+
+  const totalBytes = (attachments as { size_bytes: number }[] ?? []).reduce(
+    (sum, a) => sum + (a.size_bytes ?? 0),
+    0,
+  );
+  const totalMb = totalBytes / (1024 * 1024);
+
+  if (!runs || (runs as unknown[]).length === 0) {
+    const expected = Math.min(CAP, Math.max(FLOOR, 30 + totalMb * 10));
+    return { expected: Math.round(expected), max: Math.max(120, Math.round(expected * 2.5)) };
+  }
+
+  const typedRuns = runs as { latency_ms: number; metadata: Record<string, unknown> }[];
+  const medianMs = computeMedian(typedRuns.map((r) => r.latency_ms));
+  const medianS = medianMs / 1000;
+
+  const refBytes = typedRuns
+    .map((r) => r.metadata?.total_size_bytes)
+    .filter((v): v is number => typeof v === "number");
+
+  let expected: number;
+  if (refBytes.length > 0) {
+    const refMb = computeMedian(refBytes) / (1024 * 1024);
+    expected = medianS * (1 + (totalMb - refMb) * 0.2);
+  } else {
+    expected = medianS;
+  }
+
+  expected = Math.min(CAP, Math.max(FLOOR, expected));
+  const expectedRounded = Math.round(expected);
+  return { expected: expectedRounded, max: Math.max(120, Math.round(expectedRounded * 2.5)) };
+}
+
 /**
  * Marca uma solicitação de contato como 'visualizado'.
  * Chamada automaticamente quando o drawer de detalhe é aberto.
