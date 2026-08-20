@@ -195,12 +195,16 @@ function AnalysisPanel({ contactId, onContactRespondido }: AnalysisPanelProps) {
 
   const loadAnalysis = useCallback(() => {
     startTransition(async () => {
-      const result = await getContactAnalysis(contactId);
-      setAnalysis(result);
-      if (result) {
-        setDrafts(result.draft_issues as IssueDraftJson[]);
-      }
-      if (result?.status === "done" || result?.status === "error") {
+      try {
+        const result = await getContactAnalysis(contactId);
+        setAnalysis(result);
+        if (result) {
+          setDrafts(result.draft_issues as IssueDraftJson[]);
+        }
+        if (result?.status === "done" || result?.status === "error") {
+          stopPolling();
+        }
+      } catch {
         stopPolling();
       }
     });
