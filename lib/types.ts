@@ -294,6 +294,39 @@ export type Database = {
         }
         Relationships: Rel[]
       }
+      pipeline_logs: {
+        Row: {
+          id: string
+          contact_request_id: string
+          step_name: string
+          status: 'start' | 'success' | 'error'
+          message: string | null
+          metadata: Record<string, unknown>
+          duration_ms: number | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          contact_request_id: string
+          step_name: string
+          status: 'start' | 'success' | 'error'
+          message?: string | null
+          metadata?: Record<string, unknown>
+          duration_ms?: number | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          contact_request_id?: string
+          step_name?: string
+          status?: 'start' | 'success' | 'error'
+          message?: string | null
+          metadata?: Record<string, unknown>
+          duration_ms?: number | null
+          created_at?: string
+        }
+        Relationships: Rel[]
+      }
       agent_runs: {
         Row: {
           id: string
