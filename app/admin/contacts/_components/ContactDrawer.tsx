@@ -170,6 +170,74 @@ function IssueDraftEditor({
   );
 }
 
+const PIPELINE_STEPS = [
+  "fetch-contact",
+  "extract-attachments",
+  "run-product-agent",
+  "save-analysis",
+] as const;
+
+type StepKey = (typeof PIPELINE_STEPS)[number];
+
+interface PipelineStepsProps {
+  readonly currentStep: string | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  readonly t: (key: string) => any;
+}
+
+function PipelineSteps({ currentStep, t }: PipelineStepsProps) {
+  const activeIndex = PIPELINE_STEPS.findIndex((s) => s === currentStep);
+
+  return (
+    <div className="flex flex-col gap-2">
+      {PIPELINE_STEPS.map((step, i) => {
+        const isDone = activeIndex > i;
+        const isActive = activeIndex === i;
+
+        return (
+          <div key={step} className="flex items-center gap-2.5">
+            <div
+              className="flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center"
+              style={{
+                background: isDone
+                  ? "rgba(16,185,129,0.15)"
+                  : isActive
+                    ? "rgba(96,165,250,0.15)"
+                    : "rgba(255,255,255,0.04)",
+                border: isDone
+                  ? "1px solid rgba(16,185,129,0.4)"
+                  : isActive
+                    ? "1px solid rgba(96,165,250,0.4)"
+                    : "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
+              {isDone ? (
+                <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
+                  <path d="M1.5 4L3.5 6L6.5 2" stroke="#10b981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : isActive ? (
+                <Loader2 size={8} className="animate-spin text-blue-400" />
+              ) : null}
+            </div>
+            <span
+              className="text-[0.65rem] leading-none"
+              style={{
+                color: isDone
+                  ? "rgba(16,185,129,0.6)"
+                  : isActive
+                    ? "rgba(255,255,255,0.7)"
+                    : "rgba(255,255,255,0.2)",
+              }}
+            >
+              {t(`steps.${step as StepKey}`)}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 interface AnalysisPanelProps {
   readonly contactId: string;
   readonly onContactRespondido: () => void;
@@ -299,10 +367,7 @@ function AnalysisPanel({ contactId, onContactRespondido }: AnalysisPanelProps) {
       )}
 
       {isAnalyzing && (
-        <div className="flex items-center gap-2 text-[0.7rem] text-white/40">
-          <Loader2 size={12} className="animate-spin text-blue-400" />
-          {t("analyzing")}
-        </div>
+        <PipelineSteps currentStep={analysis?.current_step ?? null} t={t} />
       )}
 
       {isError && analysis.error_message && (

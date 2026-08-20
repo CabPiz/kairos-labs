@@ -255,6 +255,7 @@ export type Database = {
           github_issue_url: string | null
           github_issue_number: number | null
           error_message: string | null
+          current_step: string | null
           created_at: string
         }
         Insert: {
@@ -271,6 +272,7 @@ export type Database = {
           github_issue_url?: string | null
           github_issue_number?: number | null
           error_message?: string | null
+          current_step?: string | null
           created_at?: string
         }
         Update: {
@@ -287,6 +289,7 @@ export type Database = {
           github_issue_url?: string | null
           github_issue_number?: number | null
           error_message?: string | null
+          current_step?: string | null
           created_at?: string
         }
         Relationships: Rel[]

@@ -517,6 +517,12 @@
           "trigger": "Analyze with AI",
           "retrigger": "Re-analyze",
           "analyzing": "Analyzing…",
+          "steps": {
+            "fetch-contact": "Fetching contact data…",
+            "extract-attachments": "Processing attachments…",
+            "run-product-agent": "Running AI analysis…",
+            "save-analysis": "Saving results…"
+          },
           "problema": "Identified problem",
           "solucao": "Suggested solution",
           "nichos": "Market niches",
