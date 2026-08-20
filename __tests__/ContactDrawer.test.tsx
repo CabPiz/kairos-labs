@@ -215,6 +215,17 @@ describe("AnalysisPanel — via ContactDrawer", () => {
     await waitFor(() => expect(screen.getByText(/buscando dados do contato/i)).toBeInTheDocument());
   });
 
+  it("exibe etapa anterior como concluída e etapa atual como ativa", async () => {
+    mockGetContactAnalysis.mockResolvedValue({
+      ...analysisDone,
+      status: "analyzing",
+      current_step: "extract-attachments",
+    });
+    render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+    await waitFor(() => expect(screen.getByText(/processando anexos/i)).toBeInTheDocument());
+    expect(screen.getByText(/buscando dados do contato/i)).toBeInTheDocument();
+  });
+
   it("exibe etapas do pipeline quando status=pending", async () => {
     mockGetContactAnalysis.mockResolvedValue({ ...analysisDone, status: "pending" });
     render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
