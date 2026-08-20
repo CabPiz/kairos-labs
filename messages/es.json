@@ -532,6 +532,7 @@
           "creating": "Creando…",
           "issueCreated": "Issue creada",
           "reviewPrompt": "Revisa y edita antes de confirmar",
+          "waiting": "en espera...",
           "slow": "Esto está tardando más de lo esperado…",
           "cancel": "Cancelar análisis",
           "timeout": "Tiempo límite excedido. Inténtalo de nuevo.",

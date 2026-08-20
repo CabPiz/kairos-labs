@@ -524,4 +524,38 @@ describe("AnalysisPanel — timeout, slow warning e cancelamento", () => {
     fireEvent.click(screen.getByRole("button", { name: /cancelar análise/i }));
     await waitFor(() => expect(screen.queryByText(/isso está demorando/i)).not.toBeInTheDocument());
   });
+
+  it("countdown decrementa: exibe (~5s) após 5 segundos no step fetch-contact", async () => {
+    mockGetContactAnalysis.mockResolvedValue(analyzingContact);
+    render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+    await waitFor(() => expect(screen.getByText("(~10s)")).toBeInTheDocument());
+    act(() => {
+      jest.advanceTimersByTime(5000);
+    });
+    await waitFor(() => expect(screen.getByText("(~5s)")).toBeInTheDocument());
+  });
+
+  it("exibe (aguardando...) quando countdown chega a zero", async () => {
+    mockGetContactAnalysis.mockResolvedValue(analyzingContact);
+    render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+    await waitFor(() => expect(screen.getByText("(~10s)")).toBeInTheDocument());
+    act(() => {
+      jest.advanceTimersByTime(11000);
+    });
+    await waitFor(() => expect(screen.getByText("(aguardando...)")).toBeInTheDocument());
+    expect(screen.queryByText("(~0s)")).not.toBeInTheDocument();
+  });
+
+  it("countdown inicializa com expected do step ativo: extract-attachments exibe (~20s)", async () => {
+    mockGetContactAnalysis.mockResolvedValue({
+      ...analyzingContact,
+      current_step: "extract-attachments",
+    });
+    render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
+    await waitFor(() => expect(screen.getByText("(~20s)")).toBeInTheDocument());
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
+    await waitFor(() => expect(screen.getByText("(~19s)")).toBeInTheDocument());
+  });
 });
