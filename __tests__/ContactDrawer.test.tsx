@@ -107,19 +107,20 @@ describe("ContactDrawer", () => {
     render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
     fireEvent.click(screen.getByRole("button", { name: /analisar com ia/i }));
 
-    await waitFor(() => expect(screen.getByText(/serviço fora do ar/i)).toBeInTheDocument());
+    // Em produção Next.js sanitiza Server Action errors — componente usa mensagem fixa
+    await waitFor(() => expect(screen.getByRole("button", { name: /reanalisar/i })).toBeInTheDocument());
     expect(screen.getByText(/erro na análise/i)).toBeInTheDocument();
-    // Após erro o botão mostra "Reanalisar" (isError=true), não "Analisar com IA"
-    expect(screen.getByRole("button", { name: /reanalisar/i })).toBeInTheDocument();
+    expect(screen.getByText(/erro ao iniciar análise/i)).toBeInTheDocument();
   });
 
-  it("usa mensagem genérica quando o erro não é instância de Error", async () => {
+  it("usa mensagem fixa independente do tipo de erro lançado", async () => {
     mockTriggerContactAnalysis.mockRejectedValue("falha desconhecida");
 
     render(<ContactDrawer contact={makeContact()} onClose={jest.fn()} />);
     fireEvent.click(screen.getByRole("button", { name: /analisar com ia/i }));
 
-    await waitFor(() => expect(screen.getByText(/erro ao iniciar análise/i)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole("button", { name: /reanalisar/i })).toBeInTheDocument());
+    expect(screen.getByText(/erro ao iniciar análise/i)).toBeInTheDocument();
   });
 
   it("chama onClose ao clicar no botão de fechar", () => {
